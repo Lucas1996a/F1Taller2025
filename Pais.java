@@ -1,0 +1,37 @@
+public class Pais {
+
+    private int idPais;
+    private String descripcion;
+
+
+    public Pais() {
+    }
+
+
+
+    public Pais(int idPais, String descripcion) {
+        this.idPais = idPais;
+        this.descripcion = descripcion;
+    }
+
+
+
+    public int getIdPais() {
+        return this.idPais;
+    }
+
+    public void setIdPais(int idPais) {
+        this.idPais = idPais;
+    }
+
+    public String getDescripcion() {
+        return this.descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+
+    
+}
