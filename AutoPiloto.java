@@ -2,24 +2,19 @@ public class AutoPiloto {
 
     private String fechaAsignacion;
 
-    private Carrera carrera; 
+    private List<Carrera> Carrera;
     private Piloto piloto;
     private Auto auto;
-
-
 
 
     public AutoPiloto() {
     }
 
-
-
-
-    public AutoPiloto(String fechaAsignacion, Carrera carrera, Piloto piloto, Auto auto) {
+    public AutoPiloto(String fechaAsignacion, List<Carrera> Carrera, Piloto piloto, Auto auto) {
         this.fechaAsignacion = fechaAsignacion;
-        this.carrera = carrera;
-        this.piloto = piloto;
-        this.auto = auto;
+        this.Carrera = Carrera;
+        this.piloto = new ArryList<>();
+        this.auto = new ArryList<>();
     }
 
 
@@ -32,12 +27,12 @@ public class AutoPiloto {
         this.fechaAsignacion = fechaAsignacion;
     }
 
-    public Carrera getCarrera() {
-        return this.carrera;
+    public List<Carrera> getCarrera() {
+        return this.Carrera;
     }
 
-    public void setCarrera(Carrera carrera) {
-        this.carrera = carrera;
+    public void setCarrera(List<Carrera> Carrera) {
+        this.Carrera = Carrera;
     }
 
     public Piloto getPiloto() {
@@ -55,6 +50,7 @@ public class AutoPiloto {
     public void setAuto(Auto auto) {
         this.auto = auto;
     }
+
 
 
     

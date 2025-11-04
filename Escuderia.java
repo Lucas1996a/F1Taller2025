@@ -4,16 +4,11 @@ import java.util.ArrayList;
 public class Escuderia {
 
     private String nombre;
-
     private Pais país;
 
-   
-    private List<Mecanico> mecánicos; 
-
-   
-    private List<Auto> autos = new ArrayList<>();
-    private List<Piloto> pilotos = new ArrayList<>();
-
+    private List<PilotoEscuderia> pilotoEscuderia;
+    private List<Mecanico> mecánicos;
+    private List<Auto> auto;
 
 
     public Escuderia() {
@@ -21,24 +16,13 @@ public class Escuderia {
 
 
 
-    public Escuderia(String nombre, Pais país, List<Mecanico> mecánicos, List<Auto> autos, List<Piloto> pilotos) {
+    public Escuderia(String nombre, Pais país, List<PilotoEscuderia> pilotoEscuderia, List<Mecanico> mecánicos, List<Auto> auto) {
         this.nombre = nombre;
         this.país = país;
-        this.mecánicos = mecánicos;
-        this.autos = autos;
-        this.pilotos = pilotos;
+        this.pilotoEscuderia = new ArrayList<>();
+        this.mecánicos = new ArrayList<>();
+        this.auto = new ArrayList<>();
     }
-
-
-
-
-
-
-
-
-
-    
-
 
 
     public String getNombre() {
@@ -57,6 +41,14 @@ public class Escuderia {
         this.país = país;
     }
 
+    public List<PilotoEscuderia> getPilotoEscuderia() {
+        return this.pilotoEscuderia;
+    }
+
+    public void setPilotoEscuderia(List<PilotoEscuderia> pilotoEscuderia) {
+        this.pilotoEscuderia = pilotoEscuderia;
+    }
+
     public List<Mecanico> getMecánicos() {
         return this.mecánicos;
     }
@@ -65,22 +57,13 @@ public class Escuderia {
         this.mecánicos = mecánicos;
     }
 
-    public List<Auto> getAutos() {
-        return this.autos;
+    public List<Auto> getAuto() {
+        return this.auto;
     }
 
-    public void setAutos(List<Auto> autos) {
-        this.autos = autos;
+    public void setAuto(List<Auto> auto) {
+        this.auto = auto;
     }
-
-    public List<Piloto> getPilotos() {
-        return this.pilotos;
-    }
-
-    public void setPilotos(List<Piloto> pilotos) {
-        this.pilotos = pilotos;
-    }
-
 
 
 }
