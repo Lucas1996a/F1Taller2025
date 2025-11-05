@@ -1,29 +1,32 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pais {
 
     private int idPais;
     private String descripcion;
 
-    private List<Escuderia> escuderia;
-    private List<Circuito> circuito;
-    private List<Carrera> carrera;
-    private List<Persona> persona;
-
-
+    private List<Escuderia> escuderias;
+    private List<Circuito> circuitos;
+    private List<Carrera> carreras;
+    private List<Persona> personas;
 
     public Pais() {
+        this.escuderias = new ArrayList<>();
+        this.circuitos = new ArrayList<>();
+        this.carreras = new ArrayList<>();
+        this.personas = new ArrayList<>();
     }
 
-
-    public Pais(int idPais, String descripcion, List<Escuderia> escuderia, List<Circuito> circuito, List<Carrera> carrera, List<Persona> persona) {
+    public Pais(int idPais, String descripcion, List<Escuderia> escuderias, List<Circuito> circuitos, List<Carrera> carreras, List<Persona> personas) {
         this.idPais = idPais;
         this.descripcion = descripcion;
-        this.escuderia = new ArrayList<>();
-        this.circuito = new ArrayList<>();
-        this.carrera = new ArrayList<>();
-        this.persona = new ArrayList<>();
+        this.escuderias = escuderias;
+        this.circuitos = circuitos;
+        this.carreras = carreras;
+        this.personas = personas;
     }
-
-
 
     public int getIdPais() {
         return this.idPais;
@@ -42,38 +45,50 @@ public class Pais {
     }
 
     public List<Escuderia> getEscuderia() {
-        return this.escuderia;
+        return this.escuderias;
     }
 
-    public void setEscuderia(List<Escuderia> escuderia) {
-        this.escuderia = escuderia;
+    public void setEscuderia(List<Escuderia> escuderias) {
+        this.escuderias = escuderias;
+    }
+
+    public void agregarEscuderia(Escuderia e) {
+        this.escuderias.add(e);
     }
 
     public List<Circuito> getCircuito() {
-        return this.circuito;
+        return this.circuitos;
     }
 
-    public void setCircuito(List<Circuito> circuito) {
-        this.circuito = circuito;
+    public void setCircuito(List<Circuito> circuitos) {
+        this.circuitos = circuitos;
+    }
+
+    public void agregarCircuito(Circuito c) {
+        this.circuitos.add(c);
     }
 
     public List<Carrera> getCarrera() {
-        return this.carrera;
+        return this.carreras;
     }
 
-    public void setCarrera(List<Carrera> carrera) {
-        this.carrera = carrera;
+    public void setCarrera(List<Carrera> carreras) {
+        this.carreras = carreras;
+    }
+
+    public void agregarCarrera(Carrera c) {
+        this.carreras.add(c);
     }
 
     public List<Persona> getPersona() {
-        return this.persona;
+        return this.personas;
     }
 
     public void setPersona(List<Persona> persona) {
-        this.persona = persona;
+        this.personas = persona;
     }
 
-
-
-    
+    public void agregarPersona(Persona p) {
+        this.personas.add(p);
+    }
 }

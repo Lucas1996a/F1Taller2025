@@ -1,29 +1,29 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Carrera {
 
     private String fechaRealizacion;
     private int numeroVueltas;
     private String horaRealizacion;
 
-
     private Circuito circuito;
     private Pais pais;
-    private List<AutoPiloto> autoPiloto;
-
-
+    private List<AutoPiloto> autoPilotos;
 
     public Carrera() {
+        this.autoPilotos = new ArrayList<>();
     }
 
-
-    public Carrera(String fechaRealizacion, int numeroVueltas, String horaRealizacion, Circuito circuito, Pais pais, List<AutoPiloto> autoPiloto) {
+    public Carrera(String fechaRealizacion, int numeroVueltas, String horaRealizacion, Circuito circuito, Pais pais, List<AutoPiloto> autoPilotos) {
         this.fechaRealizacion = fechaRealizacion;
         this.numeroVueltas = numeroVueltas;
         this.horaRealizacion = horaRealizacion;
         this.circuito = circuito;
         this.pais = pais;
-        this.autoPiloto = new ArryList<>();
+        this.autoPilotos = autoPilotos;
     }
-
 
     public String getFechaRealizacion() {
         return this.fechaRealizacion;
@@ -65,19 +65,16 @@ public class Carrera {
         this.pais = pais;
     }
 
-    public List<AutoPiloto> getAutoPiloto() {
-        return this.autoPiloto;
+    public void agregarAutoPiloto(AutoPiloto a) {
+        this.autoPilotos.add(a);
     }
 
-    public void setAutoPiloto(List<AutoPiloto> autoPiloto) {
-        this.autoPiloto = autoPiloto;
+    public List<AutoPiloto> getAutoPilotos() {
+        return this.autoPilotos;
     }
 
+    public void setAutoPilotos(List<AutoPiloto> autoPilotos) {
+        this.autoPilotos = autoPilotos;
+    }
 
-
-
-
-
-
-    
 }

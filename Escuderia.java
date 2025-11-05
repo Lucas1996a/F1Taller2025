@@ -1,29 +1,30 @@
-import java.util.List;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Escuderia {
 
     private String nombre;
-    private Pais país;
+    private Pais pais;
 
-    private List<PilotoEscuderia> pilotoEscuderia;
-    private List<Mecanico> mecánicos;
-    private List<Auto> auto;
-
+    private List<PilotoEscuderia> pilotoEscuderias;
+    private List<Mecanico> mecanicos;
+    private List<Auto> autos;
 
     public Escuderia() {
+        this.autos = new ArrayList<>();
+        this.mecanicos = new ArrayList<>();
+        this.pilotoEscuderias = new ArrayList<>();
     }
 
-
-
-    public Escuderia(String nombre, Pais país, List<PilotoEscuderia> pilotoEscuderia, List<Mecanico> mecánicos, List<Auto> auto) {
+    public Escuderia(String nombre, Pais pais, List<PilotoEscuderia> pilotoEscuderias, List<Mecanico> mecanicos, List<Auto> autos) {
         this.nombre = nombre;
-        this.país = país;
-        this.pilotoEscuderia = new ArrayList<>();
-        this.mecánicos = new ArrayList<>();
-        this.auto = new ArrayList<>();
-    }
+        this.pais = pais;
+        this.autos = autos;
+        this.pilotoEscuderias = pilotoEscuderias;
+        this.mecanicos = mecanicos;
 
+    }
 
     public String getNombre() {
         return this.nombre;
@@ -34,39 +35,47 @@ public class Escuderia {
     }
 
     public Pais getPaís() {
-        return this.país;
+        return this.pais;
     }
 
-    public void setPaís(Pais país) {
-        this.país = país;
+    public void setPaís(Pais pais) {
+        this.pais = pais;
     }
 
     public List<PilotoEscuderia> getPilotoEscuderia() {
-        return this.pilotoEscuderia;
+        return this.pilotoEscuderias;
     }
 
-    public void setPilotoEscuderia(List<PilotoEscuderia> pilotoEscuderia) {
-        this.pilotoEscuderia = pilotoEscuderia;
+    public void setPilotoEscuderia(List<PilotoEscuderia> pilotoEscuderias) {
+        this.pilotoEscuderias = pilotoEscuderias;
+    }
+
+    public void agregarPiloto(PilotoEscuderia p) {
+        this.pilotoEscuderias.add(p);
     }
 
     public List<Mecanico> getMecánicos() {
-        return this.mecánicos;
+        return this.mecanicos;
     }
 
-    public void setMecánicos(List<Mecanico> mecánicos) {
-        this.mecánicos = mecánicos;
+    public void setMecánicos(List<Mecanico> mecanicos) {
+        this.mecanicos = mecanicos;
     }
 
-    public List<Auto> getAuto() {
-        return this.auto;
+    public void agregarMecanico(Mecanico m) {
+        this.mecanicos.add(m);
     }
 
-    public void setAuto(List<Auto> auto) {
-        this.auto = auto;
+    public List<Auto> getAutos() {
+        return this.autos;
     }
 
+    public void setAuto(List<Auto> autos) {
+        this.autos = autos;
+    }
+
+    public void agregarAuto(Auto a) {
+        this.autos.add(a);
+    }
 
 }
-
-
-

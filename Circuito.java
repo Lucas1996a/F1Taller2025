@@ -1,25 +1,25 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Circuito {
 
     private String nombre;
     private int longitud;
 
     private Pais pais;
-    private List <Carrera> carrera;
-
+    private List<Carrera> carreras;
 
     public Circuito() {
+        this.carreras = new ArrayList<>();
     }
 
-
-
-    public Circuito(String nombre, int longitud, Pais pais, List<Carrera> carrera) {
+    public Circuito(String nombre, int longitud, Pais pais, List<Carrera> carreras) {
         this.nombre = nombre;
         this.longitud = longitud;
         this.pais = pais;
-        this.carrera = new ArrayList<>();
+        this.carreras = carreras;
     }
-
-
 
     public String getNombre() {
         return this.nombre;
@@ -46,14 +46,15 @@ public class Circuito {
     }
 
     public List<Carrera> getCarrera() {
-        return this.carrera;
+        return this.carreras;
     }
 
-    public void setCarrera(List<Carrera> carrera) {
-        this.carrera = carrera;
+    public void setCarrera(List<Carrera> carreras) {
+        this.carreras = carreras;
     }
 
-    
+    public void agregarCarreras(Carrera c) {
+        this.carreras.add(c);
+    }
 
-    
 }

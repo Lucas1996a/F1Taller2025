@@ -1,3 +1,7 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Piloto extends Persona {
 
     private int numeroCompetencia;
@@ -6,26 +10,24 @@ public class Piloto extends Persona {
     private int vueltasRápidas;
     private int podios;
 
-
-    private List<AutoPiloto> autoPiloto;
-    private List<PilotoEscuderia> pilotoEscuderia;
-
+    private List<AutoPiloto> autoPilotos;
+    private List<PilotoEscuderia> pilotoEscuderias;
 
     public Piloto() {
+        this.autoPilotos = new ArrayList<>();
+        this.pilotoEscuderias = new ArrayList<>();
     }
 
-
-    public Piloto(String dni, String nombre, String apellido, Pais pais, int numeroCompetencia, int victorias, int polePosition, int vueltasRápidas, int podios, List<AutoPiloto> autoPiloto, List<PilotoEscuderia> pilotoEscuderia) {
+    public Piloto(String dni, String nombre, String apellido, Pais pais, int numeroCompetencia, int victorias, int polePosition, int vueltasRápidas, int podios, List<AutoPiloto> autoPilotos, List<PilotoEscuderia> pilotoEscuderias) {
         super(dni, nombre, apellido, pais);
         this.numeroCompetencia = numeroCompetencia;
         this.victorias = victorias;
         this.polePosition = polePosition;
         this.vueltasRápidas = vueltasRápidas;
         this.podios = podios;
-        this.autoPiloto = new ArrayList<>();
-        this.pilotoEscuderia = new ArrayList<>();
+        this.autoPilotos = autoPilotos;
+        this.pilotoEscuderias = pilotoEscuderias;
     }
-
 
     public int getNumeroCompetencia() {
         return this.numeroCompetencia;
@@ -67,27 +69,28 @@ public class Piloto extends Persona {
         this.podios = podios;
     }
 
+    public void agregarAutoPiloto(AutoPiloto a) {
+        this.autoPilotos.add(a);
+    }
+
     public List<AutoPiloto> getAutoPiloto() {
-        return this.autoPiloto;
+        return this.autoPilotos;
     }
 
-    public void setAutoPiloto(List<AutoPiloto> autoPiloto) {
-        this.autoPiloto = autoPiloto;
+    public void setAutoPiloto(List<AutoPiloto> autoPilotos) {
+        this.autoPilotos = autoPilotos;
     }
 
-    public List<PilotoEscuderia> getPilotoEscuderia() {
-        return this.pilotoEscuderia;
+    public List<PilotoEscuderia> getPilotoEscuderias() {
+        return this.pilotoEscuderias;
     }
 
-    public void setPilotoEscuderia(List<PilotoEscuderia> pilotoEscuderia) {
-        this.pilotoEscuderia = pilotoEscuderia;
+    public void setPilotoEscuderias(List<PilotoEscuderia> pilotoEscuderias) {
+        this.pilotoEscuderias = pilotoEscuderias;
     }
 
+    public void agregarPilotoEscudria(PilotoEscuderia p) {
+        this.pilotoEscuderias.add(p);
+    }
 
-
-
-
-
-
-    
 }

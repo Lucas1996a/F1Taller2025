@@ -1,17 +1,14 @@
+
 public class PilotoEscuderia {
 
     private String desdeFecha;
     private String hastaFecha;
 
-
     private Piloto piloto;
     private Escuderia escudería;
 
-
     public PilotoEscuderia() {
     }
-
-
 
     public PilotoEscuderia(String desdeFecha, String hastaFecha, Piloto piloto, Escuderia escudería) {
         this.desdeFecha = desdeFecha;
@@ -19,8 +16,6 @@ public class PilotoEscuderia {
         this.piloto = piloto;
         this.escudería = escudería;
     }
-
-
 
     public String getDesdeFecha() {
         return this.desdeFecha;
@@ -54,6 +49,4 @@ public class PilotoEscuderia {
         this.escudería = escudería;
     }
 
-
-    
 }

@@ -1,24 +1,25 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Auto {
 
     private String modelo;
     private String motor;
-   
+
     private Escuderia escuderia;
-    private List<AutoPiloto> autoPiloto = new ArrayList<>();
-
-
+    private List<AutoPiloto> autoPilotos;
 
     public Auto() {
+        this.autoPilotos = new ArrayList<>();
     }
 
-
-    public Auto(String modelo, String motor, Escuderia escuderia, List<AutoPiloto> autoPiloto) {
+    public Auto(String modelo, String motor, Escuderia escuderia, List<AutoPiloto> autoPilotos) {
         this.modelo = modelo;
         this.motor = motor;
-        this.escuderia = new ArrayList<>();
-        this.autoPiloto = new ArrayList<>();
+        this.escuderia = escuderia;
+        this.autoPilotos = autoPilotos;
     }
-
 
     public String getModelo() {
         return this.modelo;
@@ -44,14 +45,16 @@ public class Auto {
         this.escuderia = escuderia;
     }
 
-    public List<AutoPiloto> getAutoPiloto() {
-        return this.autoPiloto;
+    public void agregarAutoPiloto(AutoPiloto a) {
+        this.autoPilotos.add(a);
     }
 
-    public void setAutoPiloto(List<AutoPiloto> autoPiloto) {
-        this.autoPiloto = autoPiloto;
+    public List<AutoPiloto> getAutoPilotos() {
+        return this.autoPilotos;
     }
 
+    public void setAutoPiloto(List<AutoPiloto> autoPilotos) {
+        this.autoPilotos = autoPilotos;
+    }
 
-    
 }
