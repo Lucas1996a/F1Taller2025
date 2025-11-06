@@ -41,10 +41,47 @@ public class Gestion {
     }
     
     
-    public void agregarAutos(){
+    public void crearAutos(String modelo, String motor){
+        Auto nuevoAuto = new Auto(modelo, motor);
+        this.listaMecanicos.add(nuevoAuto);
+        System.out.println("Auto Registrado: " + modelo + motor);
+       
+        
         
     }
-            
+    
+    public void crearEscuderias(String nombre, Pais pais, ArrayList<Piloto> listaPilotos, ArrayList<Mecanico> listaMecanicos, ArrayList<Auto> listaAutos ){
+        Escuderia nuevaEscuderia = new Escuderia(nombre, pais, listaPilotos, listaMecanicos, listaAutos);
+        this.listaEscuderias.add(nuevaEscuderia);
+        System.out.println("¡NUEVA ESCUDERÍA REGISTRADA: " + nombre);
+    }
+    
+    
+    public void crearCircuitos(String nombre, int longitud, Pais pais, ArrayList<Carrera> listaCarreras){
+        Circuito nuevo = new Circuito(nombre, longitud, pais, listaCarreras);
+        this.listaCircuitos(nuevo);
+        System.out.println("Circuito registrado: " + nombre);
+      
+    }
+    
+    public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios){
+        Piloto nuevo = new Piloto(dni, nombre, apellido, pais, numero, victorias, pole, vueltasRapidas, podios);
+        this.listaPilotos(nuevo);
+        System.out.println("Piloto registrado: " + nombre);
+        
+    }
+    
+    public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escueria> listaEscuderias){
+        Mecanico nuevo = new Mecanico(dni, nombre, apellido, pais, especialidad, experiencia, listaEscuderias);
+        this.listaMecanicos(nuevo);
+        System.out.println("Mecánico registrado: " + nombre);
+        
+    }
+    
+    
+          
+    
+    
     
    
       
