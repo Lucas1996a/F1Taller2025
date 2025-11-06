@@ -4,19 +4,22 @@
  */
 package gui;
 
+import logica.Controlador;
+
 /**
  *
  * @author Admin
  */
 public class VentanaRegistrar extends javax.swing.JFrame {
-    
+    private Controlador control;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRegistrar.class.getName());
 
     /**
      * Creates new form VentanaRegistrar
      */
-    public VentanaRegistrar() {
+    public VentanaRegistrar(Controlador control) {
         initComponents();
+        this.control = control;
     }
 
     /**
@@ -106,6 +109,11 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         bg.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 800, 50));
 
         bntRegistrarPiloto.setText("Registrar Piloto");
+        bntRegistrarPiloto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntRegistrarPilotoActionPerformed(evt);
+            }
+        });
 
         bntRegistrarMecanico.setText("Registrar Mecánico");
 
@@ -203,30 +211,12 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VentanaRegistrar().setVisible(true));
-    }
+    private void bntRegistrarPilotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarPilotoActionPerformed
+        FormularioRegistro formularioRegistro = new FormularioRegistro("PILOTO", this.control);
+        formularioRegistro.setVisible(true);
+        formularioRegistro.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_bntRegistrarPilotoActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
