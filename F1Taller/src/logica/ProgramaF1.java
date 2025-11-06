@@ -2,7 +2,7 @@ package logica;
 
 import gui.Pantalla;
 
-public class ProgramaF1 implements Metodos {
+public class ProgramaF1  {
 
     public static void main(String[] args) {
         
