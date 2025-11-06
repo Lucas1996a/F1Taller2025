@@ -28,23 +28,62 @@ public class Pantalla extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        bg = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        verstappen = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        titulo = new javax.swing.JLabel();
+        asfalto = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
         btnRegistrar = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        btnPlanificar = new javax.swing.JButton();
+        btnAsociarPilotos = new javax.swing.JButton();
+        btnRegistrarResultados = new javax.swing.JButton();
+        btnCalcularPuntajes = new javax.swing.JButton();
+        btnGenerarInformes = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
-        jLabel1.setBackground(new java.awt.Color(0, 0, 255));
-        jLabel1.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Bienvenidos a Programa Escuderias Unidas");
+        bg.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        btnRegistrar.setText("Registrar");
+        jPanel2.setLayout(new java.awt.BorderLayout());
+
+        verstappen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        verstappen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/2483195.jpg"))); // NOI18N
+        verstappen.setIconTextGap(0);
+        verstappen.setPreferredSize(new java.awt.Dimension(1300, 600));
+        jPanel2.add(verstappen, java.awt.BorderLayout.CENTER);
+
+        bg.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 0, 370, 600));
+
+        jPanel3.setLayout(null);
+
+        titulo.setBackground(new java.awt.Color(255, 255, 255));
+        titulo.setFont(new java.awt.Font("Nirmala UI", 0, 24)); // NOI18N
+        titulo.setForeground(new java.awt.Color(255, 255, 255));
+        titulo.setText("¡Bienvenidos a Escuderías Unidas F1!");
+        titulo.setAlignmentY(0.0F);
+        jPanel3.add(titulo);
+        titulo.setBounds(20, 80, 391, 32);
+
+        asfalto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/asfalto.jpg"))); // NOI18N
+        asfalto.setMaximumSize(new java.awt.Dimension(400, 600));
+        asfalto.setMinimumSize(new java.awt.Dimension(400, 600));
+        asfalto.setPreferredSize(new java.awt.Dimension(400, 600));
+        jPanel3.add(asfalto);
+        asfalto.setBounds(0, 0, 430, 130);
+
+        bg.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 130));
+
+        jPanel1.setBackground(new java.awt.Color(153, 153, 0));
+        jPanel1.setLayout(null);
+
+        jPanel4.setOpaque(false);
+
+        btnRegistrar.setText("REGISTRAR");
         btnRegistrar.setFocusPainted(false);
         btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -52,120 +91,116 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Planificar Carreras");
-        jButton3.setFocusPainted(false);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnPlanificar.setText("PLANIFICAR CARRERAS");
+        btnPlanificar.setFocusPainted(false);
+        btnPlanificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnPlanificarActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Asociar Pilotos");
-        jButton4.setFocusPainted(false);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        btnAsociarPilotos.setText("ASOCIAR PILOTOS");
+        btnAsociarPilotos.setFocusPainted(false);
 
-        jButton5.setText("Registrar Resultados");
-        jButton5.setFocusPainted(false);
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
+        btnRegistrarResultados.setText("REGISTRAR RESULTADOS");
+        btnRegistrarResultados.setFocusPainted(false);
 
-        jButton6.setText("Calcular Puntos de Carrera");
-        jButton6.setFocusPainted(false);
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
+        btnCalcularPuntajes.setText("CALCULAR PUNTAJES");
+        btnCalcularPuntajes.setFocusPainted(false);
 
-        jButton7.setText("Generar Informes");
-        jButton7.setFocusPainted(false);
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
-            }
-        });
+        btnGenerarInformes.setText("GENERAR INFORMES");
+        btnGenerarInformes.setFocusPainted(false);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCalcularPuntajes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRegistrarResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(btnAsociarPilotos, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(btnPlanificar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(btnRegistrar, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(btnGenerarInformes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnPlanificar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnAsociarPilotos, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnRegistrarResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnCalcularPuntajes, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(btnGenerarInformes, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
+        );
+
+        jPanel1.add(jPanel4);
+        jPanel4.setBounds(120, 30, 180, 380);
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/2483195.jpg"))); // NOI18N
+        jLabel1.setPreferredSize(new java.awt.Dimension(1300, 600));
+        jPanel1.add(jLabel1);
+        jLabel1.setBounds(-30, -190, 1280, 720);
+
+        bg.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 430, 470));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(403, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(403, 403, 403))
+            .addComponent(bg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnRegistrar, jButton3, jButton4, jButton5, jButton6, jButton7});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(74, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
-                .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(92, 92, 92))
+            .addComponent(bg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnPlanificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlanificarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPlanificarActionPerformed
+
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        // TODO add your handling code here:
+    // Crea una instancia de la ventana nueva a abrir
+        VentanaRegistrar pantallaRegistro = new VentanaRegistrar();
+
+    // Hacerla visible
+            pantallaRegistro.setVisible(true);
+
+    // Centrar en la pantalla
+            pantallaRegistro.setLocationRelativeTo(null);
+
+    // Cerrar ventana actual
+            this.dispose();
     }//GEN-LAST:event_btnRegistrarActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel asfalto;
+    private javax.swing.JPanel bg;
+    private javax.swing.JButton btnAsociarPilotos;
+    private javax.swing.JButton btnCalcularPuntajes;
+    private javax.swing.JButton btnGenerarInformes;
+    private javax.swing.JButton btnPlanificar;
     private javax.swing.JButton btnRegistrar;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
+    private javax.swing.JButton btnRegistrarResultados;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel titulo;
+    private javax.swing.JLabel verstappen;
     // End of variables declaration//GEN-END:variables
 }
