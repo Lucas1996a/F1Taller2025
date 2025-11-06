@@ -6,13 +6,13 @@ package logica;
 
 
 import java.util.ArrayList;
-
+import persistencia.GestorPersistencia;
 /**
  *
  * @author Lucas
  */
 public class Gestion {
-    
+    GestorPersistencia gestorPersistencia = new GestorPersistencia();
     private ArrayList<Auto> listaAutos;
     private ArrayList<Escuderia> listaEscuderias;
     private ArrayList<Circuito> listaCircuitos;
