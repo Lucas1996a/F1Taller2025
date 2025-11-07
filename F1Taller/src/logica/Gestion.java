@@ -6,6 +6,8 @@ package logica;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import persistencia.GestorPersistencia;
 /**
  *
@@ -41,31 +43,38 @@ public class Gestion {
     }
     
     
-    public void crearAutos(String modelo, String motor){
+    public void crearAutos(String modelo, String motor, Escuderia escuderia){
         Auto nuevoAuto = new Auto();
         nuevoAuto.setModelo(modelo);
         nuevoAuto.setMotor(motor);
+        nuevoAuto.setEscuderia(escuderia);
         this.listaAutos.add(nuevoAuto);
         System.out.println("Auto Registrado: " + modelo + motor);
-       
     }
     
-    public void crearEscuderias(String nombre, Pais pais, ArrayList<Piloto> listaPilotos, ArrayList<Mecanico> listaMecanicos, ArrayList<Auto> listaAutos ){
-        Escuderia nuevaEscuderia = new Escuderia(nombre, pais, listaPilotos, listaMecanicos, listaAutos);
-        this.listaEscuderias.add(nuevaEscuderia);
+    public void crearEscuderias(String nombre, Pais pais){
+        Escuderia nueva = new Escuderia();
+        nueva.setNombre(nombre);
+        nueva.setPais(pais);
+        this.listaEscuderias.add(nueva);
         System.out.println("¡NUEVA ESCUDERÍA REGISTRADA: " + nombre);
     }
     
     
-    public void crearCircuitos(String nombre, int longitud, Pais pais, ArrayList<Carrera> listaCarreras){
-        Circuito nuevo = new Circuito(nombre, longitud, pais, listaCarreras);
-        this.listaCircuitos(nuevo);
+    public void crearCircuitos(String nombre, int longitud, Pais pais){
+        Circuito nuevo = new Circuito();
+        nuevo.setNombre(nombre);
+        nuevo.setLongitud(longitud);
+        nuevo.setPais(pais);
+        this.listaCircuitos.add(nuevo);
         System.out.println("Circuito registrado: " + nombre);
       
     }
     
     public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios){
         Piloto nuevo = new Piloto(dni, nombre, apellido, pais, numero, victorias, pole, vueltasRapidas, podios);
+        nuevo.setDni(dni);
+        nuevo.nombre()
         this.listaPilotos(nuevo);
         System.out.println("Piloto registrado: " + nombre);
         
