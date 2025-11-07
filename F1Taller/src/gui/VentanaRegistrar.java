@@ -116,14 +116,39 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         });
 
         bntRegistrarMecanico.setText("Registrar Mecánico");
+        bntRegistrarMecanico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntRegistrarMecanicoActionPerformed(evt);
+            }
+        });
 
         bntRegistrarAuto.setText("Registrar Auto");
+        bntRegistrarAuto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntRegistrarAutoActionPerformed(evt);
+            }
+        });
 
         bntRegistrarEscuderia.setText("Registrar Escudería");
+        bntRegistrarEscuderia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntRegistrarEscuderiaActionPerformed(evt);
+            }
+        });
 
         bntRegistrarCircuito.setText("Registrar Circuito");
+        bntRegistrarCircuito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntRegistrarCircuitoActionPerformed(evt);
+            }
+        });
 
         bntRegistrarPais.setText("Registrar País");
+        bntRegistrarPais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntRegistrarPaisActionPerformed(evt);
+            }
+        });
 
         bntRegistrar.setText("Registar...");
 
@@ -217,6 +242,41 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_bntRegistrarPilotoActionPerformed
+
+    private void bntRegistrarMecanicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarMecanicoActionPerformed
+        FormularioRegistro formularioRegistro = new FormularioRegistro("MECANICO", this.control);
+        formularioRegistro.setVisible(true);
+        formularioRegistro.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_bntRegistrarMecanicoActionPerformed
+
+    private void bntRegistrarAutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarAutoActionPerformed
+        FormularioRegistro formularioRegistro = new FormularioRegistro("AUTO", this.control);
+        formularioRegistro.setVisible(true);
+        formularioRegistro.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_bntRegistrarAutoActionPerformed
+
+    private void bntRegistrarEscuderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarEscuderiaActionPerformed
+        FormularioRegistro formularioRegistro = new FormularioRegistro("ESCUDERIA", this.control);
+        formularioRegistro.setVisible(true);
+        formularioRegistro.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_bntRegistrarEscuderiaActionPerformed
+
+    private void bntRegistrarCircuitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarCircuitoActionPerformed
+        FormularioRegistro formularioRegistro = new FormularioRegistro("CIRCUITO", this.control);
+        formularioRegistro.setVisible(true);
+        formularioRegistro.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_bntRegistrarCircuitoActionPerformed
+
+    private void bntRegistrarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarPaisActionPerformed
+        FormularioRegistro formularioRegistro = new FormularioRegistro("PAIS", this.control);
+        formularioRegistro.setVisible(true);
+        formularioRegistro.setLocationRelativeTo(null);
+        this.dispose();
+    }//GEN-LAST:event_bntRegistrarPaisActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;

@@ -41,12 +41,13 @@ public class Gestion {
     }
     
     
-    public void crearAutos(String modelo, String motor){
+    public void crearAutos(String modelo, String motor, Escuderia escuderia){
         Auto nuevoAuto = new Auto();
         nuevoAuto.setModelo(modelo);
         nuevoAuto.setMotor(motor);
+        nuevoAuto.setEscuderia(escuderia);
         this.listaAutos.add(nuevoAuto);
-        System.out.println("Auto Registrado: " + modelo + motor);
+        System.out.println("Auto Registrado: " + modelo + motor + escuderia);
        
     }
     
