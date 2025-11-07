@@ -36,11 +36,11 @@ public class Escuderia {
         this.nombre = nombre;
     }
 
-    public Pais getPaís() {
+    public Pais getPais() {
         return this.pais;
     }
 
-    public void setPaís(Pais pais) {
+    public void setPais(Pais pais) {
         this.pais = pais;
     }
 
@@ -60,7 +60,7 @@ public class Escuderia {
         return this.mecanicos;
     }
 
-    public void setMecánicos(List<Mecanico> mecanicos) {
+    public void setMecanicos(List<Mecanico> mecanicos) {
         this.mecanicos = mecanicos;
     }
 
