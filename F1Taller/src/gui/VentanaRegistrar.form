@@ -220,26 +220,41 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Registrar Mec&#xe1;nico"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bntRegistrarMecanicoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="bntRegistrarAuto">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Registrar Auto"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bntRegistrarAutoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="bntRegistrarEscuderia">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Registrar Escuder&#xed;a"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bntRegistrarEscuderiaActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="bntRegistrarCircuito">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Registrar Circuito"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bntRegistrarCircuitoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="bntRegistrarPais">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Registrar Pa&#xed;s"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bntRegistrarPaisActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="bntRegistrar">
                   <Properties>

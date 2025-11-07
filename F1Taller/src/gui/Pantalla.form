@@ -151,18 +151,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="btnCalcularPuntajes" alignment="1" max="32767" attributes="0"/>
-                              <Component id="btnRegistrarResultados" alignment="0" pref="168" max="32767" attributes="0"/>
-                              <Component id="btnAsociarPilotos" alignment="0" pref="168" max="32767" attributes="0"/>
-                              <Component id="btnPlanificar" alignment="0" pref="168" max="32767" attributes="0"/>
-                              <Component id="btnRegistrar" alignment="0" pref="168" max="32767" attributes="0"/>
-                              <Component id="btnGenerarInformes" alignment="0" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="btnRegistrar" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnPlanificar" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnRegistrarResultados" alignment="0" pref="180" max="32767" attributes="0"/>
+                      <Component id="btnCalcularPuntajes" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnGenerarInformes" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnAsociarPilotos" alignment="1" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">

@@ -49,7 +49,8 @@ public class Gestion {
         nuevoAuto.setMotor(motor);
         nuevoAuto.setEscuderia(escuderia);
         this.listaAutos.add(nuevoAuto);
-        System.out.println("Auto Registrado: " + modelo + motor);
+        System.out.println("Auto Registrado: " + modelo + motor + escuderia);
+       
     }
     
     public void crearEscuderias(String nombre, Pais pais){
