@@ -42,12 +42,12 @@ public class Gestion {
     
     
     public void crearAutos(String modelo, String motor){
-        Auto nuevoAuto = new Auto(modelo, motor);
-        this.listaMecanicos.add(nuevoAuto);
+        Auto nuevoAuto = new Auto();
+        nuevoAuto.setModelo(modelo);
+        nuevoAuto.setMotor(motor);
+        this.listaAutos.add(nuevoAuto);
         System.out.println("Auto Registrado: " + modelo + motor);
        
-        
-        
     }
     
     public void crearEscuderias(String nombre, Pais pais, ArrayList<Piloto> listaPilotos, ArrayList<Mecanico> listaMecanicos, ArrayList<Auto> listaAutos ){
@@ -71,7 +71,7 @@ public class Gestion {
         
     }
     
-    public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escueria> listaEscuderias){
+    public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escuderia> listaEscuderias){
         Mecanico nuevo = new Mecanico(dni, nombre, apellido, pais, especialidad, experiencia, listaEscuderias);
         this.listaMecanicos(nuevo);
         System.out.println("Mecánico registrado: " + nombre);
