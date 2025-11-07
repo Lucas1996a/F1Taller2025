@@ -47,7 +47,7 @@ public class PilotoEscuderia {
         return this.escudería;
     }
 
-    public void setEscudería(Escuderia escudería) {
+    public void setEscuderia(Escuderia escudería) {
         this.escudería = escudería;
     }
 
