@@ -20,6 +20,7 @@ public class Gestion {
     private ArrayList<Mecanico> listaMecanicos;
     private ArrayList<Pais> listaPais;
     private ArrayList<Carrera> listaCarreras;
+    private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
     
     /*
     public Gestion(ArrayList<Auto> listaAutos, ArrayList<Escuderia> listaEscuderias, ArrayList<Circuito> listaCircuitos, ArrayList<Piloto> listaPilotos, ArrayList<Mecanicos> listaMecanicos, ArrayList<Pais> listaPais){
@@ -40,6 +41,7 @@ public class Gestion {
         this.listaMecanicos = new ArrayList<>();
         this.listaPais = new ArrayList<>();
         this.listaCarreras = new ArrayList<>();
+        this.listaPilotoEscuderias = new ArrayList<>();
     }
     
     
@@ -121,7 +123,20 @@ public class Gestion {
         System.out.println("Pais registrado: " + id + descrip);   
     }
     
+     
+    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
+       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
+       nuevaAsociacion.setPiloto(piloto);
+       nuevaAsociacion.setAuto(auto);
+       nuevaAsociacion.setMecanico(mecanico);
+       nuevaAsociacion.setEscuderia(escuderia);
+       nuevaAsociacion.setDesdeFecha(desde);
+       nuevaAsociacion.setHastaFecha(hasta);
+       listaPilotoEscuderias.add(nuevaAsociacion);
+       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + auto.escuderia);   
           
+        
+    }
     
      
     
