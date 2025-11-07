@@ -59,7 +59,7 @@ public class Piloto extends Persona {
         return this.vueltasRápidas;
     }
 
-    public void setVueltasRápidas(int vueltasRápidas) {
+    public void setVueltasRapidas(int vueltasRápidas) {
         this.vueltasRápidas = vueltasRápidas;
     }
 

@@ -6,8 +6,6 @@ package logica;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import persistencia.GestorPersistencia;
 /**
  *
@@ -21,6 +19,7 @@ public class Gestion {
     private ArrayList<Piloto> listaPilotos;
     private ArrayList<Mecanico> listaMecanicos;
     private ArrayList<Pais> listaPais;
+    private ArrayList<Carrera> listaCarreras;
     
     /*
     public Gestion(ArrayList<Auto> listaAutos, ArrayList<Escuderia> listaEscuderias, ArrayList<Circuito> listaCircuitos, ArrayList<Piloto> listaPilotos, ArrayList<Mecanicos> listaMecanicos, ArrayList<Pais> listaPais){
@@ -40,6 +39,7 @@ public class Gestion {
         this.listaPilotos = new ArrayList<>();
         this.listaMecanicos = new ArrayList<>();
         this.listaPais = new ArrayList<>();
+        this.listaCarreras = new ArrayList<>();
     }
     
     
@@ -72,28 +72,57 @@ public class Gestion {
     }
     
     public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios){
-        Piloto nuevo = new Piloto(dni, nombre, apellido, pais, numero, victorias, pole, vueltasRapidas, podios);
+        Piloto nuevo = new Piloto();
         nuevo.setDni(dni);
-        nuevo.nombre()
-        this.listaPilotos(nuevo);
+        nuevo.setNombre(nombre);
+        nuevo.setApellido(apellido);
+        nuevo.setPais(pais);
+        nuevo.setNumeroCompetencia(numero);
+        nuevo.setVictorias(victorias);
+        nuevo.setPolePosition(pole);
+        nuevo.setVueltasRapidas(vueltasRapidas);
+        nuevo.setPodios(podios);
+        this.listaPilotos.add(nuevo);
         System.out.println("Piloto registrado: " + nombre);
         
     }
     
-    public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escuderia> listaEscuderias){
-        Mecanico nuevo = new Mecanico(dni, nombre, apellido, pais, especialidad, experiencia, listaEscuderias);
-        this.listaMecanicos(nuevo);
+    public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escuderia> escuderias){
+        Mecanico nuevo = new Mecanico();
+        nuevo.setDni(dni);
+        nuevo.setNombre(nombre);
+        nuevo.setApellido(apellido);
+        nuevo.setPais(pais);
+        nuevo.setEspecialidad(especialidad);
+        nuevo.setAñosExperiencia(experiencia);
+        nuevo.setEscuderia(escuderias);
+        listaMecanicos.add(nuevo);
         System.out.println("Mecánico registrado: " + nombre);
         
     }
     
     
+    public void crearCarrera(String fecha, int numeroVueltas, String hora, Pais pais){
+        Carrera nuevo = new Carrera();
+        nuevo.setFechaRealizacion(fecha);
+        nuevo.setNumeroVueltas(numeroVueltas);
+        nuevo.setHoraRealizacion(hora);
+        nuevo.setPais(pais);
+        listaCarreras.add(nuevo);
+        System.out.println("Carrera registrada: " + fecha + pais);      
+    }
+    
+    public void crearPais(int id, String descrip){
+        Pais nuevo = new Pais();
+        nuevo.setIdPais(id);
+        nuevo.setDescripcion(descrip);
+        listaPais.add(nuevo);
+        System.out.println("Pais registrado: " + id + descrip);   
+    }
+    
           
     
-    
-    
-   
-      
+     
     
     
 }
