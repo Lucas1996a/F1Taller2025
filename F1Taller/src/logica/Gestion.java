@@ -138,6 +138,21 @@ public class Gestion {
         
     }
     
+    
+    public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
+        Carrera nueva = new Carrera();
+    
+        nueva.setFechaRealizacion(fecha);
+        nueva.setNumeroVueltas(numeroVueltas);
+        nueva.setHoraRealizacion(hora);
+        nueva.setCircuito(circuito);
+        listaCarreras.add(nueva);
+        System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
+       
+    }
+    
+    
+    
      
     
     
