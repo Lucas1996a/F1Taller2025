@@ -21,6 +21,7 @@ public class Gestion {
     private ArrayList<Pais> listaPais;
     private ArrayList<Carrera> listaCarreras;
     private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
+    private ArrayList<ResultadoCarrera> listaResultados;
     
     /*
     public Gestion(ArrayList<Auto> listaAutos, ArrayList<Escuderia> listaEscuderias, ArrayList<Circuito> listaCircuitos, ArrayList<Piloto> listaPilotos, ArrayList<Mecanicos> listaMecanicos, ArrayList<Pais> listaPais){
@@ -152,7 +153,10 @@ public class Gestion {
     }
     
     
-    
+    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
+        
+        
+    }
      
     
     
