@@ -507,6 +507,41 @@ public class Gestion {
     }
    
    
+   public int contarParticipacionesPilotoEnCircuito(String dniPiloto, String nombreCircuito) {
+    
+        Piloto piloto = buscarPilotoPorDNI(dniPiloto);
+        Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
+        int contador = 0;
+
+        if (piloto == null) {
+            System.out.println("ERROR: Piloto con DNI " + dniPiloto + " no encontrado.");
+            return 0;
+        }
+        
+        if (circuito == null) {
+            System.out.println("ERROR: Circuito " + nombreCircuito + " no encontrado.");
+            return 0;
+        }
+
+        for (ResultadoCarrera resultado : this.listaResultados) {
+            Carrera carrera = resultado.getCarrera();
+        
+            if (carrera.getCircuito() == null) {
+                continue; 
+            }
+        
+            boolean esMismoPiloto = (resultado.getPiloto() == piloto);
+            boolean esMismoCircuito = (carrera.getCircuito() == circuito);
+        
+            if (esMismoPiloto && esMismoCircuito) {
+                contador++;
+            }
+        }
+        
+        System.out.printf("\n El piloto %s %s ha corrido %d veces en el circuito %s.\n", piloto.getNombre(), piloto.getApellido(), contador, circuito.getNombre());
+                      
+        return contador;
+    }
    
    
      
