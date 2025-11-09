@@ -492,8 +492,23 @@ public class Gestion {
    
    
    
-   
-   
+   public Circuito buscarCircuitoPorNombre(String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+         return null;
+        }
     
+        for (Circuito circuito : this.listaCircuitos) {
+            
+            if (circuito.getNombre().equalsIgnoreCase(nombre)) {
+                return circuito;
+            }
+        }
+        return null;
+    }
+   
+   
+   
+   
+     
     
 }
