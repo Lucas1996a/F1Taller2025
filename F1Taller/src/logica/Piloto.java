@@ -9,7 +9,7 @@ public class Piloto extends Persona {
     private int numeroCompetencia;
     private int victorias;
     private int polePosition;
-    private int vueltasRápidas;
+    private int vueltasRapidas;
     private int podios;
 
     private List<AutoPiloto> autoPilotos;
@@ -20,12 +20,12 @@ public class Piloto extends Persona {
         this.pilotoEscuderias = new ArrayList<>();
     }
 
-    public Piloto(String dni, String nombre, String apellido, Pais pais, int numeroCompetencia, int victorias, int polePosition, int vueltasRápidas, int podios, List<AutoPiloto> autoPilotos, List<PilotoEscuderia> pilotoEscuderias) {
+    public Piloto(String dni, String nombre, String apellido, Pais pais, int numeroCompetencia, int victorias, int polePosition, int vueltasRapidas, int podios, List<AutoPiloto> autoPilotos, List<PilotoEscuderia> pilotoEscuderias) {
         super(dni, nombre, apellido, pais);
         this.numeroCompetencia = numeroCompetencia;
         this.victorias = victorias;
         this.polePosition = polePosition;
-        this.vueltasRápidas = vueltasRápidas;
+        this.vueltasRapidas = vueltasRapidas;
         this.podios = podios;
         this.autoPilotos = autoPilotos;
         this.pilotoEscuderias = pilotoEscuderias;
@@ -55,12 +55,12 @@ public class Piloto extends Persona {
         this.polePosition = polePosition;
     }
 
-    public int getVueltasRápidas() {
-        return this.vueltasRápidas;
+    public int getVueltasRapidas() {
+        return this.vueltasRapidas;
     }
 
-    public void setVueltasRapidas(int vueltasRápidas) {
-        this.vueltasRápidas = vueltasRápidas;
+    public void setVueltasRapidas(int vueltasRapidas) {
+        this.vueltasRapidas = vueltasRapidas;
     }
 
     public int getPodios() {

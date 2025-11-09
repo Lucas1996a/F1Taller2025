@@ -21,6 +21,7 @@ public class Gestion {
     private ArrayList<Carrera> listaCarreras;
     private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
     private ArrayList<ResultadoCarrera> listaResultados;
+    private ArrayList<AutoPiloto> listaAutoPilotos;
     
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
@@ -46,6 +47,7 @@ public class Gestion {
         this.listaPais = new ArrayList<>();
         this.listaCarreras = new ArrayList<>();
         this.listaPilotoEscuderias = new ArrayList<>();
+        this.listaAutoPilotos = new ArrayList<>();
     }
     
     
@@ -133,23 +135,18 @@ public class Gestion {
         return this.listaPais;
     }
     
-    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
-        
-    }
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
        nuevaAsociacion.setPiloto(piloto);
-       nuevaAsociacion.setAuto(auto);
-       nuevaAsociacion.setMecanico(mecanico);
        nuevaAsociacion.setEscuderia(escuderia);
        nuevaAsociacion.setDesdeFecha(desde);
        nuevaAsociacion.setHastaFecha(hasta);
        listaPilotoEscuderias.add(nuevaAsociacion);
-       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + auto.escuderia);  
-    
+       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
     }
     
+     
     public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
         Carrera nueva = new Carrera();
     
@@ -161,4 +158,93 @@ public class Gestion {
         System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
        
     }
+     
+    
+    
+    public void asociarPilotoAuto(Piloto piloto, Auto auto, Carrera carrera, String fechaAsignacion) {
+        AutoPiloto nuevaAsociacion = new AutoPiloto();
+        nuevaAsociacion.setPiloto(piloto);
+        nuevaAsociacion.setAuto(auto);
+        nuevaAsociacion.setFechaAsignacion(carrera.getFechaRealizacion());;
+        this.listaAutoPilotos.add(nuevaAsociacion);
+        System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
+    }
+    
+    
+    
+    public int calcularPuntos(int posicion) {
+    return switch(posicion){
+        case 1 -> 25;
+        case 2 -> 18;
+        case 3 -> 15;
+        case 4 -> 12;
+        case 5 -> 10;
+        case 6 -> 8;
+        case 7 -> 6;
+        case 8 -> 4;
+        case 9 -> 2;
+        case 10 -> 1;
+        default -> 0;
+    };
+    }
+    
+    
+    public void resultadosCarreras(Piloto piloto, int posicionFinal, boolean vueltaRapida){
+        if (posicionFinal == 1) {
+        piloto.setVictorias(piloto.getVictorias() + 1);
+    }
+    
+        if (posicionFinal <= 3) {
+        piloto.setPodios(piloto.getPodios() + 1);
+    }
+    
+    
+        if (vueltaRapida) {
+        piloto.setVueltasRapidas(piloto.getVueltasRapidas() + 1);
+    }
+        
+        int puntosObtenidos = calcularPuntos(posicionFinal);
+        
+        System.out.println(" el Piloto suma " + puntosObtenidos + " puntos.");
+   
+     }
+    
+    
+      
+    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
+        ResultadoCarrera nuevoResultado = new ResultadoCarrera();
+    
+        nuevoResultado.setCarrera(carrera);
+        nuevoResultado.setPiloto(piloto);
+        nuevoResultado.setPosicionFinal(posicionFinal);
+        nuevoResultado.setTiempoFinal(tiempoFinal);
+        nuevoResultado.setVueltaRapida(vueltaRapida);
+
+        boolean esPodio = (posicionFinal <= 3);
+        nuevoResultado.setPodio(esPodio); 
+  
+        resultadosCarreras(piloto, posicionFinal, vueltaRapida);
+
+        this.listaResultados.add(nuevoResultado);
+        int puntosGanados = calcularPuntos(posicionFinal);
+        String podio = "";
+        String vr = "";
+
+        if (esPodio) {
+           podio = " (Podio!)";
+        }
+
+        if (vueltaRapida) {
+            vr = " (Vuelta Rápida)";
+         }
+                      
+        System.out.println("El resultado fue: " + piloto.getNombre() + " terminó en posicion" + posicionFinal + ", y sumó " + puntosGanados + " puntos en el GP de " + carrera.getPais().getDescripcion() + "." + podio + vr);    
+    }
+    
+   
+    
+    
+    
+    
+    
 }
