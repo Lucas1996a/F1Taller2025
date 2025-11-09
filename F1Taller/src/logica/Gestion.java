@@ -12,7 +12,6 @@ import persistencia.GestorPersistencia;
  * @author Lucas
  */
 public class Gestion {
-    GestorPersistencia gestorPersistencia = new GestorPersistencia();
     private ArrayList<Auto> listaAutos;
     private ArrayList<Escuderia> listaEscuderias;
     private ArrayList<Circuito> listaCircuitos;
@@ -22,6 +21,8 @@ public class Gestion {
     private ArrayList<Carrera> listaCarreras;
     private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
     private ArrayList<ResultadoCarrera> listaResultados;
+    
+    GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
     /*
     public Gestion(ArrayList<Auto> listaAutos, ArrayList<Escuderia> listaEscuderias, ArrayList<Circuito> listaCircuitos, ArrayList<Piloto> listaPilotos, ArrayList<Mecanicos> listaMecanicos, ArrayList<Pais> listaPais){
@@ -35,6 +36,8 @@ public class Gestion {
  */
     
     public Gestion(){
+        
+        
         this.listaAutos = new ArrayList<>();
         this.listaEscuderias = new ArrayList<>();
         this.listaCircuitos = new ArrayList<>();
@@ -86,9 +89,11 @@ public class Gestion {
         nuevo.setPolePosition(pole);
         nuevo.setVueltasRapidas(vueltasRapidas);
         nuevo.setPodios(podios);
+        
         this.listaPilotos.add(nuevo);
         System.out.println("Piloto registrado: " + nombre);
         
+        gestorPersistencia.guardarPiloto(nuevo);
     }
     
     public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escuderia> escuderias){
@@ -102,7 +107,6 @@ public class Gestion {
         nuevo.setEscuderia(escuderias);
         listaMecanicos.add(nuevo);
         System.out.println("Mecánico registrado: " + nombre);
-        
     }
     
     
@@ -120,44 +124,14 @@ public class Gestion {
         Pais nuevo = new Pais();
         nuevo.setIdPais(id);
         nuevo.setDescripcion(descrip);
-        listaPais.add(nuevo);
+        this.listaPais.add(nuevo);
+        gestorPersistencia.guardarPais(nuevo);
         System.out.println("Pais registrado: " + id + descrip);   
     }
     
-     
-    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
-       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
-       nuevaAsociacion.setPiloto(piloto);
-       nuevaAsociacion.setAuto(auto);
-       nuevaAsociacion.setMecanico(mecanico);
-       nuevaAsociacion.setEscuderia(escuderia);
-       nuevaAsociacion.setDesdeFecha(desde);
-       nuevaAsociacion.setHastaFecha(hasta);
-       listaPilotoEscuderias.add(nuevaAsociacion);
-       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + auto.escuderia);   
-          
-        
+    public ArrayList<Pais> getListaPais() {
+        return this.listaPais;
     }
-    
-    
-    public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
-        Carrera nueva = new Carrera();
-    
-        nueva.setFechaRealizacion(fecha);
-        nueva.setNumeroVueltas(numeroVueltas);
-        nueva.setHoraRealizacion(hora);
-        nueva.setCircuito(circuito);
-        listaCarreras.add(nueva);
-        System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
-       
-    }
-    
-    
-    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
-        
-        
-    }
-     
     
     
 }

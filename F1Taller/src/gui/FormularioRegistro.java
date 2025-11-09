@@ -1,6 +1,9 @@
 package gui;
 
-import logica.Controlador;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import logica.Gestion;
+import logica.Pais;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -15,16 +18,16 @@ public class FormularioRegistro extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioRegistro.class.getName());
     private final String tipoRegistro;
-    private final Controlador control;
+    private final Gestion gestion;
 
     /**
      * Creates new form FormularioRegistro
      */
-    public FormularioRegistro(String tipo, Controlador control) {
+    public FormularioRegistro(String tipo, Gestion gestion) {
         initComponents();
         
         this.tipoRegistro = tipo;
-        this.control = control;
+        this.gestion = gestion;
 
         // --- BLOQUE QUE OCULTA TODAS LAS VARIABLES PARA SOLO USAR LAS QUE NECESITAMOS ---
     
@@ -38,6 +41,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
         txtCampo3.setVisible(false);
     
         lblCampo4.setVisible(false);
+        comboCampo4.setVisible(false);
         txtCampo4.setVisible(false);
     
         lblCampo5.setVisible(false);
@@ -51,6 +55,9 @@ public class FormularioRegistro extends javax.swing.JFrame {
         
         lblCampo8.setVisible(false);
         txtCampo8.setVisible(false);
+        
+        lblCampo9.setVisible(false);
+        txtCampo9.setVisible(false);
         
         switch (tipo) {
         case "PILOTO":
@@ -71,25 +78,29 @@ public class FormularioRegistro extends javax.swing.JFrame {
             lblCampo3.setVisible(true); 
             txtCampo3.setVisible(true); 
             
-            lblCampo4.setText("N° Competencia:");
+            lblCampo4.setText("País:");
             lblCampo4.setVisible(true); 
-            txtCampo4.setVisible(true); 
+            comboCampo4.setVisible(true); 
             
-            lblCampo5.setText("Victorias:");
+            lblCampo5.setText("N° Competencia:");
             lblCampo5.setVisible(true); 
             txtCampo5.setVisible(true); 
             
-            lblCampo6.setText("Pole Positions:");
+            lblCampo6.setText("Victorias:");
             lblCampo6.setVisible(true); 
             txtCampo6.setVisible(true); 
             
-            lblCampo7.setText("Vueltas Rápidas:");
+            lblCampo7.setText("Pole Positions:");
             lblCampo7.setVisible(true); 
             txtCampo7.setVisible(true); 
             
-            lblCampo8.setText("Podios:");
+            lblCampo8.setText("Vueltas Rápidas:");
             lblCampo8.setVisible(true); 
             txtCampo8.setVisible(true); 
+            
+            lblCampo9.setText("Podios:");
+            lblCampo9.setVisible(true); 
+            txtCampo9.setVisible(true); 
             
             break;
             
@@ -192,6 +203,35 @@ public class FormularioRegistro extends javax.swing.JFrame {
             lblCampo2.setVisible(true); 
             txtCampo2.setVisible(true); 
             break;
+            
+            case "CARRERA":
+            this.setTitle("Registrar Carrera");
+            
+            tituloRegistro.setText(tipo);
+            
+            // "Prendemos" y configuramos los campos para Piloto
+            lblCampo1.setText("Fecha de realización:");
+            lblCampo1.setVisible(true); 
+            txtCampo1.setVisible(true); 
+            
+            lblCampo2.setText("Número de vueltas:");
+            lblCampo2.setVisible(true); 
+            txtCampo2.setVisible(true); 
+            
+            lblCampo3.setText("Hora de realización:");
+            lblCampo3.setVisible(true); 
+            txtCampo3.setVisible(true); 
+            
+            lblCampo4.setText("Circuito:");
+            lblCampo4.setVisible(true); 
+            txtCampo4.setVisible(true); 
+            
+            lblCampo5.setText("Pais:");
+            lblCampo5.setVisible(true); 
+            txtCampo5.setVisible(true); 
+            break;
+            
+            
     }
     }
 
@@ -210,22 +250,25 @@ public class FormularioRegistro extends javax.swing.JFrame {
         tituloRegistro = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         lblCampo1 = new javax.swing.JLabel();
-        lblCampo2 = new javax.swing.JLabel();
-        lblCampo3 = new javax.swing.JLabel();
-        lblCampo4 = new javax.swing.JLabel();
-        lblCampo5 = new javax.swing.JLabel();
         txtCampo1 = new javax.swing.JTextField();
+        lblCampo2 = new javax.swing.JLabel();
         txtCampo2 = new javax.swing.JTextField();
+        lblCampo3 = new javax.swing.JLabel();
         txtCampo3 = new javax.swing.JTextField();
+        lblCampo4 = new javax.swing.JLabel();
+        comboCampo4 = new javax.swing.JComboBox<>();
         txtCampo4 = new javax.swing.JTextField();
+        lblCampo5 = new javax.swing.JLabel();
         txtCampo5 = new javax.swing.JTextField();
-        bntGuardar = new javax.swing.JButton();
         lblCampo6 = new javax.swing.JLabel();
         txtCampo6 = new javax.swing.JTextField();
-        txtCampo7 = new javax.swing.JTextField();
         lblCampo7 = new javax.swing.JLabel();
+        txtCampo7 = new javax.swing.JTextField();
         lblCampo8 = new javax.swing.JLabel();
         txtCampo8 = new javax.swing.JTextField();
+        lblCampo9 = new javax.swing.JLabel();
+        txtCampo9 = new javax.swing.JTextField();
+        bntGuardar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         fondoimg = new javax.swing.JLabel();
 
@@ -258,35 +301,65 @@ public class FormularioRegistro extends javax.swing.JFrame {
 
         lblCampo1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo1.setText("lbl1");
-        jPanel3.add(lblCampo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 175, 25));
-
-        lblCampo2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo2.setText("lbl2");
-        jPanel3.add(lblCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 175, 25));
-
-        lblCampo3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo3.setText("lbl3");
-        jPanel3.add(lblCampo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 175, 25));
-
-        lblCampo4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo4.setText("lbl4");
-        jPanel3.add(lblCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 175, 25));
-
-        lblCampo5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo5.setText("lbl5");
-        lblCampo5.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jPanel3.add(lblCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 175, 25));
+        jPanel3.add(lblCampo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 175, 25));
 
         txtCampo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCampo1ActionPerformed(evt);
             }
         });
-        jPanel3.add(txtCampo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 29, 150, -1));
-        jPanel3.add(txtCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 61, 150, -1));
-        jPanel3.add(txtCampo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 93, 150, -1));
-        jPanel3.add(txtCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 125, 150, -1));
-        jPanel3.add(txtCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 157, 150, -1));
+        jPanel3.add(txtCampo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 10, 150, -1));
+
+        lblCampo2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo2.setText("lbl2");
+        jPanel3.add(lblCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 175, 25));
+        jPanel3.add(txtCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 40, 150, -1));
+
+        lblCampo3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo3.setText("lbl3");
+        jPanel3.add(lblCampo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 70, 175, 25));
+        jPanel3.add(txtCampo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, 150, -1));
+
+        lblCampo4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo4.setText("lbl4");
+        jPanel3.add(lblCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 175, 25));
+
+        jPanel3.add(comboCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 150, -1));
+        jPanel3.add(txtCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 150, -1));
+
+        lblCampo5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo5.setText("lbl5");
+        lblCampo5.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jPanel3.add(lblCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 175, 25));
+        jPanel3.add(txtCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 150, -1));
+
+        lblCampo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo6.setText("lbl6");
+        lblCampo6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jPanel3.add(lblCampo6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 175, 25));
+        jPanel3.add(txtCampo6, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 170, 150, -1));
+
+        lblCampo7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo7.setText("lbl7");
+        lblCampo7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jPanel3.add(lblCampo7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 200, 175, 25));
+        jPanel3.add(txtCampo7, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 200, 150, -1));
+
+        lblCampo8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo8.setText("lbl8");
+        jPanel3.add(lblCampo8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 175, 25));
+        jPanel3.add(txtCampo8, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 230, 150, -1));
+
+        lblCampo9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCampo9.setText("lbl9");
+        jPanel3.add(lblCampo9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 175, 25));
+
+        txtCampo9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCampo9ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(txtCampo9, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 260, 150, -1));
 
         bntGuardar.setText("GUARDAR");
         bntGuardar.addActionListener(new java.awt.event.ActionListener() {
@@ -295,23 +368,6 @@ public class FormularioRegistro extends javax.swing.JFrame {
             }
         });
         jPanel3.add(bntGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 300, -1, -1));
-
-        lblCampo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo6.setText("lbl6");
-        lblCampo6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jPanel3.add(lblCampo6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 175, 25));
-        jPanel3.add(txtCampo6, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 189, 150, -1));
-        jPanel3.add(txtCampo7, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 221, 150, -1));
-
-        lblCampo7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo7.setText("lbl7");
-        lblCampo7.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        jPanel3.add(lblCampo7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, 175, 25));
-
-        lblCampo8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCampo8.setText("lbl8");
-        jPanel3.add(lblCampo8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 175, 25));
-        jPanel3.add(txtCampo8, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 253, 150, -1));
 
         bg.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 370, 340));
 
@@ -346,11 +402,96 @@ public class FormularioRegistro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bntGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntGuardarActionPerformed
-        
+    try {
+        switch (this.tipoRegistro) {
+        case "PILOTO":
+            // 1. Lee los datos de los text fields
+            String dni = txtCampo1.getText();
+            String nombre = txtCampo2.getText();
+            String apellido = txtCampo3.getText();
+            Pais pais = (Pais) comboCampo4.getSelectedItem();
+            int numeroComp = Integer.parseInt(txtCampo5.getText());
+            int victorias = Integer.parseInt(txtCampo6.getText());
+            int poles = Integer.parseInt(txtCampo7.getText());
+            int fastLap = Integer.parseInt(txtCampo8.getText());
+            int podios =  Integer.parseInt(txtCampo9.getText());
+            
+            // 2. Llama a la controladora de lógica
+             this.gestion.crearPilotos(dni, nombre, apellido, pais, numeroComp, victorias, poles, fastLap, podios);
+            break;
+            
+        case "PAIS":
+                    String idStr = txtCampo1.getText();
+                    String descripcion = txtCampo2.getText();
+                    
+                    // 3. Conversión de datos
+                    // (El try-catch exterior se encargará del error si idStr no es un número)
+                    int id = Integer.parseInt(idStr);
+                    
+                    // 4. Llama a la controladora de lógica (tu objeto 'gestion')
+                    this.gestion.crearPais(id, descripcion);
+                    
+                    // 5. Mensaje de éxito
+                    JOptionPane.showMessageDialog(this, "País guardado correctamente.");
+                    
+                    break;
+                // --- FIN CÓDIGO NUEVO ---
+            
+            
+//        case "MECANICO":
+//            String dni = txtCampo1.getText();
+//            String nombre = txtCampo2.getText();
+//            String apellido = txtCampo3.getText();
+//            
+//            
+//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//            break;
+//            
+//        case "MECANICO":
+//            String nombreMec = txtCampo1.getText();
+//            String apellidoMec = txtCampo2.getText();
+//            String especialidad = txtCampo3.getText();
+//            
+//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//            break;
+//            
+//        case "MECANICO":
+//            String nombreMec = txtCampo1.getText();
+//            String apellidoMec = txtCampo2.getText();
+//            String especialidad = txtCampo3.getText();
+//            
+//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//            break;
+//            
+//        case "MECANICO":
+//            String nombreMec = txtCampo1.getText();
+//            String apellidoMec = txtCampo2.getText();
+//            String especialidad = txtCampo3.getText();
+//            
+//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//            break;
+//            
+//        case "MECANICO":
+//            String nombreMec = txtCampo1.getText();
+//            String apellidoMec = txtCampo2.getText();
+//            String especialidad = txtCampo3.getText();
+//            
+//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//            break;
+        }
+    } catch (NumberFormatException e) {
+    // ¡PERO ESTO NOS SALVA!
+    // Si 'parseInt' falla, el código salta aquí
+    // y la app NO crashea.
+    JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.");
+}
+    
+        // (Opcional) Muestra un mensaje de éxito
+         JOptionPane.showMessageDialog(this, "Registro guardado con éxito");
     }//GEN-LAST:event_bntGuardarActionPerformed
 
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
-        VentanaRegistrar ventanaRegistrar = new VentanaRegistrar(this.control);
+        VentanaRegistrar ventanaRegistrar = new VentanaRegistrar(this.gestion);
         ventanaRegistrar.setVisible(true);
         ventanaRegistrar.setLocationRelativeTo(null);
         this.dispose();
@@ -360,11 +501,49 @@ public class FormularioRegistro extends javax.swing.JFrame {
         
     }//GEN-LAST:event_txtCampo1ActionPerformed
 
+    private void txtCampo9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCampo9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCampo9ActionPerformed
 
+    private void cargarPaises() {
+        try {
+            // 1. Limpia el combo (borra "Item 1", "Item 2", etc.)
+            comboCampo4.removeAllItems(); 
+            
+            // 2. Le pide la lista de países a tu objeto 'miGestion'
+            //    (Esto usa el método que creamos en Gestion.java)
+            ArrayList<Pais> listaDePaises = this.gestion.getListaPais();
+
+            // 3. Recorre la lista y añade cada OBJETO 'Pais' al combo
+            if (listaDePaises != null) {
+                for (Pais p : listaDePaises) {
+                    comboCampo4.addItem(p);
+                }
+            }
+            
+            // 4. (Opcional) Pone el primero como seleccionado
+            if (comboCampo4.getItemCount() > 0) {
+                comboCampo4.setSelectedIndex(0);
+            }
+
+        } catch (Exception e) {
+            // Muestra un error si 'miGestion' falla
+            JOptionPane.showMessageDialog(this, 
+                "Error fatal: No se pudo cargar la lista de países.", 
+                "Error de Carga", 
+                JOptionPane.ERROR_MESSAGE);
+            
+            // También usamos el 'logger' que ya tienes en tu clase
+            logger.severe("Error al cargar países: " + e.getMessage());
+        }
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
     private javax.swing.JButton bntGuardar;
     private javax.swing.JButton bntVolver;
+    private javax.swing.JComboBox<Pais> comboCampo4;
     private javax.swing.JLabel fondoimg;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -377,6 +556,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private javax.swing.JLabel lblCampo6;
     private javax.swing.JLabel lblCampo7;
     private javax.swing.JLabel lblCampo8;
+    private javax.swing.JLabel lblCampo9;
     private javax.swing.JLabel tituloRegistro;
     private javax.swing.JTextField txtCampo1;
     private javax.swing.JTextField txtCampo2;
@@ -386,5 +566,6 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private javax.swing.JTextField txtCampo6;
     private javax.swing.JTextField txtCampo7;
     private javax.swing.JTextField txtCampo8;
+    private javax.swing.JTextField txtCampo9;
     // End of variables declaration//GEN-END:variables
 }

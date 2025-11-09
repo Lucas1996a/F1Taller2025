@@ -93,4 +93,10 @@ public class Pais {
     public void agregarPersona(Persona p) {
         this.personas.add(p);
     }
+    
+    @Override
+    public String toString() {
+    // Muestra la descripción (ej: "Argentina") en lugar de "logica.Pais@123abc"
+    return this.descripcion;
+}
 }
