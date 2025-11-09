@@ -158,6 +158,8 @@ public class Gestion {
         return Especialidad.values(); 
     }
     
+    
+    
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
        nuevaAsociacion.setPiloto(piloto);
@@ -351,55 +353,197 @@ public class Gestion {
     }
     
    
-   
-   
-   
-   
    public ArrayList<String> generarHistoricoPilotoIndividual(String dni){
-    ArrayList<String> informe = new ArrayList<>();
+        ArrayList<String> informe = new ArrayList<>();
+        Piloto piloto = buscarPilotoPorDNI(dni);
     
+        if (piloto == null) {
+            informe.add("No se encontró ningún piloto con el DNI: " + dni);
+            informe.add("=============");
+            return informe;
+        }
+
+        informe.add("===================");
+        informe.add("HISTORIAL DE ESTADÍSTICAS INDIVIDUAL");
+        informe.add("===================");
+   
+        int victorias = piloto.getVictorias();
+        int podios = piloto.getPodios();
+        int pole = piloto.getPolePosition();
+        int vueltasRapidas = piloto.getVueltasRapidas();
+  
+        int puntosTotales = calcularPuntosTotalesPiloto(piloto);
     
-    Piloto piloto = buscarPilotoPorDNI(dni);
+        informe.add(String.format("Piloto: ", piloto.getNombre(), piloto.getApellido(), piloto.getNumeroCompetencia()));
+                              
+        informe.add("---------------------");
     
-    if (piloto == null) {
-        informe.add("❌ ERROR: No se encontró ningún piloto con el DNI: " + dni);
-        informe.add("=================================================");
+        informe.add(String.format(" Victorias: ", victorias));
+        informe.add(String.format("Podios: ", podios));
+        informe.add(String.format("Pole Positions: ", pole));
+        informe.add(String.format(" Vueltas Rápidas: ", vueltasRapidas));
+        informe.add(String.format(" Puntos Totales Acumulados: ", puntosTotales));
+    
+        informe.add("=================");
         return informe;
     }
-
-    // 2. Generar el informe con las estadísticas acumuladas
-    informe.add("=================================================");
-    informe.add("👤 HISTORIAL DE ESTADÍSTICAS INDIVIDUAL");
-    informe.add("=================================================");
+  
+   
+   public Piloto buscarPilotoPorDNI(String dni) {
+        if (dni == null || dni.isEmpty()) {
+        return null;
+        }
     
-    // Obtener todas las estadísticas del objeto Piloto
-    int victorias = piloto.getVictorias();
-    int podios = piloto.getPodios();
-    int pole = piloto.getPolePosition();
-    int vueltasRapidas = piloto.getVueltasRapidas();
-    
-    // Obtener los puntos totales usando tu método "on-the-fly"
-    int puntosTotales = calcularPuntosTotalesPiloto(piloto);
-    
-    informe.add(String.format("Piloto: %s %s (No. %d)",
-                              piloto.getNombre(),
-                              piloto.getApellido(),
-                              piloto.getNumeroCompetencia()));
-                              
-    informe.add("-------------------------------------------------");
-    
-    informe.add(String.format("🏆 Victorias: %d", victorias));
-    informe.add(String.format("🥉 Podios: %d", podios));
-    informe.add(String.format("🏅 Pole Positions: %d", pole));
-    informe.add(String.format("💨 Vueltas Rápidas: %d", vueltasRapidas));
-    informe.add(String.format("⭐ Puntos Totales Acumulados: %d", puntosTotales));
-    
-    informe.add("=================================================");
-    return informe;
-}
+        for (Piloto piloto : this.listaPilotos) {
+         if (piloto.getDni().equals(dni)) {
+            return piloto;
+            }
+        }
+     return null;
+    }
    
     
+   /*
+   public void generarInformeAutosPorEscuderia() {
     
+        System.out.println("====================================");
+        System.out.println(" INFORME DE USO DE AUTOS POR ESCUDERÍA EN CARRERAS️");
+        System.out.println("=====================================");
+
+        if (this.listaEscuderias.isEmpty() || this.listaAutoPilotos.isEmpty()) {
+            System.out.println("No hay escuderías o registros de participación de autos para generar el informe.");
+            return; 
+        }
+        
+        for (Escuderia escuderia : this.listaEscuderias) {
+        
+            boolean tieneRegistros = false;
+            System.out.printf("ESCUDERÍA: %s (%s)\n", escuderia.getNombre(), escuderia.getPais().getDescripcion());
+            System.out.println("----------------------------------------");
+        
+            ArrayList<String> registrosUnicos = new ArrayList<>();
+            
+            for (AutoPiloto registro : this.listaAutoPilotos) {
+                Auto autoUsado = registro.getAuto();
+            
+                if (autoUsado.getEscuderia() == escuderia) {
+                
+                    tieneRegistros = true;
+                    Carrera carrera = registro.getCarrera();
+                    Piloto piloto = registro.getPiloto();
+
+                    String claveRegistro = autoUsado.getModelo() + "|" + carrera.getFechaRealizacion();
+
+               
+                    if (!registrosUnicos.contains(claveRegistro)) {
+                 
+                        System.out.printf("- Auto: %s (Motor: %s) corrió en el GP de %s con %s.\n",autoUsado.getModelo(), autoUsado.getMotor(), carrera.getPais().getDescripcion(), piloto.getNombre());
+                        registrosUnicos.add(claveRegistro);
+                    }
+                }
+            }
+        
+            if (!tieneRegistros) {
+                System.out.println("   [!] Sin registros de participación de autos en carreras.");
+            }
+        }
+
+        System.out.println("\n=================================================");
+    }
+   
+   */
+   
+   
+   
+   public void generarInformeMecanicosPorEscuderia() {
     
+        System.out.println("===============================");
+        System.out.println("INFORME DE MECÁNICOS POR ESCUDERÍA Y ESPECIALIDAD");
+        System.out.println("================================");
+
+        if (this.listaEscuderias.isEmpty() || this.listaMecanicos.isEmpty()) {
+        System.out.println("No hay escuderías o mecánicos registrados para generar el informe.");
+        return;
+        }
+
+        for (Escuderia escuderia : this.listaEscuderias) {
+        
+            boolean tieneMecanicos = false;
+            System.out.printf("ESCUDERÍA: %s\n", escuderia.getNombre());
+            System.out.println("-------------------------------------------------");
+        
+            for (Mecanico mecanico : this.listaMecanicos) {
+            
+                if (mecanico.getEscuderias().contains(escuderia)) { 
+                    tieneMecanicos = true;
+               
+                    System.out.printf("   - Mecánico: %s %s (DNI: %s)\n", mecanico.getNombre(), mecanico.getApellido(), mecanico.getDni());
+                    System.out.printf("     Especialidad: %s | Experiencia: %d años\n", mecanico.getEspecialidad(), mecanico.getAñosExperiencia());
+                }
+            }
+        
+            if (!tieneMecanicos) {
+                System.out.println("Sin mecánicos asignados a esta escudería.");
+            }
+        }
+
+        System.out.println("\n=================================================");
+    }
+   
+   
+   
+   public Circuito buscarCircuitoPorNombre(String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+         return null;
+        }
+    
+        for (Circuito circuito : this.listaCircuitos) {
+            
+            if (circuito.getNombre().equalsIgnoreCase(nombre)) {
+                return circuito;
+            }
+        }
+        return null;
+    }
+   
+   
+   public int contarParticipacionesPilotoEnCircuito(String dniPiloto, String nombreCircuito) {
+    
+        Piloto piloto = buscarPilotoPorDNI(dniPiloto);
+        Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
+        int contador = 0;
+
+        if (piloto == null) {
+            System.out.println("ERROR: Piloto con DNI " + dniPiloto + " no encontrado.");
+            return 0;
+        }
+        
+        if (circuito == null) {
+            System.out.println("ERROR: Circuito " + nombreCircuito + " no encontrado.");
+            return 0;
+        }
+
+        for (ResultadoCarrera resultado : this.listaResultados) {
+            Carrera carrera = resultado.getCarrera();
+        
+            if (carrera.getCircuito() == null) {
+                continue; 
+            }
+        
+            boolean esMismoPiloto = (resultado.getPiloto() == piloto);
+            boolean esMismoCircuito = (carrera.getCircuito() == circuito);
+        
+            if (esMismoPiloto && esMismoCircuito) {
+                contador++;
+            }
+        }
+        
+        System.out.printf("\n El piloto %s %s ha corrido %d veces en el circuito %s.\n", piloto.getNombre(), piloto.getApellido(), contador, circuito.getNombre());
+                      
+        return contador;
+    }
+   
+   
+     
     
 }
