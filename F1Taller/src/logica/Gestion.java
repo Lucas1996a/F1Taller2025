@@ -158,6 +158,8 @@ public class Gestion {
         return Especialidad.values(); 
     }
     
+    
+    
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
        nuevaAsociacion.setPiloto(piloto);
@@ -451,6 +453,54 @@ public class Gestion {
    
    */
    
+   
+   
+   public void generarInformeMecanicosPorEscuderia() {
+    
+        System.out.println("===============================");
+        System.out.println("INFORME DE MECÁNICOS POR ESCUDERÍA Y ESPECIALIDAD");
+        System.out.println("================================");
+
+    if (this.listaEscuderias.isEmpty() || this.listaMecanicos.isEmpty()) {
+        System.out.println("No hay escuderías o mecánicos registrados para generar el informe.");
+        return;
+    }
+
+    // 1. Itera sobre todas las escuderías registradas (Agrupador principal)
+    for (Escuderia escuderia : this.listaEscuderias) {
+        
+        boolean tieneMecanicos = false;
+        System.out.printf("\n🏁 ESCUDERÍA: %s\n", escuderia.getNombre());
+        System.out.println("-------------------------------------------------");
+        
+        // 2. Itera sobre todos los mecánicos registrados
+        for (Mecanico mecanico : this.listaMecanicos) {
+            
+            // 3. Comprueba si la lista de escuderías del mecánico contiene la escudería actual.
+            // Asume que la clase Mecanico tiene un método getEscuderia() que devuelve un ArrayList<Escuderia>
+            if (mecanico.getEscuderias().contains(escuderia)) { 
+                
+                tieneMecanicos = true;
+                
+                // 4. Imprime el detalle del mecánico usando printf
+                System.out.printf("   - Mecánico: %s %s (DNI: %s)\n",
+                                  mecanico.getNombre(),
+                                  mecanico.getApellido(),
+                                  mecanico.getDni());
+                
+                System.out.printf("     Especialidad: %s | Experiencia: %d años\n",
+                                  mecanico.getEspecialidad().toString(), // Asume que Especialidad es un enum o tiene un toString()
+                                  mecanico.getAñosExperiencia());
+            }
+        }
+        
+        if (!tieneMecanicos) {
+            System.out.println("   [!] Sin mecánicos asignados a esta escudería.");
+        }
+    }
+
+    System.out.println("\n=================================================");
+}
    
    
    
