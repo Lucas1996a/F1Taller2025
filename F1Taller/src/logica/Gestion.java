@@ -400,6 +400,56 @@ public class Gestion {
      return null;
     }
    
+    
+   /*
+   public void generarInformeAutosPorEscuderia() {
+    
+        System.out.println("====================================");
+        System.out.println(" INFORME DE USO DE AUTOS POR ESCUDERÍA EN CARRERAS️");
+        System.out.println("=====================================");
+
+        if (this.listaEscuderias.isEmpty() || this.listaAutoPilotos.isEmpty()) {
+            System.out.println("No hay escuderías o registros de participación de autos para generar el informe.");
+            return; 
+        }
+        
+        for (Escuderia escuderia : this.listaEscuderias) {
+        
+            boolean tieneRegistros = false;
+            System.out.printf("ESCUDERÍA: %s (%s)\n", escuderia.getNombre(), escuderia.getPais().getDescripcion());
+            System.out.println("----------------------------------------");
+        
+            ArrayList<String> registrosUnicos = new ArrayList<>();
+            
+            for (AutoPiloto registro : this.listaAutoPilotos) {
+                Auto autoUsado = registro.getAuto();
+            
+                if (autoUsado.getEscuderia() == escuderia) {
+                
+                    tieneRegistros = true;
+                    Carrera carrera = registro.getCarrera();
+                    Piloto piloto = registro.getPiloto();
+
+                    String claveRegistro = autoUsado.getModelo() + "|" + carrera.getFechaRealizacion();
+
+               
+                    if (!registrosUnicos.contains(claveRegistro)) {
+                 
+                        System.out.printf("- Auto: %s (Motor: %s) corrió en el GP de %s con %s.\n",autoUsado.getModelo(), autoUsado.getMotor(), carrera.getPais().getDescripcion(), piloto.getNombre());
+                        registrosUnicos.add(claveRegistro);
+                    }
+                }
+            }
+        
+            if (!tieneRegistros) {
+                System.out.println("   [!] Sin registros de participación de autos en carreras.");
+            }
+        }
+
+        System.out.println("\n=================================================");
+    }
+   
+   */
    
    
    
