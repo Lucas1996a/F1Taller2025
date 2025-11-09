@@ -21,6 +21,7 @@ public class Gestion {
     private ArrayList<Carrera> listaCarreras;
     private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
     private ArrayList<ResultadoCarrera> listaResultados;
+    private ArrayList<AutoPiloto> listaAutoPilotos;
     
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
@@ -46,6 +47,7 @@ public class Gestion {
         this.listaPais = new ArrayList<>();
         this.listaCarreras = new ArrayList<>();
         this.listaPilotoEscuderias = new ArrayList<>();
+        this.listaAutoPilotos = new ArrayList<>();
     }
     
     
@@ -133,23 +135,18 @@ public class Gestion {
         return this.listaPais;
     }
     
-    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
-        
-    }
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
        nuevaAsociacion.setPiloto(piloto);
-       nuevaAsociacion.setAuto(auto);
-       nuevaAsociacion.setMecanico(mecanico);
        nuevaAsociacion.setEscuderia(escuderia);
        nuevaAsociacion.setDesdeFecha(desde);
        nuevaAsociacion.setHastaFecha(hasta);
        listaPilotoEscuderias.add(nuevaAsociacion);
-       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + auto.escuderia);  
-    
+       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
     }
     
+     
     public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
         Carrera nueva = new Carrera();
     
@@ -161,4 +158,25 @@ public class Gestion {
         System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
        
     }
+     
+    
+    
+    public void asociarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
+        AutoPiloto nuevaAsociacion = new AutoPiloto();
+        nuevaAsociacion.setPiloto(piloto);
+        nuevaAsociacion.setAuto(auto);
+        nuevaAsociacion.setFechaAsignacion(fechaAsignacion);
+        this.listaAutoPilotos.add(nuevaAsociacion);
+        System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
+    }
+    
+    
+      
+    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
+        
+    }
+    
+   
+    
+    
 }
