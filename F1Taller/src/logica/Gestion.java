@@ -7,6 +7,8 @@ package logica;
 
 import java.util.ArrayList;
 import persistencia.GestorPersistencia;
+import java.util.Collections;
+import java.util.Comparator;
 /**
  *
  * @author Lucas
@@ -258,6 +260,91 @@ public class Gestion {
     }
     
    
+    
+    // GENERAR INFORMES
+    
+    
+    
+    
+    
+    
+    
+    public int calcularPuntosTotalesPiloto(Piloto piloto) {
+    
+        int totalPuntos = 0;
+    
+        for (ResultadoCarrera resultado : this.listaResultados) {
+        
+            if (resultado.getPiloto() == piloto) {    
+                int posicion = resultado.getPosicionFinal();
+                int puntosGanados = calcularPuntos(posicion);
+            
+                totalPuntos += puntosGanados;
+             }
+        }
+    
+        return totalPuntos;
+    }
+    
+    
+    private class PilotoPuntuacion {
+        Piloto piloto;
+        int puntosAcumulados;
+
+        public PilotoPuntuacion(Piloto piloto, int puntosAcumulados) {
+        this.piloto = piloto;
+        this.puntosAcumulados = puntosAcumulados;
+        }
+    
+        public Piloto getPiloto() { return piloto; }
+        public int getPuntosAcumulados() { return puntosAcumulados; }
+    }
+    
+       
+   public ArrayList<String> generarRankingPilotos() {
+        ArrayList<String> rankingInforme = new ArrayList<>();
+        ArrayList<PilotoPuntuacion> rankingTemporal = new ArrayList<>();
+
+        for (Piloto piloto : this.listaPilotos) {
+            int puntosAcumulados = 0;
+        
+            for (ResultadoCarrera resultado : this.listaResultados) {
+           
+                if (resultado.getPiloto() == piloto) { 
+                int posicion = resultado.getPosicionFinal();
+                int puntosGanados = calcularPuntos(posicion); 
+                puntosAcumulados += puntosGanados;
+                }
+            }
+           rankingTemporal.add(new PilotoPuntuacion(piloto, puntosAcumulados));
+        }
+    
+        Collections.sort(rankingTemporal, new Comparator<PilotoPuntuacion>() {
+        @Override
+        public int compare(PilotoPuntuacion pp1, PilotoPuntuacion pp2) {
+            return Integer.compare(pp2.getPuntosAcumulados(), pp1.getPuntosAcumulados());
+        }
+        });
+
+        rankingInforme.add("====================");
+        rankingInforme.add("RANKING DE PILOTOS F1 2025");
+        rankingInforme.add("====================");
+    
+        if (rankingTemporal.isEmpty()) {
+        rankingInforme.add("No hay pilotos registrados o resultados de carreras para calcular el ranking.");
+        return rankingInforme;
+        }
+
+        int posicion = 1;
+        for (PilotoPuntuacion pp : rankingTemporal){
+        
+            String linea = posicion + ". " + pp.getPiloto().getNombre() + " " + pp.getPiloto().getApellido() + " - Puntos: " + pp.getPuntosAcumulados();
+
+            rankingInforme.add(linea);
+            posicion++;
+        }
+        return rankingInforme;
+    }
     
     
     

@@ -82,7 +82,7 @@ public class GestorPersistencia {
                            piloto.getNumeroCompetencia() + SEPARADOR +
                            piloto.getVictorias() + SEPARADOR +
                            piloto.getPolePosition() + SEPARADOR +
-                           piloto.getVueltasRápidas() + SEPARADOR +
+                           piloto.getVueltasRapidas() + SEPARADOR +
                            piloto.getPodios();
             
             bw.write(linea);
