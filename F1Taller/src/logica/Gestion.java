@@ -41,20 +41,18 @@ public class Gestion {
         this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
         this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
         this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
+        this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
+        this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
         
-        if (this.listaPais == null) {
-            this.listaPais = new ArrayList<>();
-        }
-        if (this.listaEscuderias == null) {
-            this.listaEscuderias = new ArrayList<>();
-        }
-        if (this.listaPilotos == null) {
-            this.listaPilotos = new ArrayList<>();
-        }
+        
+        if (this.listaPais == null) this.listaPais = new ArrayList<>();
+        if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
+        if (this.listaPilotos == null)this.listaPilotos = new ArrayList<>();
         if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
+        if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
+        if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
         
-        this.listaCircuitos = new ArrayList<>();
-        this.listaMecanicos = new ArrayList<>();
+        
         this.listaCarreras = new ArrayList<>();
         this.listaPilotoEscuderias = new ArrayList<>();
         this.listaAutoPilotos = new ArrayList<>();
@@ -89,6 +87,7 @@ public class Gestion {
         nuevo.setLongitud(longitud);
         nuevo.setPais(pais);
         this.listaCircuitos.add(nuevo);
+        gestorPersistencia.guardarCircuito(nuevo);
         System.out.println("Circuito registrado: " + nombre);
       
     }
@@ -111,7 +110,7 @@ public class Gestion {
         gestorPersistencia.guardarPiloto(nuevo);
     }
     
-    public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escuderia> escuderias){
+    public void crearMecanicos(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia){
         Mecanico nuevo = new Mecanico();
         nuevo.setDni(dni);
         nuevo.setNombre(nombre);
@@ -119,8 +118,9 @@ public class Gestion {
         nuevo.setPais(pais);
         nuevo.setEspecialidad(especialidad);
         nuevo.setAñosExperiencia(experiencia);
-        nuevo.setEscuderia(escuderias);
         listaMecanicos.add(nuevo);
+        
+        gestorPersistencia.guardarMecanico(nuevo);
         System.out.println("Mecánico registrado: " + nombre);
     }
     
@@ -150,6 +150,10 @@ public class Gestion {
     
     public ArrayList<Escuderia> getListaEscuderias() {
         return this.listaEscuderias;
+    }
+    
+    public Especialidad[] getListaEspecialidades() {
+        return Especialidad.values(); 
     }
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){

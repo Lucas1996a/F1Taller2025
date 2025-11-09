@@ -60,31 +60,36 @@ public class GestorPersistencia {
      * Guarda un objeto Piloto en el archivo pilotos.csv
      */
     public void guardarPiloto(Piloto piloto) {
-        File archivo = new File(PILOTOS_CSV);
-        boolean noExiste = !archivo.exists();
+    File archivo = new File(PILOTOS_CSV); // Asume "src/data/Pilotos.csv"
+    boolean noExiste = !archivo.exists();
 
-        try (FileWriter fw = new FileWriter(archivo, true);
-             BufferedWriter bw = new BufferedWriter(fw)) {
+    try (FileWriter fw = new FileWriter(archivo, true);
+         BufferedWriter bw = new BufferedWriter(fw)) {
 
-            if (noExiste) {
-                // Escribimos la cabecera
-                bw.write("dni;nombre;apellido;id_pais;numero_competencia;victorias;poles;vueltas_rapidas;podios");
-                bw.newLine();
-            }
+        if (noExiste) {
+            // Cabecera del archivo
+            bw.write("dni" + SEPARADOR + "nombre" + SEPARADOR + "apellido" + SEPARADOR +
+                     "pais_descripcion" + SEPARADOR + "numero_competencia" + SEPARADOR +
+                     "victorias" + SEPARADOR + "poles" + SEPARADOR +
+                     "vueltas_rapidas" + SEPARADOR + "podios");
+            bw.newLine();
+        }
 
-            // Guardamos el ID del país, no el objeto entero
-            int idPais = piloto.getPais().getIdPais();
+        // --- VINCULACIÓN ---
+        // Obtenemos la descripción (nombre) del país
+            String paisDescripcion = piloto.getPais().getDescripcion();
 
+        // Escribimos la línea de datos
             String linea = piloto.getDni() + SEPARADOR +
-                           piloto.getNombre() + SEPARADOR +
-                           piloto.getApellido() + SEPARADOR +
-                           idPais + SEPARADOR + // Guardamos solo el ID
-                           piloto.getNumeroCompetencia() + SEPARADOR +
-                           piloto.getVictorias() + SEPARADOR +
-                           piloto.getPolePosition() + SEPARADOR +
-                           piloto.getVueltasRápidas() + SEPARADOR +
-                           piloto.getPodios();
-            
+                       piloto.getNombre() + SEPARADOR +
+                       piloto.getApellido() + SEPARADOR +
+                       paisDescripcion + SEPARADOR + // Guardamos la descripción
+                       piloto.getNumeroCompetencia() + SEPARADOR +
+                       piloto.getVictorias() + SEPARADOR +
+                       piloto.getPolePosition() + SEPARADOR +
+                       piloto.getVueltasRapidas() + SEPARADOR +
+                       piloto.getPodios();
+
             bw.write(linea);
             bw.newLine();
 
@@ -155,6 +160,70 @@ public class GestorPersistencia {
             System.err.println("Error al guardar auto en CSV: " + e.getMessage());
         }
     }
+    
+    public void guardarCircuito(Circuito circuito) {
+        File archivo = new File(CIRCUITOS_CSV);
+        boolean noExiste = !archivo.exists();
+
+        try (FileWriter fw = new FileWriter(archivo, true);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            if (noExiste) {
+                // Cabecera del archivo
+                bw.write("nombre" + SEPARADOR + "longitud" + SEPARADOR + "pais_descripcion");
+                bw.newLine();
+            }
+
+            // --- VINCULACIÓN ---
+            // Obtenemos la descripción (nombre) del país
+            String paisDescripcion = circuito.getPais().getDescripcion();
+
+            // Escribimos la línea de datos
+            String linea = circuito.getNombre() + SEPARADOR +
+                           circuito.getLongitud() + SEPARADOR +
+                           paisDescripcion; // Guardamos el nombre del país
+            
+            bw.write(linea);
+            bw.newLine();
+
+        } catch (IOException e) {
+            System.err.println("Error al guardar circuito en CSV: " + e.getMessage());
+        }
+    }
+    
+    public void guardarMecanico(Mecanico mecanico) {
+    File archivo = new File(MECANICOS_CSV);
+    boolean noExiste = !archivo.exists();
+
+        try (FileWriter fw = new FileWriter(archivo, true);
+            BufferedWriter bw = new BufferedWriter(fw)) {
+
+            if (noExiste) {
+                bw.write("dni" + SEPARADOR + "nombre" + SEPARADOR + "apellido" + SEPARADOR +
+                     "pais_descripcion" + SEPARADOR + "especialidad" + SEPARADOR + "años_experiencia");
+                bw.newLine();
+            }
+
+            String paisDescripcion = mecanico.getPais().getDescripcion();
+
+        // --- ¡CAMBIO IMPORTANTE! ---
+        // Convertimos el enum a su nombre en String
+            String especialidadStr = mecanico.getEspecialidad().name(); 
+
+            String linea = mecanico.getDni() + SEPARADOR +
+                       mecanico.getNombre() + SEPARADOR +
+                       mecanico.getApellido() + SEPARADOR +
+                       paisDescripcion + SEPARADOR +
+                       especialidadStr + SEPARADOR + // Guardamos el String
+                       mecanico.getAñosExperiencia();
+
+            bw.write(linea);
+            bw.newLine();
+
+        } catch (IOException e) {
+            System.err.println("Error al guardar mecánico en CSV: " + e.getMessage());
+        }
+    }
     // --- MÉTODOS DE CARGA ---
 
     /**
@@ -198,53 +267,67 @@ public class GestorPersistencia {
      * @param listaDePaises La lista de países ya cargada para re-vincularlos
      */
     public ArrayList<Piloto> cargarPilotos(ArrayList<Pais> listaDePaises) {
-        ArrayList<Piloto> pilotos = new ArrayList<>();
-        File archivo = new File(PILOTOS_CSV);
+    ArrayList<Piloto> pilotos = new ArrayList<>();
+    File archivo = new File(PILOTOS_CSV);
 
-        if (!archivo.exists()) {
-            return pilotos; // Lista vacía
-        }
+    if (!archivo.exists()) {
+        System.err.println("No se encontró el archivo: " + PILOTOS_CSV);
+        return pilotos; // Lista vacía
+    }
 
-        try (FileReader fr = new FileReader(archivo);
-             BufferedReader br = new BufferedReader(fr)) {
+    try (FileReader fr = new FileReader(archivo);
+         BufferedReader br = new BufferedReader(fr)) {
 
-            br.readLine(); // Salteamos cabecera
+        br.readLine(); // Salteamos cabecera
 
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] datos = linea.split(SEPARADOR);
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(SEPARADOR);
 
-                if (datos.length == 9) {
-                    // Creamos el piloto con los datos del CSV
-                    Piloto p = new Piloto();
-                    p.setDni(datos[0]);
-                    p.setNombre(datos[1]);
-                    p.setApellido(datos[2]);
-                    
-                    int idPais = Integer.parseInt(datos[3]);
-                    
+            if (datos.length >= 9) {
+                try {
+                    String dni = datos[0];
+                    String nombre = datos[1];
+                    String apellido = datos[2];
+                    String paisDescripcion = datos[3]; // Leemos la descripción
+                    int numeroComp = Integer.parseInt(datos[4]);
+                    int victorias = Integer.parseInt(datos[5]);
+                    int poles = Integer.parseInt(datos[6]);
+                    int fastLap = Integer.parseInt(datos[7]);
+                    int podios = Integer.parseInt(datos[8]);
+
                     // --- VINCULACIÓN ---
-                    // Buscamos el objeto Pais que corresponde a ese ID
+                    // Buscamos el objeto Pais que corresponde a esa DESCRIPCIÓN
                     Pais paisDelPiloto = null;
                     for (Pais pais : listaDePaises) {
-                        if (pais.getIdPais() == idPais) {
+                        if (pais.getDescripcion().equalsIgnoreCase(paisDescripcion)) {
                             paisDelPiloto = pais;
                             break;
                         }
                     }
-                    p.setPais(paisDelPiloto); // Asignamos el objeto Pais encontrado
-                    
-                    p.setNumeroCompetencia(Integer.parseInt(datos[4]));
-                    p.setVictorias(Integer.parseInt(datos[5]));
-                    p.setPolePosition(Integer.parseInt(datos[6]));
-                    p.setVueltasRapidas(Integer.parseInt(datos[7]));
-                    p.setPodios(Integer.parseInt(datos[8]));
-                    
-                    pilotos.add(p);
+
+                    if (paisDelPiloto != null) {
+                        Piloto p = new Piloto();
+                        p.setDni(dni);
+                        p.setNombre(nombre);
+                        p.setApellido(apellido);
+                        p.setPais(paisDelPiloto);
+                        p.setNumeroCompetencia(numeroComp);
+                        p.setVictorias(victorias);
+                        p.setPolePosition(poles);
+                        p.setVueltasRapidas(fastLap);
+                        p.setPodios(podios);
+                        pilotos.add(p);
+                    } else {
+                        System.err.println("No se encontró país '" + paisDescripcion + "' para el piloto " + nombre);
+                    }
+                } catch (Exception e) {
+                     System.err.println("Error parseando línea de piloto: " + linea + " | Error: " + e.getMessage());
+                    }
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            System.err.println("Error al cargar pilotos desde CSV: " + e.getMessage());
+        System.err.println("Error al cargar pilotos desde CSV: " + e.getMessage());
         }
         return pilotos;
     }
@@ -348,7 +431,122 @@ public class GestorPersistencia {
             System.err.println("Error al cargar autos desde CSV: " + e.getMessage());
         }
             return autos;
+    }
+    
+    public ArrayList<Circuito> cargarCircuitos(ArrayList<Pais> listaDePaises) {
+        ArrayList<Circuito> circuitos = new ArrayList<>();
+        File archivo = new File(CIRCUITOS_CSV);
+
+        if (!archivo.exists()) {
+            System.err.println("No se encontró el archivo: " + CIRCUITOS_CSV);
+            return circuitos; // Lista vacía
         }
+
+        try (FileReader fr = new FileReader(archivo);
+             BufferedReader br = new BufferedReader(fr)) {
+
+            br.readLine(); // Salteamos cabecera (nombre;longitud;pais_descripcion)
+
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(SEPARADOR);
+
+                if (datos.length >= 3) {
+                    
+                    String nombreCircuito = datos[0];
+                    int longitud = Integer.parseInt(datos[1]);
+                    String paisDescripcion = datos[2]; // El nombre/descripción del país
+                    
+                    // --- VINCULACIÓN ---
+                    // Buscamos el objeto Pais que corresponde a esa DESCRIPCIÓN
+                    Pais paisDelCircuito = null;
+                    for (Pais pais : listaDePaises) {
+                        if (pais.getDescripcion().equalsIgnoreCase(paisDescripcion)) {
+                            paisDelCircuito = pais;
+                            break;
+                        }
+                    }
+                    
+                    if (paisDelCircuito != null) {
+                        Circuito c = new Circuito();
+                        c.setNombre(nombreCircuito);
+                        c.setLongitud(longitud);
+                        c.setPais(paisDelCircuito); // Asignamos el objeto Pais encontrado
+                        circuitos.add(c);
+                    } else {
+                        System.err.println("No se encontró país con descripción '" + paisDescripcion + "' para el circuito " + nombreCircuito);
+                    }
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error al cargar circuitos desde CSV: " + e.getMessage());
+        }
+        return circuitos;
+    }
+    
+    public ArrayList<Mecanico> cargarMecanicos(ArrayList<Pais> listaDePaises) {
+    ArrayList<Mecanico> mecanicos = new ArrayList<>();
+    File archivo = new File(MECANICOS_CSV);
+
+    if (!archivo.exists()) {
+        System.err.println("No se encontró el archivo: " + MECANICOS_CSV);
+        return mecanicos;
+    }
+
+    try (FileReader fr = new FileReader(archivo);
+         BufferedReader br = new BufferedReader(fr)) {
+
+        br.readLine(); // Salteamos cabecera
+
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(SEPARADOR);
+
+            if (datos.length >= 6) {
+                try {
+                    String dni = datos[0];
+                    String nombre = datos[1];
+                    String apellido = datos[2];
+                    String paisDescripcion = datos[3];
+                    String especialidadStr = datos[4]; // Leemos el String
+                    int experiencia = Integer.parseInt(datos[5]);
+
+                    Pais paisDelMecanico = null;
+                    for (Pais pais : listaDePaises) {
+                        if (pais.getDescripcion().equalsIgnoreCase(paisDescripcion)) {
+                            paisDelMecanico = pais;
+                            break;
+                        }
+                    }
+
+                    // --- ¡CAMBIO IMPORTANTE! ---
+                    // Convertimos el String de vuelta a un Enum
+                    // Usamos toUpperCase() por si el CSV fue editado a mano
+                    Especialidad especialidad = Especialidad.valueOf(especialidadStr.toUpperCase()); 
+
+                    if (paisDelMecanico != null) {
+                        Mecanico m = new Mecanico();
+                        m.setDni(dni);
+                        m.setNombre(nombre);
+                        m.setApellido(apellido);
+                        m.setPais(paisDelMecanico);
+                        m.setEspecialidad(especialidad); // Asignamos el enum
+                        m.setAñosExperiencia(experiencia);
+                        mecanicos.add(m);
+                    } else {
+                        System.err.println("País no encontrado para mecánico " + nombre);
+                    }
+                // Este catch es por si 'Especialidad.valueOf()' falla
+                } catch (IllegalArgumentException e) { 
+                    System.err.println("Especialidad desconocida en CSV: " + datos[4]);
+                }
+            }
+        }
+    } catch (IOException | NumberFormatException e) {
+        System.err.println("Error al cargar mecánicos desde CSV: " + e.getMessage());
+    }
+    return mecanicos;
+    }
     
         
 }  

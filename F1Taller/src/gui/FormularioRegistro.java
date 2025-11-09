@@ -32,6 +32,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
         
         cargarPaises();
         cargarEscuderias();
+        cargarEspecialidades();
 
         // --- BLOQUE QUE OCULTA TODAS LAS VARIABLES PARA SOLO USAR LAS QUE NECESITAMOS ---
     
@@ -52,6 +53,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
     
         lblCampo5.setVisible(false);
         txtCampo5.setVisible(false);
+        comboCampoEsp.setVisible(false);
         
         lblCampo6.setVisible(false);
         txtCampo6.setVisible(false);
@@ -128,17 +130,18 @@ public class FormularioRegistro extends javax.swing.JFrame {
             lblCampo3.setVisible(true); 
             txtCampo3.setVisible(true); 
             
-            lblCampo4.setText("Especialidad:");
+            lblCampo4.setText("País:");
             lblCampo4.setVisible(true); 
-            txtCampo4.setVisible(true); 
+            comboCampo4.setVisible(true); 
             
-            lblCampo5.setText("Años de experiencia:");
+            lblCampo5.setText("Especialidad:");
             lblCampo5.setVisible(true); 
-            txtCampo5.setVisible(true); 
+            comboCampoEsp.setVisible(true); 
             
-            lblCampo6.setText("País:");
+            lblCampo6.setText("Años de experiencia:");
             lblCampo6.setVisible(true); 
             txtCampo6.setVisible(true); 
+            
             
             break;
             
@@ -186,13 +189,13 @@ public class FormularioRegistro extends javax.swing.JFrame {
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
             
-            lblCampo2.setText("Longitud:");
+            lblCampo2.setText("Longitud (km):");
             lblCampo2.setVisible(true); 
             txtCampo2.setVisible(true); 
             
-            lblCampo2.setText("País:");
-            lblCampo2.setVisible(true); 
-            txtCampo2.setVisible(true); 
+            lblCampo4.setText("País:");
+            lblCampo4.setVisible(true); 
+            comboCampo4.setVisible(true); 
             break;
             
             case "PAIS":
@@ -266,6 +269,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
         lblCampo4 = new javax.swing.JLabel();
         comboCampo4 = new javax.swing.JComboBox<>();
         txtCampo4 = new javax.swing.JTextField();
+        comboCampoEsp = new javax.swing.JComboBox<>();
         lblCampo5 = new javax.swing.JLabel();
         txtCampo5 = new javax.swing.JTextField();
         lblCampo6 = new javax.swing.JLabel();
@@ -335,6 +339,13 @@ public class FormularioRegistro extends javax.swing.JFrame {
         jPanel3.add(lblCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 175, 25));
         jPanel3.add(comboCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 150, -1));
         jPanel3.add(txtCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 150, -1));
+
+        comboCampoEsp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCampoEspActionPerformed(evt);
+            }
+        });
+        jPanel3.add(comboCampoEsp, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 150, -1));
 
         lblCampo5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo5.setText("lbl5");
@@ -426,6 +437,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             // 2. Llama a la controladora de lógica
                 this.gestion.crearPilotos(dni, nombrePil, apellido, paisPil, numeroComp, victorias, poles, fastLap, podios);
+                JOptionPane.showMessageDialog(this, "Piloto guardado correctamente.");
                 break;
             
             case "PAIS":
@@ -463,21 +475,26 @@ public class FormularioRegistro extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Escudería guardada correctamente.");
                     break;
 //            
-//          case "MECANICO":
-//              String nombreMec = txtCampo1.getText();
-//              String apellidoMec = txtCampo2.getText();
-//              String especialidad = txtCampo3.getText();
+            case "CIRCUITO":
+                    String nombreCircuito = txtCampo1.getText();
+                    int longitud = Integer.parseInt(txtCampo2.getText());
+                    Pais paisCircuito = (Pais) comboCampo4.getSelectedItem();
+
+                    this.gestion.crearCircuitos(nombreCircuito, longitud, paisCircuito);
+                    JOptionPane.showMessageDialog(this, "Circuito guardado correctamente.");
+                    break;
 //            
-//              // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
-//            break;
-//            
-//          case "MECANICO":
-//              String nombreMec = txtCampo1.getText();
-//              String apellidoMec = txtCampo2.getText();
-//              String especialidad = txtCampo3.getText();
-//            
-//              // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
-//            break;
+            case "MECANICO":
+                    String dniMec = txtCampo1.getText();
+                    String nombreMec = txtCampo2.getText();
+                    String apellidoMec = txtCampo3.getText();
+                    Pais paisMec = (Pais) comboCampo4.getSelectedItem();
+                    Especialidad especialidad = (Especialidad) comboCampoEsp.getSelectedItem();
+                    int aniosExp = Integer.parseInt(txtCampo6.getText());
+
+                    this.gestion.crearMecanicos(dniMec, nombreMec, apellidoMec, paisMec, especialidad, aniosExp);
+                    JOptionPane.showMessageDialog(this, "Mecánico guardado correctamente.");
+                    break;
 //            
 //          case "MECANICO":
 //              String nombreMec = txtCampo1.getText();
@@ -507,6 +524,10 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private void txtCampo9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCampo9ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCampo9ActionPerformed
+
+    private void comboCampoEspActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoEspActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboCampoEspActionPerformed
 
     private void cargarPaises() {
         try {
@@ -547,10 +568,9 @@ public class FormularioRegistro extends javax.swing.JFrame {
     }
     
     private void cargarEscuderias() {
-    try {
-        comboCampo3.removeAllItems();
-
-        ArrayList<Escuderia> escuderias = this.gestion.getListaEscuderias();
+        try {
+            comboCampo3.removeAllItems();
+            ArrayList<Escuderia> escuderias = this.gestion.getListaEscuderias();
 
         if (escuderias != null) {
             for (Escuderia e : escuderias) {
@@ -566,6 +586,28 @@ public class FormularioRegistro extends javax.swing.JFrame {
             "Error fatal: No se pudo cargar la lista de escuderías.", 
             "Error de Carga", 
             JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void cargarEspecialidades() {
+    try {
+        comboCampoEsp.removeAllItems(); // Limpia el combo
+
+        // Pide a la lógica todas las especialidades disponibles
+        Especialidad[] especialidades = this.gestion.getListaEspecialidades();
+
+        for (Especialidad e : especialidades) {
+            comboCampoEsp.addItem(e);
+        }
+
+        if (comboCampoEsp.getItemCount() > 0) {
+            comboCampoEsp.setSelectedIndex(0);
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error fatal: No se pudo cargar la lista de especialidades.", 
+            "Error de Carga", 
+            JOptionPane.ERROR_MESSAGE);
     }
 }
     
@@ -577,6 +619,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private javax.swing.JComboBox<Pais> comboCampo2;
     private javax.swing.JComboBox<Escuderia> comboCampo3;
     private javax.swing.JComboBox<Pais> comboCampo4;
+    private javax.swing.JComboBox<Especialidad> comboCampoEsp;
     private javax.swing.JLabel fondoimg;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
