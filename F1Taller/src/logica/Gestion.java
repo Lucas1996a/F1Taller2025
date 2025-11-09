@@ -19,6 +19,8 @@ public class Gestion {
     private ArrayList<Mecanico> listaMecanicos;
     private ArrayList<Pais> listaPais;
     private ArrayList<Carrera> listaCarreras;
+    private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
+    private ArrayList<ResultadoCarrera> listaResultados;
     
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
@@ -43,6 +45,7 @@ public class Gestion {
         this.listaMecanicos = new ArrayList<>();
         this.listaPais = new ArrayList<>();
         this.listaCarreras = new ArrayList<>();
+        this.listaPilotoEscuderias = new ArrayList<>();
     }
     
     
