@@ -6,7 +6,9 @@ public class ProgramaF1  {
 
     public static void main(String[] args) {
         
-        Pantalla pantalla = new Pantalla();
+        Gestion gestionPrincipal = new Gestion();
+        
+        Pantalla pantalla = new Pantalla(gestionPrincipal);
         pantalla.setVisible(true);
         pantalla.setLocationRelativeTo(null);
     }

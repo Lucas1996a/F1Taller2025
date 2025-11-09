@@ -79,5 +79,10 @@ public class Escuderia {
     public void agregarAuto(Auto a) {
         this.autos.add(a);
     }
+    
+    @Override
+    public String toString() {
+        return this.nombre; // O como se llame tu variable de nombre
+    }
 
 }

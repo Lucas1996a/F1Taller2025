@@ -2,8 +2,7 @@ package gui;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import logica.Gestion;
-import logica.Pais;
+import logica.*;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,15 +18,20 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioRegistro.class.getName());
     private final String tipoRegistro;
     private final Gestion gestion;
+    private final VentanaRegistrar ventanaAnterior;
 
     /**
      * Creates new form FormularioRegistro
      */
-    public FormularioRegistro(String tipo, Gestion gestion) {
+    public FormularioRegistro(String tipo, Gestion gestion, VentanaRegistrar ventanaAnterior) {
         initComponents();
         
         this.tipoRegistro = tipo;
         this.gestion = gestion;
+        this.ventanaAnterior = ventanaAnterior;
+        
+        cargarPaises();
+        cargarEscuderias();
 
         // --- BLOQUE QUE OCULTA TODAS LAS VARIABLES PARA SOLO USAR LAS QUE NECESITAMOS ---
     
@@ -35,9 +39,11 @@ public class FormularioRegistro extends javax.swing.JFrame {
         txtCampo1.setVisible(false);
     
         lblCampo2.setVisible(false);
+        comboCampo2.setVisible(false);
         txtCampo2.setVisible(false);
     
         lblCampo3.setVisible(false);
+        comboCampo3.setVisible(false);
         txtCampo3.setVisible(false);
     
         lblCampo4.setVisible(false);
@@ -152,7 +158,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             lblCampo3.setText("Escuderia:");
             lblCampo3.setVisible(true); 
-            txtCampo3.setVisible(true); 
+            comboCampo3.setVisible(true); 
             
             break;
             
@@ -168,7 +174,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             lblCampo2.setText("País:");
             lblCampo2.setVisible(true); 
-            txtCampo2.setVisible(true); 
+            comboCampo2.setVisible(true); 
             
             case "CIRCUITO":
             this.setTitle("Registrar Circuito");
@@ -251,8 +257,10 @@ public class FormularioRegistro extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         lblCampo1 = new javax.swing.JLabel();
         txtCampo1 = new javax.swing.JTextField();
+        comboCampo2 = new javax.swing.JComboBox<>();
         lblCampo2 = new javax.swing.JLabel();
         txtCampo2 = new javax.swing.JTextField();
+        comboCampo3 = new javax.swing.JComboBox<>();
         lblCampo3 = new javax.swing.JLabel();
         txtCampo3 = new javax.swing.JTextField();
         lblCampo4 = new javax.swing.JLabel();
@@ -309,11 +317,13 @@ public class FormularioRegistro extends javax.swing.JFrame {
             }
         });
         jPanel3.add(txtCampo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 10, 150, -1));
+        jPanel3.add(comboCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 40, 150, -1));
 
         lblCampo2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo2.setText("lbl2");
         jPanel3.add(lblCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 175, 25));
         jPanel3.add(txtCampo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 40, 150, -1));
+        jPanel3.add(comboCampo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, 150, -1));
 
         lblCampo3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo3.setText("lbl3");
@@ -323,14 +333,12 @@ public class FormularioRegistro extends javax.swing.JFrame {
         lblCampo4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo4.setText("lbl4");
         jPanel3.add(lblCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 175, 25));
-
         jPanel3.add(comboCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 150, -1));
         jPanel3.add(txtCampo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 100, 150, -1));
 
         lblCampo5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo5.setText("lbl5");
-        lblCampo5.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        jPanel3.add(lblCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 130, 175, 25));
+        jPanel3.add(lblCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 175, 25));
         jPanel3.add(txtCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 150, -1));
 
         lblCampo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -404,23 +412,23 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private void bntGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntGuardarActionPerformed
     try {
         switch (this.tipoRegistro) {
-        case "PILOTO":
+            case "PILOTO":
             // 1. Lee los datos de los text fields
-            String dni = txtCampo1.getText();
-            String nombre = txtCampo2.getText();
-            String apellido = txtCampo3.getText();
-            Pais pais = (Pais) comboCampo4.getSelectedItem();
-            int numeroComp = Integer.parseInt(txtCampo5.getText());
-            int victorias = Integer.parseInt(txtCampo6.getText());
-            int poles = Integer.parseInt(txtCampo7.getText());
-            int fastLap = Integer.parseInt(txtCampo8.getText());
-            int podios =  Integer.parseInt(txtCampo9.getText());
+                String dni = txtCampo1.getText();
+                String nombrePil = txtCampo2.getText();
+                String apellido = txtCampo3.getText();
+                Pais paisPil = (Pais) comboCampo4.getSelectedItem();
+                int numeroComp = Integer.parseInt(txtCampo5.getText());
+                int victorias = Integer.parseInt(txtCampo6.getText());
+                int poles = Integer.parseInt(txtCampo7.getText());
+                int fastLap = Integer.parseInt(txtCampo8.getText());
+                int podios =  Integer.parseInt(txtCampo9.getText());
             
             // 2. Llama a la controladora de lógica
-             this.gestion.crearPilotos(dni, nombre, apellido, pais, numeroComp, victorias, poles, fastLap, podios);
-            break;
+                this.gestion.crearPilotos(dni, nombrePil, apellido, paisPil, numeroComp, victorias, poles, fastLap, podios);
+                break;
             
-        case "PAIS":
+            case "PAIS":
                     String idStr = txtCampo1.getText();
                     String descripcion = txtCampo2.getText();
                     
@@ -435,65 +443,60 @@ public class FormularioRegistro extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "País guardado correctamente.");
                     
                     break;
-                // --- FIN CÓDIGO NUEVO ---
             
             
-//        case "MECANICO":
-//            String dni = txtCampo1.getText();
-//            String nombre = txtCampo2.getText();
-//            String apellido = txtCampo3.getText();
+            case "AUTO":
+                    String modelo = txtCampo1.getText();
+                    String motor = txtCampo2.getText();
+                    Escuderia escuderia = (Escuderia) comboCampo3.getSelectedItem();
+            
+            
+                    this.gestion.crearAutos(modelo,motor,escuderia);
+                    JOptionPane.showMessageDialog(this, "Auto guardado correctamente.");
+                    break;
 //            
+            case "ESCUDERIA":
+                    String nombreEsc = txtCampo1.getText();
+                    Pais paisEsc = (Pais) comboCampo2.getSelectedItem();
+            
+                    this.gestion.crearEscuderias(nombreEsc, paisEsc);
+                    JOptionPane.showMessageDialog(this, "Escudería guardada correctamente.");
+                    break;
 //            
-//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//          case "MECANICO":
+//              String nombreMec = txtCampo1.getText();
+//              String apellidoMec = txtCampo2.getText();
+//              String especialidad = txtCampo3.getText();
+//            
+//              // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
 //            break;
 //            
-//        case "MECANICO":
-//            String nombreMec = txtCampo1.getText();
-//            String apellidoMec = txtCampo2.getText();
-//            String especialidad = txtCampo3.getText();
+//          case "MECANICO":
+//              String nombreMec = txtCampo1.getText();
+//              String apellidoMec = txtCampo2.getText();
+//              String especialidad = txtCampo3.getText();
 //            
-//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//              // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
 //            break;
 //            
-//        case "MECANICO":
-//            String nombreMec = txtCampo1.getText();
-//            String apellidoMec = txtCampo2.getText();
-//            String especialidad = txtCampo3.getText();
+//          case "MECANICO":
+//              String nombreMec = txtCampo1.getText();
+//              String apellidoMec = txtCampo2.getText();
+//              String especialidad = txtCampo3.getText();
 //            
-//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
-//            break;
-//            
-//        case "MECANICO":
-//            String nombreMec = txtCampo1.getText();
-//            String apellidoMec = txtCampo2.getText();
-//            String especialidad = txtCampo3.getText();
-//            
-//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
-//            break;
-//            
-//        case "MECANICO":
-//            String nombreMec = txtCampo1.getText();
-//            String apellidoMec = txtCampo2.getText();
-//            String especialidad = txtCampo3.getText();
-//            
-//            // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
-//            break;
-        }
-    } catch (NumberFormatException e) {
-    // ¡PERO ESTO NOS SALVA!
-    // Si 'parseInt' falla, el código salta aquí
-    // y la app NO crashea.
-    JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.");
-}
+//              // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
+//              break;
+            }
     
-        // (Opcional) Muestra un mensaje de éxito
-         JOptionPane.showMessageDialog(this, "Registro guardado con éxito");
+    } catch (NumberFormatException e) {
+    // Si 'parseInt' falla, el código salta acá y la app NO crashea.
+        JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.");
+        }
+         
     }//GEN-LAST:event_bntGuardarActionPerformed
 
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
-        VentanaRegistrar ventanaRegistrar = new VentanaRegistrar(this.gestion);
-        ventanaRegistrar.setVisible(true);
-        ventanaRegistrar.setLocationRelativeTo(null);
+        this.ventanaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
@@ -508,6 +511,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
     private void cargarPaises() {
         try {
             // 1. Limpia el combo (borra "Item 1", "Item 2", etc.)
+            comboCampo2.removeAllItems(); 
             comboCampo4.removeAllItems(); 
             
             // 2. Le pide la lista de países a tu objeto 'miGestion'
@@ -517,11 +521,15 @@ public class FormularioRegistro extends javax.swing.JFrame {
             // 3. Recorre la lista y añade cada OBJETO 'Pais' al combo
             if (listaDePaises != null) {
                 for (Pais p : listaDePaises) {
+                    comboCampo2.addItem(p);
                     comboCampo4.addItem(p);
                 }
             }
             
             // 4. (Opcional) Pone el primero como seleccionado
+            if (comboCampo2.getItemCount() > 0) {
+                comboCampo2.setSelectedIndex(0);
+            }
             if (comboCampo4.getItemCount() > 0) {
                 comboCampo4.setSelectedIndex(0);
             }
@@ -538,11 +546,36 @@ public class FormularioRegistro extends javax.swing.JFrame {
         }
     }
     
+    private void cargarEscuderias() {
+    try {
+        comboCampo3.removeAllItems();
+
+        ArrayList<Escuderia> escuderias = this.gestion.getListaEscuderias();
+
+        if (escuderias != null) {
+            for (Escuderia e : escuderias) {
+                comboCampo3.addItem(e);
+            }
+        }
+
+        if (comboCampo3.getItemCount() > 0) {
+            comboCampo3.setSelectedIndex(0);
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error fatal: No se pudo cargar la lista de escuderías.", 
+            "Error de Carga", 
+            JOptionPane.ERROR_MESSAGE);
+    }
+}
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
     private javax.swing.JButton bntGuardar;
     private javax.swing.JButton bntVolver;
+    private javax.swing.JComboBox<Pais> comboCampo2;
+    private javax.swing.JComboBox<Escuderia> comboCampo3;
     private javax.swing.JComboBox<Pais> comboCampo4;
     private javax.swing.JLabel fondoimg;
     private javax.swing.JPanel jPanel2;
