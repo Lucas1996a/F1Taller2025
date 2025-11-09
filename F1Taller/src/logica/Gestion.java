@@ -203,6 +203,8 @@ public class Gestion {
         piloto.setVueltasRapidas(piloto.getVueltasRapidas() + 1);
     }
         
+        int puntosObtenidos = calcularPuntos(posicionFinal);
+        
         System.out.println(" el Piloto suma " + puntosObtenidos + " puntos.");
    
      }
@@ -210,10 +212,39 @@ public class Gestion {
     
       
     public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
-        
+        ResultadoCarrera nuevoResultado = new ResultadoCarrera();
+    
+        nuevoResultado.setCarrera(carrera);
+        nuevoResultado.setPiloto(piloto);
+        nuevoResultado.setPosicionFinal(posicionFinal);
+        nuevoResultado.setTiempoFinal(tiempoFinal);
+        nuevoResultado.setVueltaRapida(vueltaRapida);
+
+        boolean esPodio = (posicionFinal <= 3);
+        nuevoResultado.setPodio(esPodio); 
+  
+        resultadosCarreras(piloto, posicionFinal, vueltaRapida);
+
+        this.listaResultados.add(nuevoResultado);
+        int puntosGanados = calcularPuntos(posicionFinal);
+        String podio = "";
+        String vr = "";
+
+        if (esPodio) {
+           podio = " (Podio!)";
+        }
+
+        if (vueltaRapida) {
+            vr = " (Vuelta Rápida)";
+         }
+                      
+        System.out.println("El resultado fue: " + piloto.getNombre() + " terminó en posicion" + posicionFinal + ", y sumó " + puntosGanados + " puntos en el GP de " + carrera.getPais().getDescripcion() + "." + podio + vr);    
     }
     
    
+    
+    
+    
     
     
 }
