@@ -11,14 +11,15 @@ import logica.Gestion;
  * @author Admin
  */
 public class Pantalla extends javax.swing.JFrame {
-    Gestion gestion = new Gestion();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Pantalla.class.getName());
 
     /**
      * Creates new form Pantalla
      */
-    public Pantalla() {
+    private Gestion gestion;
+    public Pantalla(Gestion gestion) {
         initComponents();
+        this.gestion = gestion;
     }
 
     /**
@@ -171,7 +172,7 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
     // Crea una instancia de la ventana nueva a abrir
-        VentanaRegistrar pantallaRegistro = new VentanaRegistrar(this.gestion);
+        VentanaRegistrar pantallaRegistro = new VentanaRegistrar(this.gestion, this);
 
     // Hacerla visible
             pantallaRegistro.setVisible(true);

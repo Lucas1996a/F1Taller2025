@@ -113,6 +113,16 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="javax.swing.JComboBox" name="comboCampo2">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Pais&gt;"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="190" y="40" width="150" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
             <Component class="javax.swing.JLabel" name="lblCampo2">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
@@ -128,6 +138,16 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="190" y="40" width="150" height="-1"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="comboCampo3">
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Escuderia&gt;"/>
+              </AuxValues>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="190" y="70" width="150" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -161,8 +181,6 @@
               </Constraints>
             </Component>
             <Component class="javax.swing.JComboBox" name="comboCampo4">
-              <Properties>
-              </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Pais&gt;"/>
               </AuxValues>
@@ -183,11 +201,10 @@
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="4"/>
                 <Property name="text" type="java.lang.String" value="lbl5"/>
-                <Property name="verticalAlignment" type="int" value="3"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="130" width="175" height="25"/>
+                  <AbsoluteConstraints x="0" y="140" width="175" height="25"/>
                 </Constraint>
               </Constraints>
             </Component>

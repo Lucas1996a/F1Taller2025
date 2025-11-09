@@ -37,14 +37,24 @@ public class Gestion {
  */
     
     public Gestion(){
+        this.listaPais = gestorPersistencia.cargarPaises();
+        this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
+        this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
+        this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
         
+        if (this.listaPais == null) {
+            this.listaPais = new ArrayList<>();
+        }
+        if (this.listaEscuderias == null) {
+            this.listaEscuderias = new ArrayList<>();
+        }
+        if (this.listaPilotos == null) {
+            this.listaPilotos = new ArrayList<>();
+        }
+        if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
         
-        this.listaAutos = new ArrayList<>();
-        this.listaEscuderias = new ArrayList<>();
         this.listaCircuitos = new ArrayList<>();
-        this.listaPilotos = new ArrayList<>();
         this.listaMecanicos = new ArrayList<>();
-        this.listaPais = new ArrayList<>();
         this.listaCarreras = new ArrayList<>();
         this.listaPilotoEscuderias = new ArrayList<>();
         this.listaAutoPilotos = new ArrayList<>();
@@ -57,16 +67,19 @@ public class Gestion {
         nuevoAuto.setMotor(motor);
         nuevoAuto.setEscuderia(escuderia);
         this.listaAutos.add(nuevoAuto);
+        gestorPersistencia.guardarAuto(nuevoAuto);
         System.out.println("Auto Registrado: " + modelo + motor + escuderia);
        
     }
     
     public void crearEscuderias(String nombre, Pais pais){
-        Escuderia nueva = new Escuderia();
-        nueva.setNombre(nombre);
-        nueva.setPais(pais);
-        this.listaEscuderias.add(nueva);
+        Escuderia nuevaEsc = new Escuderia();
+        nuevaEsc.setNombre(nombre);
+        nuevaEsc.setPais(pais);
+        this.listaEscuderias.add(nuevaEsc);
         System.out.println("¡NUEVA ESCUDERÍA REGISTRADA: " + nombre);
+        
+        gestorPersistencia.guardarEscuderia(nuevaEsc);
     }
     
     
@@ -135,6 +148,9 @@ public class Gestion {
         return this.listaPais;
     }
     
+    public ArrayList<Escuderia> getListaEscuderias() {
+        return this.listaEscuderias;
+    }
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
