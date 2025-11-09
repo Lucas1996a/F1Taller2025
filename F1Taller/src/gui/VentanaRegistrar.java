@@ -4,22 +4,22 @@
  */
 package gui;
 
-import logica.Controlador;
+import logica.Gestion;
 
 /**
  *
  * @author Admin
  */
 public class VentanaRegistrar extends javax.swing.JFrame {
-    private Controlador control;
+    private Gestion gestion;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRegistrar.class.getName());
 
     /**
      * Creates new form VentanaRegistrar
      */
-    public VentanaRegistrar(Controlador control) {
+    public VentanaRegistrar(Gestion gestion) {
         initComponents();
-        this.control = control;
+        this.gestion = gestion;
     }
 
     /**
@@ -237,42 +237,42 @@ public class VentanaRegistrar extends javax.swing.JFrame {
     }//GEN-LAST:event_bntVolverActionPerformed
 
     private void bntRegistrarPilotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarPilotoActionPerformed
-        FormularioRegistro formularioRegistro = new FormularioRegistro("PILOTO", this.control);
+        FormularioRegistro formularioRegistro = new FormularioRegistro("PILOTO", this.gestion);
         formularioRegistro.setVisible(true);
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_bntRegistrarPilotoActionPerformed
 
     private void bntRegistrarMecanicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarMecanicoActionPerformed
-        FormularioRegistro formularioRegistro = new FormularioRegistro("MECANICO", this.control);
+        FormularioRegistro formularioRegistro = new FormularioRegistro("MECANICO", this.gestion);
         formularioRegistro.setVisible(true);
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_bntRegistrarMecanicoActionPerformed
 
     private void bntRegistrarAutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarAutoActionPerformed
-        FormularioRegistro formularioRegistro = new FormularioRegistro("AUTO", this.control);
+        FormularioRegistro formularioRegistro = new FormularioRegistro("AUTO", this.gestion);
         formularioRegistro.setVisible(true);
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_bntRegistrarAutoActionPerformed
 
     private void bntRegistrarEscuderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarEscuderiaActionPerformed
-        FormularioRegistro formularioRegistro = new FormularioRegistro("ESCUDERIA", this.control);
+        FormularioRegistro formularioRegistro = new FormularioRegistro("ESCUDERIA", this.gestion);
         formularioRegistro.setVisible(true);
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_bntRegistrarEscuderiaActionPerformed
 
     private void bntRegistrarCircuitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarCircuitoActionPerformed
-        FormularioRegistro formularioRegistro = new FormularioRegistro("CIRCUITO", this.control);
+        FormularioRegistro formularioRegistro = new FormularioRegistro("CIRCUITO", this.gestion);
         formularioRegistro.setVisible(true);
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_bntRegistrarCircuitoActionPerformed
 
     private void bntRegistrarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarPaisActionPerformed
-        FormularioRegistro formularioRegistro = new FormularioRegistro("PAIS", this.control);
+        FormularioRegistro formularioRegistro = new FormularioRegistro("PAIS", this.gestion);
         formularioRegistro.setVisible(true);
         formularioRegistro.setLocationRelativeTo(null);
         this.dispose();

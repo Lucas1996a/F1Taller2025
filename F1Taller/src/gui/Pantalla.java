@@ -4,14 +4,14 @@
  */
 package gui;
 
-import logica.Controlador;
+import logica.Gestion;
 
 /**
  *
  * @author Admin
  */
 public class Pantalla extends javax.swing.JFrame {
-    Controlador control = new Controlador();
+    Gestion gestion = new Gestion();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Pantalla.class.getName());
 
     /**
@@ -171,7 +171,7 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
     // Crea una instancia de la ventana nueva a abrir
-        VentanaRegistrar pantallaRegistro = new VentanaRegistrar(this.control);
+        VentanaRegistrar pantallaRegistro = new VentanaRegistrar(this.gestion);
 
     // Hacerla visible
             pantallaRegistro.setVisible(true);

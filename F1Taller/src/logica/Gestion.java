@@ -12,7 +12,6 @@ import persistencia.GestorPersistencia;
  * @author Lucas
  */
 public class Gestion {
-    GestorPersistencia gestorPersistencia = new GestorPersistencia();
     private ArrayList<Auto> listaAutos;
     private ArrayList<Escuderia> listaEscuderias;
     private ArrayList<Circuito> listaCircuitos;
@@ -20,6 +19,8 @@ public class Gestion {
     private ArrayList<Mecanico> listaMecanicos;
     private ArrayList<Pais> listaPais;
     private ArrayList<Carrera> listaCarreras;
+    
+    GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
     /*
     public Gestion(ArrayList<Auto> listaAutos, ArrayList<Escuderia> listaEscuderias, ArrayList<Circuito> listaCircuitos, ArrayList<Piloto> listaPilotos, ArrayList<Mecanicos> listaMecanicos, ArrayList<Pais> listaPais){
@@ -33,6 +34,8 @@ public class Gestion {
  */
     
     public Gestion(){
+        
+        
         this.listaAutos = new ArrayList<>();
         this.listaEscuderias = new ArrayList<>();
         this.listaCircuitos = new ArrayList<>();
@@ -83,9 +86,11 @@ public class Gestion {
         nuevo.setPolePosition(pole);
         nuevo.setVueltasRapidas(vueltasRapidas);
         nuevo.setPodios(podios);
+        
         this.listaPilotos.add(nuevo);
         System.out.println("Piloto registrado: " + nombre);
         
+        gestorPersistencia.guardarPiloto(nuevo);
     }
     
     public void crearMecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia, ArrayList<Escuderia> escuderias){
@@ -99,7 +104,6 @@ public class Gestion {
         nuevo.setEscuderia(escuderias);
         listaMecanicos.add(nuevo);
         System.out.println("Mecánico registrado: " + nombre);
-        
     }
     
     
@@ -117,13 +121,14 @@ public class Gestion {
         Pais nuevo = new Pais();
         nuevo.setIdPais(id);
         nuevo.setDescripcion(descrip);
-        listaPais.add(nuevo);
+        this.listaPais.add(nuevo);
+        gestorPersistencia.guardarPais(nuevo);
         System.out.println("Pais registrado: " + id + descrip);   
     }
     
-          
-    
-     
+    public ArrayList<Pais> getListaPais() {
+        return this.listaPais;
+    }
     
     
 }
