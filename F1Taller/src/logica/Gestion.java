@@ -7,6 +7,8 @@ package logica;
 
 import java.util.ArrayList;
 import persistencia.GestorPersistencia;
+import java.util.Collections;
+import java.util.Comparator;
 /**
  *
  * @author Lucas
@@ -259,6 +261,139 @@ public class Gestion {
     
    
     
+    // GENERAR INFORMES
+    
+    
+    
+    
+    
+    
+    
+    public int calcularPuntosTotalesPiloto(Piloto piloto) {
+    
+        int totalPuntos = 0;
+    
+        for (ResultadoCarrera resultado : this.listaResultados) {
+        
+            if (resultado.getPiloto() == piloto) {    
+                int posicion = resultado.getPosicionFinal();
+                int puntosGanados = calcularPuntos(posicion);
+            
+                totalPuntos += puntosGanados;
+             }
+        }
+    
+        return totalPuntos;
+    }
+    
+    
+    private class PilotoPuntuacion {
+        Piloto piloto;
+        int puntosAcumulados;
+
+        public PilotoPuntuacion(Piloto piloto, int puntosAcumulados) {
+        this.piloto = piloto;
+        this.puntosAcumulados = puntosAcumulados;
+        }
+    
+        public Piloto getPiloto() { return piloto; }
+        public int getPuntosAcumulados() { return puntosAcumulados; }
+    }
+    
+       
+   public ArrayList<String> generarRankingPilotos() {
+        ArrayList<String> rankingInforme = new ArrayList<>();
+        ArrayList<PilotoPuntuacion> rankingTemporal = new ArrayList<>();
+
+        for (Piloto piloto : this.listaPilotos) {
+            int puntosAcumulados = 0;
+        
+            for (ResultadoCarrera resultado : this.listaResultados) {
+           
+                if (resultado.getPiloto() == piloto) { 
+                int posicion = resultado.getPosicionFinal();
+                int puntosGanados = calcularPuntos(posicion); 
+                puntosAcumulados += puntosGanados;
+                }
+            }
+           rankingTemporal.add(new PilotoPuntuacion(piloto, puntosAcumulados));
+        }
+    
+        Collections.sort(rankingTemporal, new Comparator<PilotoPuntuacion>() {
+        @Override
+        public int compare(PilotoPuntuacion pp1, PilotoPuntuacion pp2) {
+            return Integer.compare(pp2.getPuntosAcumulados(), pp1.getPuntosAcumulados());
+        }
+        });
+
+        rankingInforme.add("====================");
+        rankingInforme.add("RANKING DE PILOTOS F1 2025");
+        rankingInforme.add("====================");
+    
+        if (rankingTemporal.isEmpty()) {
+        rankingInforme.add("No hay pilotos registrados o resultados de carreras para calcular el ranking.");
+        return rankingInforme;
+        }
+
+        int posicion = 1;
+        for (PilotoPuntuacion pp : rankingTemporal){
+        
+            String linea = posicion + ". " + pp.getPiloto().getNombre() + " " + pp.getPiloto().getApellido() + " - Puntos: " + pp.getPuntosAcumulados();
+
+            rankingInforme.add(linea);
+            posicion++;
+        }
+        return rankingInforme;
+    }
+    
+   
+   
+   
+   
+   
+   public ArrayList<String> generarHistoricoPilotoIndividual(String dni){
+    ArrayList<String> informe = new ArrayList<>();
+    
+    
+    Piloto piloto = buscarPilotoPorDNI(dni);
+    
+    if (piloto == null) {
+        informe.add("❌ ERROR: No se encontró ningún piloto con el DNI: " + dni);
+        informe.add("=================================================");
+        return informe;
+    }
+
+    // 2. Generar el informe con las estadísticas acumuladas
+    informe.add("=================================================");
+    informe.add("👤 HISTORIAL DE ESTADÍSTICAS INDIVIDUAL");
+    informe.add("=================================================");
+    
+    // Obtener todas las estadísticas del objeto Piloto
+    int victorias = piloto.getVictorias();
+    int podios = piloto.getPodios();
+    int pole = piloto.getPolePosition();
+    int vueltasRapidas = piloto.getVueltasRapidas();
+    
+    // Obtener los puntos totales usando tu método "on-the-fly"
+    int puntosTotales = calcularPuntosTotalesPiloto(piloto);
+    
+    informe.add(String.format("Piloto: %s %s (No. %d)",
+                              piloto.getNombre(),
+                              piloto.getApellido(),
+                              piloto.getNumeroCompetencia()));
+                              
+    informe.add("-------------------------------------------------");
+    
+    informe.add(String.format("🏆 Victorias: %d", victorias));
+    informe.add(String.format("🥉 Podios: %d", podios));
+    informe.add(String.format("🏅 Pole Positions: %d", pole));
+    informe.add(String.format("💨 Vueltas Rápidas: %d", vueltasRapidas));
+    informe.add(String.format("⭐ Puntos Totales Acumulados: %d", puntosTotales));
+    
+    informe.add("=================================================");
+    return informe;
+}
+   
     
     
     
