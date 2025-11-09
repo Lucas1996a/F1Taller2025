@@ -133,5 +133,32 @@ public class Gestion {
         return this.listaPais;
     }
     
+    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
+        
+    }
     
+    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
+       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
+       nuevaAsociacion.setPiloto(piloto);
+       nuevaAsociacion.setAuto(auto);
+       nuevaAsociacion.setMecanico(mecanico);
+       nuevaAsociacion.setEscuderia(escuderia);
+       nuevaAsociacion.setDesdeFecha(desde);
+       nuevaAsociacion.setHastaFecha(hasta);
+       listaPilotoEscuderias.add(nuevaAsociacion);
+       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + auto.escuderia);  
+    
+    }
+    
+    public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
+        Carrera nueva = new Carrera();
+    
+        nueva.setFechaRealizacion(fecha);
+        nueva.setNumeroVueltas(numeroVueltas);
+        nueva.setHoraRealizacion(hora);
+        nueva.setCircuito(circuito);
+        listaCarreras.add(nueva);
+        System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
+       
+    }
 }

@@ -7,16 +7,16 @@ public class PilotoEscuderia {
     private String hastaFecha;
 
     private Piloto piloto;
-    private Escuderia escudería;
+    private Escuderia escuderia;
 
     public PilotoEscuderia() {
     }
 
-    public PilotoEscuderia(String desdeFecha, String hastaFecha, Piloto piloto, Escuderia escudería) {
+    public PilotoEscuderia(String desdeFecha, String hastaFecha, Piloto piloto, Escuderia escuderia) {
         this.desdeFecha = desdeFecha;
         this.hastaFecha = hastaFecha;
         this.piloto = piloto;
-        this.escudería = escudería;
+        this.escuderia = escuderia;
     }
 
     public String getDesdeFecha() {
@@ -43,12 +43,12 @@ public class PilotoEscuderia {
         this.piloto = piloto;
     }
 
-    public Escuderia getEscudería() {
-        return this.escudería;
+    public Escuderia getEscuderia() {
+        return this.escuderia;
     }
 
-    public void setEscuderia(Escuderia escudería) {
-        this.escudería = escudería;
+    public void setEscuderia(Escuderia escuderia) {
+        this.escuderia = escuderia;
     }
 
 }
