@@ -18,6 +18,10 @@ public class ResultadoCarrera {
     private boolean podio;
     
     
+    public ResultadoCarrera(){
+        
+    }
+    
     public ResultadoCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida, boolean podio) {
         this.carrera = carrera;
         this.piloto = piloto;
