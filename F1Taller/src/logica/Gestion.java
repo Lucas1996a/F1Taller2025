@@ -544,6 +544,27 @@ public class Gestion {
     }
    
    
+   public int contarCarrerasEnCircuito(String nombreCircuito){
+    
+        Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
+        int contador = 0;
+
+        if (circuito == null) {
+            System.out.println("ERROR: Circuito con nombre '" + nombreCircuito + "' no encontrado.");
+            return 0;
+         }
+
+        for (Carrera carrera : this.listaCarreras) {
+        
+            if (carrera.getCircuito() == circuito) { 
+                contador++;
+            }
+        }
+
+        System.out.printf("\n El circuito %s ha albergado %d carreras planificadas.\n", circuito.getNombre(), contador);            
+        return contador;
+    }
+   
      
     
 }
