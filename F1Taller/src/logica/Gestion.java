@@ -161,14 +161,51 @@ public class Gestion {
      
     
     
-    public void asociarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
+    public void asociarPilotoAuto(Piloto piloto, Auto auto, Carrera carrera, String fechaAsignacion) {
         AutoPiloto nuevaAsociacion = new AutoPiloto();
         nuevaAsociacion.setPiloto(piloto);
         nuevaAsociacion.setAuto(auto);
-        nuevaAsociacion.setFechaAsignacion(fechaAsignacion);
+        nuevaAsociacion.setFechaAsignacion(carrera.getFechaRealizacion());;
         this.listaAutoPilotos.add(nuevaAsociacion);
         System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
     }
+    
+    
+    
+    public int calcularPuntos(int posicion) {
+    return switch(posicion){
+        case 1 -> 25;
+        case 2 -> 18;
+        case 3 -> 15;
+        case 4 -> 12;
+        case 5 -> 10;
+        case 6 -> 8;
+        case 7 -> 6;
+        case 8 -> 4;
+        case 9 -> 2;
+        case 10 -> 1;
+        default -> 0;
+    };
+    }
+    
+    
+    public void resultadosCarreras(Piloto piloto, int posicionFinal, boolean vueltaRapida){
+        if (posicionFinal == 1) {
+        piloto.setVictorias(piloto.getVictorias() + 1);
+    }
+    
+        if (posicionFinal <= 3) {
+        piloto.setPodios(piloto.getPodios() + 1);
+    }
+    
+    
+        if (vueltaRapida) {
+        piloto.setVueltasRapidas(piloto.getVueltasRapidas() + 1);
+    }
+        
+        System.out.println(" el Piloto suma " + puntosObtenidos + " puntos.");
+   
+     }
     
     
       
