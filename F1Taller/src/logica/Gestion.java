@@ -346,6 +346,54 @@ public class Gestion {
         return rankingInforme;
     }
     
+   
+   
+   
+   
+   
+   public ArrayList<String> generarHistoricoPilotoIndividual(String dni){
+    ArrayList<String> informe = new ArrayList<>();
+    
+    
+    Piloto piloto = buscarPilotoPorDNI(dni);
+    
+    if (piloto == null) {
+        informe.add("❌ ERROR: No se encontró ningún piloto con el DNI: " + dni);
+        informe.add("=================================================");
+        return informe;
+    }
+
+    // 2. Generar el informe con las estadísticas acumuladas
+    informe.add("=================================================");
+    informe.add("👤 HISTORIAL DE ESTADÍSTICAS INDIVIDUAL");
+    informe.add("=================================================");
+    
+    // Obtener todas las estadísticas del objeto Piloto
+    int victorias = piloto.getVictorias();
+    int podios = piloto.getPodios();
+    int pole = piloto.getPolePosition();
+    int vueltasRapidas = piloto.getVueltasRapidas();
+    
+    // Obtener los puntos totales usando tu método "on-the-fly"
+    int puntosTotales = calcularPuntosTotalesPiloto(piloto);
+    
+    informe.add(String.format("Piloto: %s %s (No. %d)",
+                              piloto.getNombre(),
+                              piloto.getApellido(),
+                              piloto.getNumeroCompetencia()));
+                              
+    informe.add("-------------------------------------------------");
+    
+    informe.add(String.format("🏆 Victorias: %d", victorias));
+    informe.add(String.format("🥉 Podios: %d", podios));
+    informe.add(String.format("🏅 Pole Positions: %d", pole));
+    informe.add(String.format("💨 Vueltas Rápidas: %d", vueltasRapidas));
+    informe.add(String.format("⭐ Puntos Totales Acumulados: %d", puntosTotales));
+    
+    informe.add("=================================================");
+    return informe;
+}
+   
     
     
     
