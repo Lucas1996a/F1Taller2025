@@ -52,7 +52,11 @@ public class Mecanico extends Persona {
         this.escuderias.add(e);
     }
     
-    public List<MecanicoEscuderia> getMecanicosEscuderias(){
+    public void agregarEscuderia(MecanicoEscuderia e) {
+        this.mecanicoEscuderias.add(e);
+    }
+    
+    public List<MecanicoEscuderia> getMecanicoEscuderias(){
         return this.mecanicoEscuderias;
     }
     

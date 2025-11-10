@@ -178,6 +178,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             lblCampo2.setText("País:");
             lblCampo2.setVisible(true); 
             comboCampo2.setVisible(true); 
+            break;
             
             case "CIRCUITO":
             this.setTitle("Registrar Circuito");

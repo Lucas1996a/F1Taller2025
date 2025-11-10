@@ -240,13 +240,13 @@ public class Gestion {
     // NO borramos los mecánicos, solo los enlaces.
 
     // 3a. Limpiamos la lista principal de asociaciones
-    this.listaMecanicosEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
+    this.listaMecanicoEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
     // 3b. Limpiamos las referencias inversas en cada mecánico
     for (Mecanico m : this.listaMecanicos) {
         m.getMecanicoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
     }
     // 3c. Re-escribimos el CSV de asociaciones
-    gestorPersistencia.reescribirMecanicoEscuderiaCSV(this.listaMecanicosEscuderias);
+    gestorPersistencia.reescribirMecanicoEscuderiaCSV(this.listaMecanicoEscuderias);
 
     // --- PASO 4: Borrar la Escudería (El último paso) ---
     // Borramos la escudería de la lista principal
@@ -268,18 +268,10 @@ public class Gestion {
         this.listaPilotoEscuderias.add(nuevoContrato);
         System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", piloto.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
         
-        
-        PilotoEscuderia contratoExistente = null;
-    
-        for (PilotoEscuderia p : this.listaPilotoEscuderias) {
-            if (p.getPiloto() == piloto && p.getEscuderia() == escuderia) {
-                contratoExistente = p;
-                break; 
-            }
-            this.listaPilotoEscuderias.remove(contratoExistente);
-            
-            System.out.printf("CONTRATO FINALIZADO/BORRADO: El contrato de %s con %s ha sido eliminado.\n", piloto.getNombre(), escuderia.getNombre());
-        }   
+        piloto.agregarPilotoEscuderia(nuevoContrato);
+        escuderia.agregarPiloto(nuevoContrato);
+        this.listaPilotoEscuderias.add(nuevoContrato);
+        gestorPersistencia.guardarPilotoEscuderia(nuevoContrato);
     }
     
     
@@ -293,39 +285,24 @@ public class Gestion {
             escuderia.agregarAuto(auto);
             System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
         }
-
-        escuderia.getAutos().remove(auto); 
-        this.listaAutos.remove(auto);
-        System.out.printf("AUTO BORRADO COMPLETAMENTE: El Auto '%s' ha sido retirado de %s y eliminado del sistema.\n", auto.getModelo(), auto.getEscuderia()); 
     }
        
     
     public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin){
-        
-       
         MecanicoEscuderia nuevoContrato = new MecanicoEscuderia();
         nuevoContrato.setDesdeFecha(fechaInicio);
         nuevoContrato.setHastaFecha(fechaFin);
         nuevoContrato.setMecanico(mecanico);
         nuevoContrato.setEscuderia(escuderia);
+        
+        mecanico.agregarEscuderia(nuevoContrato);
+        escuderia.agregarAsociacionMecanico(nuevoContrato);
+        
         this.listaMecanicoEscuderias.add(nuevoContrato);
         System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", mecanico.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
-        
-        
-        MecanicoEscuderia contratoExistente = null;
-    
-        for (MecanicoEscuderia p : this.listaMecanicoEscuderias) {
-            if (p.getMecanico() == mecanico && p.getEscuderia() == escuderia) {
-                contratoExistente = p;
-                break; 
-            }
-            this.listaMecanicoEscuderias.remove(contratoExistente);
-            
-            System.out.printf("CONTRATO FINALIZADO/BORRADO: El contrato de %s con %s ha sido eliminado.\n", mecanico.getNombre(), escuderia.getNombre());
-        }   
     } 
         
-    }
+    
     
     
     

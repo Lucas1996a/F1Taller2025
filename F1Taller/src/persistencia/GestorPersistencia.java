@@ -28,6 +28,7 @@ public class GestorPersistencia {
     private static final String MECANICOS_CSV = "src/data/Mecanicos.csv";
     private static final String CARRERAS_CSV = "src/data/Carreras.csv";
     private static final String PILOTOESCUDERIA_CSV = "src/data/PilotoEscuderia.csv";
+    private static final String MECANICOESCUDERIA_CSV = "src/data/MecanicoEscuderia.csv";
     
     private static final String SEPARADOR = ";";
     
@@ -716,5 +717,124 @@ public class GestorPersistencia {
     }
     
         
+//    REESCRIBIR CSV
+    
+    /**
+     * SOBRESCRIBE el archivo Escuderias.csv con la lista actualizada.
+     * Se usa después de borrar una escudería.
+     * @param listaEscuderias La lista completa y actualizada.
+     */
+    public void reescribirEscuderiasCSV(ArrayList<Escuderia> listaEscuderias) {
+        
+        // Abrimos el FileWriter SIN 'true' para que BORRE el contenido anterior.
+        try (FileWriter fw = new FileWriter(ESCUDERIAS_CSV);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            // 1. Escribimos la cabecera (basada en tu CSV)
+            bw.write("nombre" + SEPARADOR + "pais_descripcion");
+            bw.newLine();
+
+            // 2. Recorremos la lista actualizada y la guardamos
+            for (Escuderia escuderia : listaEscuderias) {
+                String paisDescripcion = escuderia.getPais().getDescripcion();
+                String linea = escuderia.getNombre() + SEPARADOR + paisDescripcion;
+                bw.write(linea);
+                bw.newLine();
+            }
+
+        } catch (IOException e) {
+            // Este es un error grave, si falla aquí, perdiste los datos.
+            System.err.println("Error FATAL al reescribir Escuderias.csv: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * SOBRESCRIBE el archivo Autos.csv con la lista actualizada.
+     * Se usa después de borrar una escudería (para borrar sus autos).
+     * @param listaAutos La lista completa y actualizada.
+     */
+    public void reescribirAutosCSV(ArrayList<Auto> listaAutos) {
+        
+        try (FileWriter fw = new FileWriter(AUTOS_CSV); // Sin 'true'
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            // 1. Escribimos la cabecera
+            bw.write("modelo" + SEPARADOR + "motor" + SEPARADOR + "nombre_escuderia");
+            bw.newLine();
+
+            // 2. Recorremos la lista actualizada
+            for (Auto auto : listaAutos) {
+                String nombreEscuderia = auto.getEscuderia().getNombre();
+                String linea = auto.getModelo() + SEPARADOR +
+                               auto.getMotor() + SEPARADOR +
+                               nombreEscuderia;
+                bw.write(linea);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error FATAL al reescribir Autos.csv: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * SOBRESCRIBE el archivo PilotoEscuderia.csv con la lista actualizada.
+     * Se usa después de borrar una escudería o desasociar un piloto.
+     * @param listaAsociaciones La lista completa y actualizada de asociaciones.
+     */
+    public void reescribirPilotoEscuderiaCSV(ArrayList<PilotoEscuderia> listaAsociaciones) {
+        
+        try (FileWriter fw = new FileWriter(PILOTOESCUDERIA_CSV); // Sin 'true'
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            // 1. Escribimos la cabecera
+            bw.write("dni_piloto" + SEPARADOR + "nombre_escuderia" + SEPARADOR + 
+                     "fecha_desde" + SEPARADOR + "fecha_hasta");
+            bw.newLine();
+
+            // 2. Recorremos la lista actualizada
+            for (PilotoEscuderia asoc : listaAsociaciones) {
+                String dniPiloto = asoc.getPiloto().getDni();
+                String nombreEscuderia = asoc.getEscuderia().getNombre();
+
+                String linea = dniPiloto + SEPARADOR +
+                               nombreEscuderia + SEPARADOR +
+                               asoc.getDesdeFecha() + SEPARADOR +
+                               asoc.getHastaFecha();
+                
+                bw.write(linea);
+                bw.newLine();
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error FATAL al reescribir PilotoEscuderia.csv: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * SOBRESCRIBE el archivo MecanicoEscuderia.csv con la lista actualizada.
+     * Se usa después de borrar una escudería o desasociar un mecánico.
+     * @param listaAsociaciones La lista completa y actualizada de asociaciones.
+     */
+    public void reescribirMecanicoEscuderiaCSV(ArrayList<MecanicoEscuderia> listaAsociaciones) {
+        
+        try (FileWriter fw = new FileWriter(MECANICOESCUDERIA_CSV); // Sin 'true'
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            // 1. Escribimos la cabecera
+            bw.write("dni_mecanico" + SEPARADOR + "nombre_escuderia");
+            bw.newLine();
+
+            // 2. Recorremos la lista actualizada
+            for (MecanicoEscuderia asoc : listaAsociaciones) {
+                String linea = asoc.getMecanico().getDni() + SEPARADOR +
+                               asoc.getEscuderia().getNombre();
+                bw.write(linea);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error FATAL al reescribir MecanicoEscuderia.csv: " + e.getMessage());
+        }
+    }
+    
 }  
 

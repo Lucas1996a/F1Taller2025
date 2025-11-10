@@ -273,8 +273,7 @@ public class FormularioGestionar extends javax.swing.JFrame {
         switch (this.modo) {
             case "ESCUDERIA":
                     Escuderia esc = (Escuderia) comboCampoEsc.getSelectedItem();
-                    String nom = esc.getNombre();
-                    this.gestion.borrarEscuderiaPorNombre(nom);
+                    this.gestion.borrarEscuderia(esc);
                     JOptionPane.showMessageDialog(this, "Escudería borrada correctamente.");
                     break;
         }

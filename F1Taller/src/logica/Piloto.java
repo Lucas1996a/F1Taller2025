@@ -91,7 +91,7 @@ public class Piloto extends Persona {
         this.pilotoEscuderias = pilotoEscuderias;
     }
 
-    public void agregarPilotoEscudria(PilotoEscuderia p) {
+    public void agregarPilotoEscuderia(PilotoEscuderia p) {
         this.pilotoEscuderias.add(p);
     }
     
