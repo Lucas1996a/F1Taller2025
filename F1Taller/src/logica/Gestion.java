@@ -159,6 +159,30 @@ public class Gestion {
     }
     
     
+    public void borrarEscuderiaPorNombre(String nombreEscuderia) {
+        if (nombreEscuderia == null || nombreEscuderia.isEmpty()) {
+            System.out.println("ERROR: El nombre de la Escudería no puede estar vacío.");
+            return;
+        }
+        
+        Escuderia escuderiaEncontrada = null;
+
+     for (Escuderia escuderia : this.listaEscuderias) {
+            if (escuderia.getNombre().equalsIgnoreCase(nombreEscuderia)) {
+                escuderiaEncontrada = escuderia;
+                break; 
+            }
+        }
+ 
+        if (escuderiaEncontrada == null) {
+            System.out.printf("ERROR: La Escudería no se encontró en el sistema.\n", nombreEscuderia);
+        }   else {
+            this.listaEscuderias.remove(escuderiaEncontrada);
+            System.out.printf("Escudería eliminada exitosamente del sistema.\n", nombreEscuderia);
+        }
+    }
+    
+    
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
@@ -544,6 +568,27 @@ public class Gestion {
     }
    
    
-     
+   public int contarCarrerasEnCircuito(String nombreCircuito){
     
+        Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
+        int contador = 0;
+
+        if (circuito == null) {
+            System.out.println("ERROR: Circuito con nombre '" + nombreCircuito + "' no encontrado.");
+            return 0;
+         }
+
+        for (Carrera carrera : this.listaCarreras) {
+        
+            if (carrera.getCircuito() == circuito) { 
+                contador++;
+            }
+        }
+
+        System.out.printf("\n El circuito %s ha albergado %d carreras planificadas.\n", circuito.getNombre(), contador);            
+        return contador;
+    }
+   
+     
+   
 }
