@@ -24,6 +24,7 @@ public class Gestion {
     private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
     private ArrayList<ResultadoCarrera> listaResultados;
     private ArrayList<AutoPiloto> listaAutoPilotos;
+    private ArrayList<MecanicoEscuderia> listaMecanicoEscuderias;
     
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
@@ -244,13 +245,13 @@ public class Gestion {
         nuevoContrato.setHastaFecha(fechaFin);
         nuevoContrato.setMecanico(mecanico);
         nuevoContrato.setEscuderia(escuderia);
-        this.listaPilotoEscuderias.add(nuevoContrato);
+        this.listaMecanicoEscuderias.add(nuevoContrato);
         System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", mecanico.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
         
         
         MecanicoEscuderia contratoExistente = null;
     
-        for (MecanicoEscuderia p : this.listaPilotoEscuderias) {
+        for (MecanicoEscuderia p : this.listaMecanicoEscuderias) {
             if (p.getMecanico() == mecanico && p.getEscuderia() == escuderia) {
                 contratoExistente = p;
                 break; 
