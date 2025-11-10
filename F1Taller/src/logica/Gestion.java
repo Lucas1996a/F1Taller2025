@@ -184,7 +184,7 @@ public class Gestion {
     
     
   
-    public void gestionarPilotoEscuderia(Piloto piloto, Escuderia escuderia, String fechaInicio, String fechaFin, String accion) {
+    public void gestionarPilotoEscuderia(Piloto piloto, Escuderia escuderia, String fechaInicio, String fechaFin) {
         PilotoEscuderia nuevoContrato = new PilotoEscuderia(fechaInicio, fechaFin, piloto, escuderia);
         nuevoContrato.setDesdeFecha(fechaInicio);
         nuevoContrato.setHastaFecha(fechaFin);
@@ -203,9 +203,21 @@ public class Gestion {
             }
             this.listaPilotoEscuderias.remove(contratoExistente);
             
-            System.out.printf("🗑️ CONTRATO FINALIZADO/BORRADO: El contrato de %s con %s ha sido eliminado.\n", iloto.getNombre(), escuderia.getNombre());
+            System.out.printf("CONTRATO FINALIZADO/BORRADO: El contrato de %s con %s ha sido eliminado.\n", piloto.getNombre(), escuderia.getNombre());
         }   
     }
+    
+    
+    
+    public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
+        if (auto.getEscuderia() != escuderia) {
+            System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
+           
+        } else {
+
+            escuderia.agregarAuto(auto);
+            System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
+        }
         
        
     
