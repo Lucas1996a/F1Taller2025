@@ -223,13 +223,17 @@ public class Gestion {
     public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
         if (auto.getEscuderia() != escuderia) {
             System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
-           
+
         } else {
 
             escuderia.agregarAuto(auto);
             System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
         }
-        
+
+        escuderia.getAutos().remove(auto); 
+        this.listaAutos.remove(auto);
+        System.out.printf("AUTO BORRADO COMPLETAMENTE: El Auto '%s' ha sido retirado de %s y eliminado del sistema.\n", auto.getModelo(), auto.getEscuderia()); 
+    }
        
     
     
