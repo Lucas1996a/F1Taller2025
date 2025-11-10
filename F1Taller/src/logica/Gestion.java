@@ -183,6 +183,46 @@ public class Gestion {
     }
     
     
+  
+    public void gestionarPilotoEscuderia(Piloto piloto, Escuderia escuderia, String fechaInicio, String fechaFin) {
+        PilotoEscuderia nuevoContrato = new PilotoEscuderia(fechaInicio, fechaFin, piloto, escuderia);
+        nuevoContrato.setDesdeFecha(fechaInicio);
+        nuevoContrato.setHastaFecha(fechaFin);
+        nuevoContrato.setPiloto(piloto);
+        nuevoContrato.setEscuderia(escuderia);
+        this.listaPilotoEscuderias.add(nuevoContrato);
+        System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", piloto.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
+        
+        
+        PilotoEscuderia contratoExistente = null;
+    
+        for (PilotoEscuderia p : this.listaPilotoEscuderias) {
+            if (p.getPiloto() == piloto && p.getEscuderia() == escuderia) {
+                contratoExistente = p;
+                break; 
+            }
+            this.listaPilotoEscuderias.remove(contratoExistente);
+            
+            System.out.printf("CONTRATO FINALIZADO/BORRADO: El contrato de %s con %s ha sido eliminado.\n", piloto.getNombre(), escuderia.getNombre());
+        }   
+    }
+    
+    
+    
+    public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
+        if (auto.getEscuderia() != escuderia) {
+            System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
+           
+        } else {
+
+            escuderia.agregarAuto(auto);
+            System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
+        }
+        
+       
+    
+    
+    
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
