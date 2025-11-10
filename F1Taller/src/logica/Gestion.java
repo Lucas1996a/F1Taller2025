@@ -196,7 +196,7 @@ public class Gestion {
     
   
     public void gestionarPilotoEscuderia(Piloto piloto, Escuderia escuderia, String fechaInicio, String fechaFin) {
-        PilotoEscuderia nuevoContrato = new PilotoEscuderia(fechaInicio, fechaFin, piloto, escuderia);
+        PilotoEscuderia nuevoContrato = new PilotoEscuderia();
         nuevoContrato.setDesdeFecha(fechaInicio);
         nuevoContrato.setHastaFecha(fechaFin);
         nuevoContrato.setPiloto(piloto);
@@ -235,6 +235,33 @@ public class Gestion {
         System.out.printf("AUTO BORRADO COMPLETAMENTE: El Auto '%s' ha sido retirado de %s y eliminado del sistema.\n", auto.getModelo(), auto.getEscuderia()); 
     }
        
+    
+    public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin){
+        
+       
+        MecanicoEscuderia nuevoContrato = new MecanicoEscuderia();
+        nuevoContrato.setDesdeFecha(fechaInicio);
+        nuevoContrato.setHastaFecha(fechaFin);
+        nuevoContrato.setMecanico(mecanico);
+        nuevoContrato.setEscuderia(escuderia);
+        this.listaPilotoEscuderias.add(nuevoContrato);
+        System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", mecanico.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
+        
+        
+        MecanicoEscuderia contratoExistente = null;
+    
+        for (MecanicoEscuderia p : this.listaPilotoEscuderias) {
+            if (p.getMecanico() == mecanico && p.getEscuderia() == escuderia) {
+                contratoExistente = p;
+                break; 
+            }
+            this.listaMecanicoEscuderias.remove(contratoExistente);
+            
+            System.out.printf("CONTRATO FINALIZADO/BORRADO: El contrato de %s con %s ha sido eliminado.\n", mecanico.getNombre(), escuderia.getNombre());
+        }   
+    } 
+        
+    }
     
     
     
