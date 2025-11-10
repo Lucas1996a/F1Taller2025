@@ -80,6 +80,10 @@ public class Escuderia {
         this.autos.add(a);
     }
     
+    public void agregarEscuderia(MecanicoEscuderia e) {
+        this.mecanicoEscuderias.add(e);
+    }
+    
     @Override
     public String toString() {
         return this.nombre;
