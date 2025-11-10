@@ -388,7 +388,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
         });
         jPanel3.add(bntGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 300, -1, -1));
 
-        bg.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 370, 340));
+        bg.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 380, 340));
 
         fondoimg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/f1logo.png"))); // NOI18N
         fondoimg.setPreferredSize(new java.awt.Dimension(310, 320));

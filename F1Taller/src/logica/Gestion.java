@@ -45,21 +45,26 @@ public class Gestion {
         this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
         this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
         this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
-        
-        
+        this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
+        this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
+        this.listaPilotos, this.listaEscuderias);
+    
+    
+    
         if (this.listaPais == null) this.listaPais = new ArrayList<>();
         if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
         if (this.listaPilotos == null)this.listaPilotos = new ArrayList<>();
         if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
         if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
         if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
+        if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
+        if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
         
-        
-        this.listaCarreras = new ArrayList<>();
-        this.listaPilotoEscuderias = new ArrayList<>();
         this.listaAutoPilotos = new ArrayList<>();
     }
     
+    
+//    METODOS PARA CREAR OBJETOS
     
     public void crearAutos(String modelo, String motor, Escuderia escuderia){
         Auto nuevoAuto = new Auto();
@@ -146,6 +151,8 @@ public class Gestion {
         System.out.println("Pais registrado: " + id + descrip);   
     }
     
+//    GETTERS
+    
     public ArrayList<Pais> getListaPais() {
         return this.listaPais;
     }
@@ -158,6 +165,10 @@ public class Gestion {
         return Especialidad.values(); 
     }
     
+    public ArrayList<Circuito> getListaCircuitos() {
+    return this.listaCircuitos;
+}
+    
     
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
@@ -166,6 +177,7 @@ public class Gestion {
        nuevaAsociacion.setEscuderia(escuderia);
        nuevaAsociacion.setDesdeFecha(desde);
        nuevaAsociacion.setHastaFecha(hasta);
+       
        listaPilotoEscuderias.add(nuevaAsociacion);
        System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
     }
@@ -179,6 +191,7 @@ public class Gestion {
         nueva.setHoraRealizacion(hora);
         nueva.setCircuito(circuito);
         listaCarreras.add(nueva);
+        gestorPersistencia.guardarCarrera(nueva);
         System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
        
     }

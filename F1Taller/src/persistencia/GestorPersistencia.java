@@ -26,6 +26,8 @@ public class GestorPersistencia {
     private static final String CIRCUITOS_CSV = "src/data/Circuitos.csv";
     private static final String PAISES_CSV = "src/data/Paises.csv";
     private static final String MECANICOS_CSV = "src/data/Mecanicos.csv";
+    private static final String CARRERAS_CSV = "src/data/Carreras.csv";
+    private static final String PILOTOESCUDERIA_CSV = "src/data/PilotoEscuderia.csv";
     
     private static final String SEPARADOR = ";";
     
@@ -131,6 +133,37 @@ public class GestorPersistencia {
         }
     }
     
+    public void guardarPilotoEscuderia(PilotoEscuderia asociacion) {
+        File archivo = new File(PILOTOESCUDERIA_CSV); //
+        boolean noExiste = !archivo.exists();
+
+        try (FileWriter fw = new FileWriter(archivo, true);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            if (noExiste) {
+                bw.write("dni_piloto" + SEPARADOR + "nombre_escuderia" + SEPARADOR +
+                         "fecha_desde" + SEPARADOR + "fecha_hasta");
+                bw.newLine();
+            }
+
+            // --- VINCULACIÓN ---
+            String dniPiloto = asociacion.getPiloto().getDni();
+            String nombreEscuderia = asociacion.getEscuderia().getNombre();
+
+            // Escribimos la línea de datos
+            String linea = dniPiloto + SEPARADOR +
+                           nombreEscuderia + SEPARADOR +
+                           asociacion.getDesdeFecha() + SEPARADOR +
+                           asociacion.getHastaFecha();
+            
+            bw.write(linea);
+            bw.newLine();
+
+        } catch (IOException e) {
+            System.err.println("Error al guardar la asociación PilotoEscuderia: " + e.getMessage());
+        }
+    }
+    
     public void guardarAuto(Auto auto) {
         File archivo = new File(AUTOS_CSV); // Asume "src/data/Autos.csv"
         boolean noExiste = !archivo.exists();
@@ -224,6 +257,39 @@ public class GestorPersistencia {
             System.err.println("Error al guardar mecánico en CSV: " + e.getMessage());
         }
     }
+    
+    public void guardarCarrera(Carrera carrera) {
+    File archivo = new File(CARRERAS_CSV);
+    boolean noExiste = !archivo.exists();
+
+    try (FileWriter fw = new FileWriter(archivo, true);
+         BufferedWriter bw = new BufferedWriter(fw)) {
+
+        if (noExiste) {
+            // Cabecera del archivo
+            bw.write("fecha" + SEPARADOR + "hora" + SEPARADOR + "numero_vueltas" + SEPARADOR + "nombre_circuito");
+            bw.newLine();
+        }
+
+        // --- VINCULACIÓN ---
+        String nombreCircuito = carrera.getCircuito().getNombre();
+
+        // Escribimos la línea de datos
+        String linea = carrera.getFechaRealizacion() + SEPARADOR +
+                       carrera.getHoraRealizacion() + SEPARADOR +
+                       carrera.getNumeroVueltas() + SEPARADOR +
+                       nombreCircuito;
+
+        bw.write(linea);
+        bw.newLine();
+
+    } catch (IOException e) {
+        System.err.println("Error al guardar carrera en CSV: " + e.getMessage());
+        }
+    }
+    
+    
+    
     // --- MÉTODOS DE CARGA ---
 
     /**
@@ -380,6 +446,52 @@ public class GestorPersistencia {
             System.err.println("Error al cargar escuderías desde CSV: " + e.getMessage());
     }
     return escuderias; 
+    }
+    
+    public ArrayList<PilotoEscuderia> cargarPilotosEscuderias(
+            ArrayList<Piloto> listaPilotos, ArrayList<Escuderia> listaEscuderias) {
+        
+        ArrayList<PilotoEscuderia> asociaciones = new ArrayList<>();
+        File archivo = new File(PILOTOESCUDERIA_CSV);
+
+        if (!archivo.exists()) {
+            return asociaciones; 
+        }
+
+        try (FileReader fr = new FileReader(archivo);
+             BufferedReader br = new BufferedReader(fr)) {
+
+            br.readLine(); 
+
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(SEPARADOR);
+                if (datos.length < 4) continue; 
+
+                String dniPiloto = datos[0];
+                String nombreEscuderia = datos[1];
+                String fechaDesde = datos[2];
+                String fechaHasta = datos[3];
+
+                // --- VINCULACIÓN ---
+                Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
+                Escuderia escuderia = listaEscuderias.stream().filter(e -> e.getNombre().equalsIgnoreCase(nombreEscuderia)).findFirst().orElse(null);
+
+                if (piloto != null && escuderia != null) {
+                    PilotoEscuderia pe = new PilotoEscuderia();
+                    pe.setPiloto(piloto);
+                    pe.setEscuderia(escuderia);
+                    pe.setDesdeFecha(fechaDesde);
+                    pe.setHastaFecha(fechaHasta);
+                    asociaciones.add(pe);
+                } else {
+                    System.err.println("Error al vincular asociación (Piloto/Escudería no encontrados): " + linea);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al cargar PilotosEscuderias: " + e.getMessage());
+        }
+        return asociaciones;
     }
     
     public ArrayList<Auto> cargarAutos(ArrayList<Escuderia> listaDeEscuderias) {
@@ -546,6 +658,61 @@ public class GestorPersistencia {
         System.err.println("Error al cargar mecánicos desde CSV: " + e.getMessage());
     }
     return mecanicos;
+    }
+    
+    public ArrayList<Carrera> cargarCarreras(ArrayList<Circuito> listaDeCircuitos) {
+    ArrayList<Carrera> carreras = new ArrayList<>();
+    File archivo = new File(CARRERAS_CSV);
+
+    if (!archivo.exists()) {
+        System.err.println("No se encontró el archivo: " + CARRERAS_CSV);
+        return carreras; // Lista vacía
+    }
+
+    try (FileReader fr = new FileReader(archivo);
+         BufferedReader br = new BufferedReader(fr)) {
+
+        br.readLine(); // Salteamos cabecera (fecha;hora;numero_vueltas;nombre_circuito)
+
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(SEPARADOR);
+
+            if (datos.length >= 4) {
+                try {
+                    String fecha = datos[0];
+                    String hora = datos[1];
+                    int numeroVueltas = Integer.parseInt(datos[2]);
+                    String nombreCircuito = datos[3];
+
+                    // --- VINCULACIÓN ---
+                    Circuito circuitoDeLaCarrera = null;
+                    for (Circuito c : listaDeCircuitos) {
+                        if (c.getNombre().equalsIgnoreCase(nombreCircuito)) {
+                            circuitoDeLaCarrera = c;
+                            break;
+                        }
+                    }
+
+                    if (circuitoDeLaCarrera != null) {
+                        Carrera carrera = new Carrera();
+                        carrera.setFechaRealizacion(fecha);
+                        carrera.setHoraRealizacion(hora);
+                        carrera.setNumeroVueltas(numeroVueltas);
+                        carrera.setCircuito(circuitoDeLaCarrera);
+                        carreras.add(carrera);
+                    } else {
+                        System.err.println("No se encontró circuito '" + nombreCircuito + "' para la carrera del " + fecha);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error parseando línea de carrera: " + linea + " | Error: " + e.getMessage());
+                }
+            }
+        }
+    } catch (IOException | NumberFormatException e) {
+        System.err.println("Error al cargar carreras desde CSV: " + e.getMessage());
+    }
+    return carreras;
     }
     
         
