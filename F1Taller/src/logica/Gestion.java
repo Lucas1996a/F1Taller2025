@@ -224,9 +224,7 @@ public class Gestion {
         System.out.printf("AUTO BORRADO COMPLETAMENTE: El Auto '%s' ha sido retirado de %s y eliminado del sistema.\n", auto.getModelo(), auto.getEscuderia()); 
     }
         
-       
-    
-    
+  
     
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
