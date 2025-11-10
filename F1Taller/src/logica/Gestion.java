@@ -159,6 +159,30 @@ public class Gestion {
     }
     
     
+    public void borrarEscuderiaPorNombre(String nombreEscuderia) {
+        if (nombreEscuderia == null || nombreEscuderia.isEmpty()) {
+            System.out.println("ERROR: El nombre de la Escudería no puede estar vacío.");
+            return;
+        }
+        
+        Escuderia escuderiaEncontrada = null;
+
+     for (Escuderia escuderia : this.listaEscuderias) {
+            if (escuderia.getNombre().equalsIgnoreCase(nombreEscuderia)) {
+                escuderiaEncontrada = escuderia;
+                break; 
+            }
+        }
+ 
+        if (escuderiaEncontrada == null) {
+            System.out.printf("ERROR: La Escudería no se encontró en el sistema.\n", nombreEscuderia);
+        }   else {
+            this.listaEscuderias.remove(escuderiaEncontrada);
+            System.out.printf("Escudería eliminada exitosamente del sistema.\n", nombreEscuderia);
+        }
+    }
+    
+    
     
     public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
        PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
