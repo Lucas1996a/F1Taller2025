@@ -50,5 +50,4 @@ public class PilotoEscuderia {
     public void setEscuderia(Escuderia escuderia) {
         this.escuderia = escuderia;
     }
-
 }

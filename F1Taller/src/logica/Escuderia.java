@@ -51,7 +51,7 @@ public class Escuderia {
     public void setPilotoEscuderia(List<PilotoEscuderia> pilotoEscuderias) {
         this.pilotoEscuderias = pilotoEscuderias;
     }
-
+    
     public void agregarPiloto(PilotoEscuderia p) {
         this.pilotoEscuderias.add(p);
     }
@@ -82,7 +82,7 @@ public class Escuderia {
     
     @Override
     public String toString() {
-        return this.nombre; // O como se llame tu variable de nombre
+        return this.nombre;
     }
 
 }

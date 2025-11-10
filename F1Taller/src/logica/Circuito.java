@@ -58,5 +58,10 @@ public class Circuito {
     public void agregarCarreras(Carrera c) {
         this.carreras.add(c);
     }
+    
+    @Override
+    public String toString() {
+        return this.nombre; 
+    }
 
 }
