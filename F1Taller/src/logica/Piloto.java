@@ -94,5 +94,10 @@ public class Piloto extends Persona {
     public void agregarPilotoEscudria(PilotoEscuderia p) {
         this.pilotoEscuderias.add(p);
     }
+    
+    @Override
+    public String toString(){
+        return this.getNombre() + " " + this.getApellido();
+    }
 
 }

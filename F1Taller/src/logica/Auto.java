@@ -58,5 +58,10 @@ public class Auto {
     public void setAutoPiloto(List<AutoPiloto> autoPilotos) {
         this.autoPilotos = autoPilotos;
     }
+    
+    @Override
+    public String toString(){
+        return this.getModelo();
+    }
 
 }

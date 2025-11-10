@@ -170,29 +170,92 @@ public class Gestion {
     return this.listaCircuitos;
 }
     
-    
-    public void borrarEscuderiaPorNombre(String nombreEscuderia) {
-        if (nombreEscuderia == null || nombreEscuderia.isEmpty()) {
-            System.out.println("ERROR: El nombre de la Escudería no puede estar vacío.");
-            return;
-        }
-        
-        Escuderia escuderiaEncontrada = null;
-
-     for (Escuderia escuderia : this.listaEscuderias) {
-            if (escuderia.getNombre().equalsIgnoreCase(nombreEscuderia)) {
-                escuderiaEncontrada = escuderia;
-                break; 
-            }
-        }
- 
-        if (escuderiaEncontrada == null) {
-            System.out.printf("ERROR: La Escudería no se encontró en el sistema.\n", nombreEscuderia);
-        }   else {
-            this.listaEscuderias.remove(escuderiaEncontrada);
-            System.out.printf("Escudería eliminada exitosamente del sistema.\n", nombreEscuderia);
-        }
+    public ArrayList<Piloto> getListaPilotos() {
+        return this.listaPilotos;
     }
+    
+    public ArrayList<Auto> getListaAutos() {
+        return this.listaAutos;
+    }
+    
+    public ArrayList<Mecanico> getListaMecanicos() {
+        return this.listaMecanicos;
+    }
+    
+    
+    
+    
+//    public void borrarEscuderiaPorNombre(String nombreEscuderia) {
+//        if (nombreEscuderia == null || nombreEscuderia.isEmpty()) {
+//            System.out.println("ERROR: El nombre de la Escudería no puede estar vacío.");
+//            return;
+//        }
+//        
+//        Escuderia escuderiaEncontrada = null;
+//
+//     for (Escuderia escuderia : this.listaEscuderias) {
+//            if (escuderia.getNombre().equalsIgnoreCase(nombreEscuderia)) {
+//                escuderiaEncontrada = escuderia;
+//                break; 
+//            }
+//        }
+// 
+//        if (escuderiaEncontrada == null) {
+//            System.out.printf("ERROR: La Escudería no se encontró en el sistema.\n", nombreEscuderia);
+//        }   else {
+//            this.listaEscuderias.remove(escuderiaEncontrada);
+//            System.out.printf("Escudería eliminada exitosamente del sistema.\n", nombreEscuderia);
+//        }
+//        
+//        
+//    }
+    
+    public void borrarEscuderia(Escuderia escuderiaABorrar) throws Exception {
+    
+    if (escuderiaABorrar == null) {
+        throw new Exception("No se seleccionó ninguna escudería para borrar.");
+    }
+    
+    String nombreEscuderia = escuderiaABorrar.getNombre();
+    
+    // --- PASO 1: Borrar Autos (Objetos dependientes) ---
+    // Usamos removeIf para limpiar la lista principal de autos
+    this.listaAutos.removeIf(auto -> auto.getEscuderia().equals(escuderiaABorrar));
+    // Re-escribimos el CSV de Autos (ya sin los autos de esta escudería)
+    gestorPersistencia.reescribirAutosCSV(this.listaAutos);
+
+    // --- PASO 2: Borrar Asociaciones de Pilotos (Enlaces) ---
+    // NO borramos los pilotos, solo los contratos.
+    
+    // 2a. Limpiamos la lista principal de asociaciones
+    this.listaPilotoEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
+    // 2b. Limpiamos las referencias inversas en cada piloto (para consistencia en memoria)
+    for (Piloto p : this.listaPilotos) {
+        p.getPilotoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
+    }
+    // 2c. Re-escribimos el CSV de asociaciones
+    gestorPersistencia.reescribirPilotoEscuderiaCSV(this.listaPilotoEscuderias);
+
+    // --- PASO 3: Borrar Asociaciones de Mecánicos (Enlaces) ---
+    // NO borramos los mecánicos, solo los enlaces.
+
+    // 3a. Limpiamos la lista principal de asociaciones
+    this.listaMecanicosEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
+    // 3b. Limpiamos las referencias inversas en cada mecánico
+    for (Mecanico m : this.listaMecanicos) {
+        m.getMecanicoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
+    }
+    // 3c. Re-escribimos el CSV de asociaciones
+    gestorPersistencia.reescribirMecanicoEscuderiaCSV(this.listaMecanicosEscuderias);
+
+    // --- PASO 4: Borrar la Escudería (El último paso) ---
+    // Borramos la escudería de la lista principal
+    this.listaEscuderias.remove(escuderiaABorrar);
+    // Re-escribimos el CSV de Escuderías
+    gestorPersistencia.reescribirEscuderiasCSV(this.listaEscuderias);
+    
+    System.out.println("Escudería " + nombreEscuderia + " y todas sus dependencias han sido eliminadas.");
+}
     
     
   

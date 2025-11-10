@@ -10,9 +10,11 @@ public class Mecanico extends Persona {
     private int añosExperiencia;
 
     private List<Escuderia> escuderias;
-
+    private List<MecanicoEscuderia> mecanicoEscuderias;
+    
     public Mecanico() {
         this.escuderias = new ArrayList<>();
+        this.mecanicoEscuderias = new ArrayList<>();
     }
 
     public Mecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int añosExperiencia, List<Escuderia> escuderias) {
@@ -48,6 +50,15 @@ public class Mecanico extends Persona {
 
     public void agregarEscuderia(Escuderia e) {
         this.escuderias.add(e);
+    }
+    
+    public List<MecanicoEscuderia> getMecanicosEscuderias(){
+        return this.mecanicoEscuderias;
+    }
+    
+    @Override
+    public String toString(){
+        return this.getNombre() + " " + this.getApellido();
     }
 
 }

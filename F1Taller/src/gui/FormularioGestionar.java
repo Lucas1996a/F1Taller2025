@@ -31,7 +31,7 @@ public class FormularioGestionar extends javax.swing.JFrame {
         this.ventanaAnterior = ventanaAnterior;
         
         cargarEscuderias();
-        cargarMecanicos();
+        cargarAutos();
         cargarPilotos();
         cargarMecanicos();
 
@@ -39,6 +39,9 @@ public class FormularioGestionar extends javax.swing.JFrame {
     
         lblCampoEsc.setVisible(false);
         comboCampoEsc.setVisible(true);
+        btnBorrarEsc.setVisible(false);
+        btnAsociar.setVisible(false);
+        btnEliminarAsociacion.setVisible(false);
         
         lblCampo2.setVisible(false);
         comboCampoPiloto.setVisible(false);
@@ -70,9 +73,13 @@ public class FormularioGestionar extends javax.swing.JFrame {
             lblCampodF.setVisible(true); 
             txtCampodF.setVisible(true); 
             
-            lblCampodF.setText("Hasta fecha:");
+            lblCampohF.setText("Hasta fecha:");
             lblCampohF.setVisible(true); 
             txtCampohF.setVisible(true); 
+            
+            
+            btnAsociar.setVisible(true);
+            btnEliminarAsociacion.setVisible(true);
             
             
             break;
@@ -90,6 +97,8 @@ public class FormularioGestionar extends javax.swing.JFrame {
             lblCampo2.setVisible(true); 
             comboCampoMecanico.setVisible(true); 
             
+            btnAsociar.setVisible(true);
+            btnEliminarAsociacion.setVisible(true);
             
             break;
             
@@ -103,10 +112,12 @@ public class FormularioGestionar extends javax.swing.JFrame {
             lblCampoEsc.setVisible(true); 
             comboCampoEsc.setVisible(true); 
             
-            lblCampo2.setText("Piloto:");
+            lblCampo2.setText("Auto:");
             lblCampo2.setVisible(true); 
             comboCampoAuto.setVisible(true); 
             
+            btnAsociar.setVisible(true);
+            btnEliminarAsociacion.setVisible(true);
             break;
             
             case "BORRAR_ESCUDERIA":
@@ -117,6 +128,7 @@ public class FormularioGestionar extends javax.swing.JFrame {
             lblCampoEsc.setText("Escudería:");
             lblCampoEsc.setVisible(true); 
             comboCampoEsc.setVisible(true); 
+            btnBorrarEsc.setVisible(true);
             
         }
     }
@@ -145,9 +157,9 @@ public class FormularioGestionar extends javax.swing.JFrame {
         lblCampohF = new javax.swing.JLabel();
         txtCampodF = new javax.swing.JTextField();
         txtCampohF = new javax.swing.JTextField();
-        bntBorrarEsc = new javax.swing.JButton();
-        bntAsociar = new javax.swing.JButton();
-        bntEliminarAsociacion = new javax.swing.JButton();
+        btnBorrarEsc = new javax.swing.JButton();
+        btnAsociar = new javax.swing.JButton();
+        btnEliminarAsociacion = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         fondoimg = new javax.swing.JLabel();
 
@@ -200,29 +212,29 @@ public class FormularioGestionar extends javax.swing.JFrame {
         jPanel3.add(txtCampodF, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 170, 150, 30));
         jPanel3.add(txtCampohF, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 220, 150, 30));
 
-        bntBorrarEsc.setText("GUARDAR");
-        bntBorrarEsc.addActionListener(new java.awt.event.ActionListener() {
+        btnBorrarEsc.setText("BORRAR");
+        btnBorrarEsc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bntBorrarEscActionPerformed(evt);
+                btnBorrarEscActionPerformed(evt);
             }
         });
-        jPanel3.add(bntBorrarEsc, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 290, 100, 30));
+        jPanel3.add(btnBorrarEsc, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 290, 100, 30));
 
-        bntAsociar.setText("ASOCIAR");
-        bntAsociar.addActionListener(new java.awt.event.ActionListener() {
+        btnAsociar.setText("ASOCIAR");
+        btnAsociar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bntAsociarActionPerformed(evt);
+                btnAsociarActionPerformed(evt);
             }
         });
-        jPanel3.add(bntAsociar, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 290, 110, 30));
+        jPanel3.add(btnAsociar, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 290, 110, 30));
 
-        bntEliminarAsociacion.setText("ELIMINAR");
-        bntEliminarAsociacion.addActionListener(new java.awt.event.ActionListener() {
+        btnEliminarAsociacion.setText("ELIMINAR");
+        btnEliminarAsociacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bntEliminarAsociacionActionPerformed(evt);
+                btnEliminarAsociacionActionPerformed(evt);
             }
         });
-        jPanel3.add(bntEliminarAsociacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 290, 110, 30));
+        jPanel3.add(btnEliminarAsociacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 290, 110, 30));
 
         bg.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 380, 340));
 
@@ -256,7 +268,7 @@ public class FormularioGestionar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bntBorrarEscActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntBorrarEscActionPerformed
+    private void btnBorrarEscActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarEscActionPerformed
         try {
         switch (this.modo) {
             case "ESCUDERIA":
@@ -269,7 +281,7 @@ public class FormularioGestionar extends javax.swing.JFrame {
         } catch (Exception e) {
     // Si 'parseInt' falla, el código salta acá y la app NO crashea.
         JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.");
-    }//GEN-LAST:event_bntBorrarEscActionPerformed
+    }//GEN-LAST:event_btnBorrarEscActionPerformed
     }
     
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
@@ -277,13 +289,13 @@ public class FormularioGestionar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
-    private void bntEliminarAsociacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntEliminarAsociacionActionPerformed
+    private void btnEliminarAsociacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAsociacionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bntEliminarAsociacionActionPerformed
+    }//GEN-LAST:event_btnEliminarAsociacionActionPerformed
 
-    private void bntAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntAsociarActionPerformed
+    private void btnAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bntAsociarActionPerformed
+    }//GEN-LAST:event_btnAsociarActionPerformed
 
     private void cargarEscuderias() {
         try {
@@ -307,6 +319,30 @@ public class FormularioGestionar extends javax.swing.JFrame {
         }
     }
     
+    private void cargarPilotos() {
+    comboCampoPiloto.removeAllItems();
+    ArrayList<Piloto> lista = gestion.getListaPilotos();
+    if (lista != null) {
+        for (Piloto p : lista) comboCampoPiloto.addItem(p);
+    }
+}
+    
+    private void cargarAutos() {
+    comboCampoAuto.removeAllItems();
+    ArrayList<Auto> lista = gestion.getListaAutos();
+    if (lista != null) {
+        for (Auto a : lista) comboCampoAuto.addItem(a);
+    }
+    }
+    
+    private void cargarMecanicos() {
+    comboCampoMecanico.removeAllItems();
+    ArrayList<Mecanico> lista = gestion.getListaMecanicos();
+    if (lista != null) {
+        for (Mecanico m : lista) comboCampoMecanico.addItem(m);
+    }
+}
+    
     
     
 
@@ -314,14 +350,14 @@ public class FormularioGestionar extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
-    private javax.swing.JButton bntAsociar;
-    private javax.swing.JButton bntBorrarEsc;
-    private javax.swing.JButton bntEliminarAsociacion;
     private javax.swing.JButton bntVolver;
-    private javax.swing.JComboBox<AutoPiloto> comboCampoAuto;
+    private javax.swing.JButton btnAsociar;
+    private javax.swing.JButton btnBorrarEsc;
+    private javax.swing.JButton btnEliminarAsociacion;
+    private javax.swing.JComboBox<Auto> comboCampoAuto;
     private javax.swing.JComboBox<Escuderia> comboCampoEsc;
     private javax.swing.JComboBox<Mecanico> comboCampoMecanico;
-    private javax.swing.JComboBox<PilotoEscuderia> comboCampoPiloto;
+    private javax.swing.JComboBox<Piloto> comboCampoPiloto;
     private javax.swing.JLabel fondoimg;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
