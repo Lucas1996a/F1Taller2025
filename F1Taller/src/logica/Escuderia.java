@@ -56,7 +56,7 @@ public class Escuderia {
         this.pilotoEscuderias.add(p);
     }
 
-    public List<Mecanico> getMecánicos() {
+    public List<Mecanico> getMecanicos() {
         return this.mecanicos;
     }
 
