@@ -97,6 +97,14 @@ public class FormularioGestionar extends javax.swing.JFrame {
             lblCampo2.setVisible(true); 
             comboCampoMecanico.setVisible(true); 
             
+            lblCampodF.setText("Desde fecha:");
+            lblCampodF.setVisible(true); 
+            txtCampodF.setVisible(true); 
+            
+            lblCampohF.setText("Hasta fecha:");
+            lblCampohF.setVisible(true); 
+            txtCampohF.setVisible(true); 
+            
             btnAsociar.setVisible(true);
             btnEliminarAsociacion.setVisible(true);
             
@@ -317,23 +325,24 @@ public class FormularioGestionar extends javax.swing.JFrame {
                 break;
             }
                 
-            // --- FLUJO AUTO (1-a-N Reasignar) ---
-//            case "AUTO": {
-//                // 1. Leer datos
-//                Auto auto = (Auto) comboAuto.getSelectedItem();
-//                Escuderia nuevaEscuderia = (Escuderia) comboEscuderia.getSelectedItem();
-//                
-//                // 2. Validar
-//                if (auto == null || nuevaEscuderia == null) {
-//                    JOptionPane.showMessageDialog(this, "Debe seleccionar un Auto y la Nueva Escudería.", "Error", JOptionPane.ERROR_MESSAGE);
-//                    break;
-//                }
-//
-//                // 3. Llamar a la lógica
-//                gestion.reasignarAuto(auto, nuevaEscuderia); 
-//                JOptionPane.showMessageDialog(this, "Auto reasignado exitosamente.");
-//                break;
-//            }
+//             --- FLUJO AUTO (1-a-N Reasignar) ---
+            case "AUTO": {
+                // 1. Leer datos
+                Auto auto = (Auto) comboCampoAuto.getSelectedItem();
+                Escuderia nuevaEscuderia = (Escuderia) comboCampoEsc.getSelectedItem();
+                
+                
+                // 2. Validar
+                if (auto == null || nuevaEscuderia == null) {
+                    JOptionPane.showMessageDialog(this, "Debe seleccionar un Auto y la Nueva Escudería.", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+
+                // 3. Llamar a la lógica
+                gestion.gestionarAutoEscuderia(auto, nuevaEscuderia); 
+                JOptionPane.showMessageDialog(this, "Auto reasignado exitosamente.");
+                break;
+            }
 
             // --- FLUJO MECÁNICO (N-a-N simple) ---
             case "MECANICO": {
