@@ -9,19 +9,17 @@ public class Mecanico extends Persona {
     private Especialidad especialidad;
     private int añosExperiencia;
 
-    private List<Escuderia> escuderias;
     private List<MecanicoEscuderia> mecanicoEscuderias;
     
     public Mecanico() {
-        this.escuderias = new ArrayList<>();
         this.mecanicoEscuderias = new ArrayList<>();
     }
 
-    public Mecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int añosExperiencia, List<Escuderia> escuderias) {
+    public Mecanico(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int añosExperiencia, List<MecanicoEscuderia> escuderias) {
         super(dni, nombre, apellido, pais);
         this.especialidad = especialidad;
         this.añosExperiencia = añosExperiencia;
-        this.escuderias = escuderias;
+        this.mecanicoEscuderias = escuderias;
     }
 
     public Especialidad getEspecialidad() {
@@ -40,24 +38,16 @@ public class Mecanico extends Persona {
         this.añosExperiencia = añosExperiencia;
     }
 
-    public List<Escuderia> getEscuderias() {
-        return this.escuderias;
-    }
-
-    public void setEscuderia(List<Escuderia> escuderias) {
-        this.escuderias = escuderias;
-    }
-
-    public void agregarEscuderia(Escuderia e) {
-        this.escuderias.add(e);
-    }
-    
-    public void agregarEscuderia(MecanicoEscuderia e) {
-        this.mecanicoEscuderias.add(e);
-    }
-    
-    public List<MecanicoEscuderia> getMecanicoEscuderias(){
+    public List<MecanicoEscuderia> getMecanicoEscuderias() {
         return this.mecanicoEscuderias;
+    }
+
+    public void setEscuderia(List<MecanicoEscuderia> escuderias) {
+        this.mecanicoEscuderias = escuderias;
+    }
+    
+    public void agregarMecanicoEscuderia(MecanicoEscuderia e) {
+        this.mecanicoEscuderias.add(e);
     }
     
     @Override

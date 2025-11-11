@@ -259,6 +259,36 @@ public class GestorPersistencia {
         }
     }
     
+    public void guardarMecanicoEscuderia(MecanicoEscuderia asociacion) {
+        
+        File archivo = new File(MECANICOESCUDERIA_CSV);
+        boolean noExiste = !archivo.exists();
+
+        // Usamos 'true' para añadir al final (append)
+        try (FileWriter fw = new FileWriter(archivo, true);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+
+            if (noExiste) {
+                // Si el archivo es nuevo, escribimos la cabecera (solo 2 columnas)
+                bw.write("dni_mecanico" + SEPARADOR + "nombre_escuderia");
+                bw.newLine();
+            }
+
+            // --- VINCULACIÓN ---
+            String dniMecanico = asociacion.getMecanico().getDni();
+            String nombreEscuderia = asociacion.getEscuderia().getNombre();
+
+            // Escribimos la línea de datos
+            String linea = dniMecanico + SEPARADOR + nombreEscuderia;
+            
+            bw.write(linea);
+            bw.newLine();
+
+        } catch (IOException e) {
+            System.err.println("Error al guardar la asociación MecanicoEscuderia: " + e.getMessage());
+        }
+    }
+    
     public void guardarCarrera(Carrera carrera) {
     File archivo = new File(CARRERAS_CSV);
     boolean noExiste = !archivo.exists();
@@ -659,6 +689,80 @@ public class GestorPersistencia {
         System.err.println("Error al cargar mecánicos desde CSV: " + e.getMessage());
     }
     return mecanicos;
+    }
+    
+    /**
+     * Lee MecanicoEscuderia.csv y devuelve un ArrayList de asociaciones.
+     * Realiza la "doble vinculación" en memoria.
+     * @param listaMecanicos La lista de mecánicos ya cargada.
+     * @param listaEscuderias La lista de escuderías ya cargada.
+     */
+    public ArrayList<MecanicoEscuderia> cargarMecanicosEscuderias(
+            ArrayList<Mecanico> listaMecanicos, ArrayList<Escuderia> listaEscuderias) {
+        
+        ArrayList<MecanicoEscuderia> asociaciones = new ArrayList<>();
+        File archivo = new File(MECANICOESCUDERIA_CSV); // Asume "src/data/MecanicoEscuderia.csv"
+
+        if (!archivo.exists()) {
+            System.err.println("No se encontró el archivo: " + MECANICOESCUDERIA_CSV);
+            return asociaciones; // Devuelve una lista vacía si no hay archivo
+        }
+
+        try (FileReader fr = new FileReader(archivo);
+             BufferedReader br = new BufferedReader(fr)) {
+
+            br.readLine(); // Salteamos la cabecera (dni_mecanico;nombre_escuderia)
+
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(SEPARADOR);
+
+                if (datos.length < 2) continue; // Saltea líneas corruptas
+
+                String dniMecanico = datos[0];
+                String nombreEscuderia = datos[1];
+
+                // --- VINCULACIÓN ---
+                // 1. Busca el objeto Mecanico real por su DNI
+                Mecanico mecanico = null;
+                for(Mecanico m : listaMecanicos) {
+                    if(m.getDni().equals(dniMecanico)) {
+                        mecanico = m;
+                        break;
+                    }
+                }
+
+                // 2. Busca el objeto Escuderia real por su Nombre
+                Escuderia escuderia = null;
+                for(Escuderia e : listaEscuderias) {
+                    if(e.getNombre().equalsIgnoreCase(nombreEscuderia)) {
+                        escuderia = e;
+                        break;
+                    }
+                }
+
+                // 3. Si encontró ambos, crea la asociación
+                if (mecanico != null && escuderia != null) {
+                    MecanicoEscuderia me = new MecanicoEscuderia();
+                    me.setMecanico(mecanico);
+                    me.setEscuderia(escuderia);
+                    
+                    // --- DOBLE VINCULACIÓN ---
+                    // Le decimos al mecánico que está en esta escudería
+                    mecanico.agregarMecanicoEscuderia(me); // (El método en Mecanico.java)
+                    // Le decimos a la escudería que tiene este mecánico
+                    escuderia.agregarMecanicoEscuderia(me); // (El método en Escuderia.java)
+                    
+                    asociaciones.add(me);
+                } else {
+                    System.err.println("Error al vincular MecanicoEscuderia: No se encontró Mecánico (DNI " + dniMecanico + ") o Escudería (" + nombreEscuderia + ")");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al cargar MecanicosEscuderias: " + e.getMessage());
+        }
+        
+        return asociaciones;
     }
     
     public ArrayList<Carrera> cargarCarreras(ArrayList<Circuito> listaDeCircuitos) {
