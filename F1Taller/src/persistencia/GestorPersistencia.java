@@ -29,6 +29,7 @@ public class GestorPersistencia {
     private static final String CARRERAS_CSV = "src/data/Carreras.csv";
     private static final String PILOTOESCUDERIA_CSV = "src/data/PilotoEscuderia.csv";
     private static final String MECANICOESCUDERIA_CSV = "src/data/MecanicoEscuderia.csv";
+    private static final String AUTOPILOTO_CSV = "src/data/AutoPiloto.csv";
     
     private static final String SEPARADOR = ";";
     
@@ -195,6 +196,37 @@ public class GestorPersistencia {
         }
     }
     
+    public void guardarAutoPiloto(AutoPiloto asociacion) {
+    File archivo = new File(AUTOPILOTO_CSV);
+    boolean noExiste = !archivo.exists();
+
+    try (FileWriter fw = new FileWriter(archivo, true); // 'true' para añadir
+         BufferedWriter bw = new BufferedWriter(fw)) {
+
+        if (noExiste) {
+            // Cabecera del archivo
+            bw.write("dni_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "fecha_asignacion");
+            bw.newLine();
+        }
+
+        // --- VINCULACIÓN ---
+        String dniPiloto = asociacion.getPiloto().getDni();
+        String modeloAuto = asociacion.getAuto().getModelo();
+        String fecha = asociacion.getFechaAsignacion();
+
+        // Escribimos la línea de datos
+        String linea = dniPiloto + SEPARADOR +
+                       modeloAuto + SEPARADOR +
+                       fecha;
+
+        bw.write(linea);
+        bw.newLine();
+
+    } catch (IOException e) {
+        System.err.println("Error al guardar la asociación AutoPiloto: " + e.getMessage());
+        }
+    }
+    
     public void guardarCircuito(Circuito circuito) {
         File archivo = new File(CIRCUITOS_CSV);
         boolean noExiste = !archivo.exists();
@@ -277,9 +309,11 @@ public class GestorPersistencia {
             // --- VINCULACIÓN ---
             String dniMecanico = asociacion.getMecanico().getDni();
             String nombreEscuderia = asociacion.getEscuderia().getNombre();
+            String desde = asociacion.getDesdeFecha();
+            String hasta = asociacion.getHastaFecha();
 
             // Escribimos la línea de datos
-            String linea = dniMecanico + SEPARADOR + nombreEscuderia;
+            String linea = dniMecanico + SEPARADOR + nombreEscuderia + SEPARADOR + desde + SEPARADOR + hasta;
             
             bw.write(linea);
             bw.newLine();
@@ -576,6 +610,57 @@ public class GestorPersistencia {
             return autos;
     }
     
+    /**
+ * Lee AutoPiloto.csv y devuelve un ArrayList de asociaciones.
+ * @param listaPilotos La lista de pilotos ya cargada.
+ * @param listaAutos La lista de autos ya cargada.
+ */
+    public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos) {
+
+    ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
+    File archivo = new File(AUTOPILOTO_CSV);
+    if (!archivo.exists()) {
+        return asociaciones; // Devuelve lista vacía
+    }
+
+    try (FileReader fr = new FileReader(archivo);
+         BufferedReader br = new BufferedReader(fr)) {
+
+        br.readLine(); // Salteamos cabecera
+
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(SEPARADOR);
+            if (datos.length < 3) continue;
+
+            String dniPiloto = datos[0];
+            String modeloAuto = datos[1];
+            String fechaAsignacion = datos[2];
+
+            // --- VINCULACIÓN ---
+            Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
+            Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
+
+            if (piloto != null && auto != null) {
+                AutoPiloto ap = new AutoPiloto();
+                ap.setPiloto(piloto);
+                ap.setAuto(auto);
+                ap.setFechaAsignacion(fechaAsignacion);
+
+                // Doble vinculación (¡Aquí se usa tu método!)
+                piloto.agregarAutoPiloto(ap);
+
+                asociaciones.add(ap);
+            } else {
+                System.err.println("Error al vincular AutoPiloto: " + linea);
+            }
+        }
+    } catch (IOException e) {
+        System.err.println("Error al cargar AutoPilotos: " + e.getMessage());
+    }
+        return asociaciones;
+    }
+    
     public ArrayList<Circuito> cargarCircuitos(ArrayList<Pais> listaDePaises) {
         ArrayList<Circuito> circuitos = new ArrayList<>();
         File archivo = new File(CIRCUITOS_CSV);
@@ -701,7 +786,7 @@ public class GestorPersistencia {
             ArrayList<Mecanico> listaMecanicos, ArrayList<Escuderia> listaEscuderias) {
         
         ArrayList<MecanicoEscuderia> asociaciones = new ArrayList<>();
-        File archivo = new File(MECANICOESCUDERIA_CSV); // Asume "src/data/MecanicoEscuderia.csv"
+        File archivo = new File(MECANICOESCUDERIA_CSV); 
 
         if (!archivo.exists()) {
             System.err.println("No se encontró el archivo: " + MECANICOESCUDERIA_CSV);
@@ -717,7 +802,7 @@ public class GestorPersistencia {
             while ((linea = br.readLine()) != null) {
                 String[] datos = linea.split(SEPARADOR);
 
-                if (datos.length < 2) continue; // Saltea líneas corruptas
+                if (datos.length < 2) continue; 
 
                 String dniMecanico = datos[0];
                 String nombreEscuderia = datos[1];

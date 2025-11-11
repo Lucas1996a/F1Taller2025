@@ -111,8 +111,13 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
-        btnAsociarPilotos.setText("ASOCIAR PILOTOS");
+        btnAsociarPilotos.setText("ASOCIAR PILOTOS A AUTOS");
         btnAsociarPilotos.setFocusPainted(false);
+        btnAsociarPilotos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAsociarPilotosActionPerformed(evt);
+            }
+        });
 
         btnRegistrarResultados.setText("REGISTRAR RESULTADOS");
         btnRegistrarResultados.setFocusPainted(false);
@@ -128,7 +133,7 @@ public class Pantalla extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(btnRegistrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnRegistrarResultados, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+            .addComponent(btnRegistrarResultados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCalcularPuntajes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGenerarInformes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnAsociarPilotos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -155,7 +160,7 @@ public class Pantalla extends javax.swing.JFrame {
         );
 
         jPanel1.add(jPanel4);
-        jPanel4.setBounds(120, 20, 180, 410);
+        jPanel4.setBounds(120, 20, 190, 410);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/2483195.jpg"))); // NOI18N
         jLabel1.setPreferredSize(new java.awt.Dimension(1300, 600));
@@ -206,6 +211,10 @@ public class Pantalla extends javax.swing.JFrame {
         vGestionar.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_btnGestionarActionPerformed
+
+    private void btnAsociarPilotosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarPilotosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAsociarPilotosActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

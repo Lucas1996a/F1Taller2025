@@ -82,7 +82,7 @@ public class VentanaGestionar extends javax.swing.JFrame {
                 btnBorrarEscuderiaActionPerformed(evt);
             }
         });
-        jPanel3.add(btnBorrarEscuderia, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 260, 40));
+        jPanel3.add(btnBorrarEscuderia, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 270, 40));
 
         btnPilotos.setText("GESTIONAR PILOTOS EN ESCUDERIAS");
         btnPilotos.addActionListener(new java.awt.event.ActionListener() {
@@ -90,7 +90,7 @@ public class VentanaGestionar extends javax.swing.JFrame {
                 btnPilotosActionPerformed(evt);
             }
         });
-        jPanel3.add(btnPilotos, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 120, 260, 40));
+        jPanel3.add(btnPilotos, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 270, 40));
 
         btnAutos.setText("GESTIONAR AUTOS EN ESCUDERIAS");
         btnAutos.addActionListener(new java.awt.event.ActionListener() {
@@ -98,7 +98,7 @@ public class VentanaGestionar extends javax.swing.JFrame {
                 btnAutosActionPerformed(evt);
             }
         });
-        jPanel3.add(btnAutos, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 180, 260, 40));
+        jPanel3.add(btnAutos, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, 270, 40));
 
         btnMecanicos.setText("GESTIONAR MECÁNICOS EN ESCUDERIAS");
         btnMecanicos.addActionListener(new java.awt.event.ActionListener() {
@@ -106,7 +106,7 @@ public class VentanaGestionar extends javax.swing.JFrame {
                 btnMecanicosActionPerformed(evt);
             }
         });
-        jPanel3.add(btnMecanicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 240, 260, 40));
+        jPanel3.add(btnMecanicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 270, 40));
 
         bg.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 360, 340));
 

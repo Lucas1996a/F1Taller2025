@@ -50,7 +50,7 @@ public class Gestion {
         this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
         this.listaPilotos, this.listaEscuderias);
         this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(this.listaMecanicos, this.listaEscuderias);
-    
+        this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(this.listaPilotos, this.listaAutos);
     
     
         if (this.listaPais == null) this.listaPais = new ArrayList<>();
@@ -62,8 +62,7 @@ public class Gestion {
         if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
         if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
         if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
-        
-        this.listaAutoPilotos = new ArrayList<>();
+        if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
     }
     
     
@@ -263,7 +262,6 @@ public class Gestion {
         nuevoContrato.setHastaFecha(fechaFin);
         nuevoContrato.setPiloto(piloto);
         nuevoContrato.setEscuderia(escuderia);
-        this.listaPilotoEscuderias.add(nuevoContrato);
         System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", piloto.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
         
         piloto.agregarPilotoEscuderia(nuevoContrato);
@@ -324,19 +322,17 @@ public class Gestion {
     public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
         if (auto.getEscuderia() != escuderia) {
             System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
-
         } else {
-
             escuderia.agregarAuto(auto);
             System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
         }
     }
        
-    public void gestionarPilotoAuto(Piloto piloto, Auto auto, Carrera carrera, String fechaAsignacion) {
+    public void gestionarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
         AutoPiloto nuevaAsociacion = new AutoPiloto();
         nuevaAsociacion.setPiloto(piloto);
         nuevaAsociacion.setAuto(auto);
-        nuevaAsociacion.setFechaAsignacion(carrera.getFechaRealizacion());
+        nuevaAsociacion.setFechaAsignacion(fechaAsignacion);
         
         piloto.agregarAutoPiloto(nuevaAsociacion);
         auto.agregarAutoPiloto(nuevaAsociacion);
@@ -356,10 +352,6 @@ public class Gestion {
             System.out.printf("AUTO DADO DE BAJA: El Auto '%s' ha sido retirado de %s y eliminado del sistema.\n", auto.getModelo(), auto.getEscuderia());
         }  
     }
-    
-    
-   
-    
     
     public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin){
         MecanicoEscuderia nuevoContrato = new MecanicoEscuderia();
