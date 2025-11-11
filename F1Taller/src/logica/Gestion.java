@@ -271,6 +271,66 @@ public class Gestion {
         this.listaPilotoEscuderias.add(nuevoContrato);
         gestorPersistencia.guardarPilotoEscuderia(nuevoContrato);
     }
+    
+    public void darDeBajaPilotoEscuderia(Piloto pilotoABorrar) throws Exception {
+        
+       if (pilotoABorrar == null) {
+         throw new Exception("No se seleccionó ninguna escudería para borrar.");
+        }
+    
+     String nombrePiloto = pilotoABorrar.getNombre();
+    
+        // --- PASO 1: Borrar Autos (Objetos dependientes) ---
+        // Usamos removeIf para limpiar la lista principal de autos
+        this.listaAutos.removeIf(auto -> auto.getEscuderia().equals(pilotoABorrar));
+        // Re-escribimos el CSV de Autos (ya sin los autos de esta escudería)
+        gestorPersistencia.reescribirAutosCSV(this.listaAutos);
+
+        // --- PASO 2: Borrar Asociaciones de Pilotos (Enlaces) ---
+         // NO borramos los pilotos, solo los contratos.
+    
+         // 2a. Limpiamos la lista principal de asociaciones
+        this.listaPilotoEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(pilotoABorrar));
+        // 2b. Limpiamos las referencias inversas en cada piloto (para consistencia en memoria)
+        for (Piloto p : this.listaPilotos) {
+            p.getPilotoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(pilotoABorrar));
+        }
+        // 2c. Re-escribimos el CSV de asociaciones
+        gestorPersistencia.reescribirPilotoEscuderiaCSV(this.listaPilotoEscuderias);
+
+        // --- PASO 3: Borrar Asociaciones de Mecánicos (Enlaces) ---
+        // NO borramos los mecánicos, solo los enlaces.
+
+        // 3a. Limpiamos la lista principal de asociaciones
+        this.listaPilotoEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(pilotoABorrar));
+        // 3b. Limpiamos las referencias inversas en cada mecánico
+        for (Piloto m : this.listaPilotos) {
+            m.getPilotoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(pilotoABorrar));
+        }
+        // 3c. Re-escribimos el CSV de asociaciones
+        gestorPersistencia.reescribirPilotoEscuderiaCSV(this.listaPilotoEscuderias);
+
+        // --- PASO 4: Borrar la Escudería (El último paso) ---
+        // Borramos la escudería de la lista principal
+        this.listaEscuderias.remove(pilotoABorrar);
+        // Re-escribimos el CSV de Escuderías
+        gestorPersistencia.reescribirEscuderiasCSV(this.listaEscuderias);
+    
+        System.out.println("Escudería " + nombrePiloto + " y todas sus dependencias han sido eliminadas.");
+        
+     }
+    
+    
+    public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
+        if (auto.getEscuderia() != escuderia) {
+            System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
+
+        } else {
+
+            escuderia.agregarAuto(auto);
+            System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
+        }
+    }
        
     public void gestionarPilotoAuto(Piloto piloto, Auto auto, Carrera carrera, String fechaAsignacion) {
         AutoPiloto nuevaAsociacion = new AutoPiloto();
@@ -284,6 +344,22 @@ public class Gestion {
         gestorPersistencia.guardarAutoPiloto(nuevaAsociacion);
         System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
     }
+    
+    public void darDeBajaAutoEscuderia(Auto auto, Escuderia escuderia){
+       boolean eliminadoDelInventario = escuderia.getAutos().remove(auto); 
+    
+        // 3. Borrar de la lista global de autos (retiro completo del sistema)
+       boolean eliminadoDelSistema = this.listaAutos.remove(auto);
+    
+        // 4. Mensaje de confirmación
+        if (eliminadoDelInventario || eliminadoDelSistema) {
+            System.out.printf("AUTO DADO DE BAJA: El Auto '%s' ha sido retirado de %s y eliminado del sistema.\n", auto.getModelo(), auto.getEscuderia());
+        }  
+    }
+    
+    
+   
+    
     
     public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin){
         MecanicoEscuderia nuevoContrato = new MecanicoEscuderia();
@@ -300,6 +376,33 @@ public class Gestion {
         gestorPersistencia.guardarMecanicoEscuderia(nuevoContrato);
         System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", mecanico.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
     } 
+  
+    public void darDeBajaMecanicoEscuderia(Mecanico mecanicoAEliminar){
+        
+        boolean exitoEnEscuderias = false;
+        
+        for (Escuderia escuderia : this.listaEscuderias) {
+       
+            // Comprobamos si la lista de mecánicos de ESTA escudería contiene al mecánico a eliminar
+            if (escuderia.getMecanicos().remove(mecanicoAEliminar)) {
+                exitoEnEscuderias = true;
+                System.out.printf("   [INFO] Desvinculado de la Escudería %s.\n", escuderia.getNombre());
+            }
+        }
+     }
+    
+    
+    
+    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
+       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
+       nuevaAsociacion.setPiloto(piloto);
+       nuevaAsociacion.setEscuderia(escuderia);
+       nuevaAsociacion.setDesdeFecha(desde);
+       nuevaAsociacion.setHastaFecha(hasta);
+       
+       listaPilotoEscuderias.add(nuevaAsociacion);
+       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
+    }
     
      
     public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
