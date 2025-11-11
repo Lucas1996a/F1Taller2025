@@ -293,7 +293,73 @@ public class FormularioGestionar extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarAsociacionActionPerformed
 
     private void btnAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarActionPerformed
-        // TODO add your handling code here:
+        try {
+        // El switch decide qué lógica ejecutar basado en el modo
+        switch (this.modo) {
+            
+            // --- FLUJO PILOTO (N-a-N con Fechas) ---
+            case "PILOTO": {
+                // 1. Leer datos
+                Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
+                Escuderia escPil = (Escuderia) comboCampoEsc.getSelectedItem();
+                String desde = txtCampodF.getText();
+                String hasta = txtCampohF.getText();
+                
+                // 2. Validar
+                if (pil == null || escPil == null || desde.isEmpty() || hasta.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Debe seleccionar Piloto, Escudería y completar ambas fechas.", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+                
+                // 3. Llamar a la lógica
+                gestion.gestionarPilotoEscuderia(pil, escPil, desde, hasta);
+                JOptionPane.showMessageDialog(this, "Contrato de Piloto guardado.");
+                break;
+            }
+                
+            // --- FLUJO AUTO (1-a-N Reasignar) ---
+//            case "AUTO": {
+//                // 1. Leer datos
+//                Auto auto = (Auto) comboAuto.getSelectedItem();
+//                Escuderia nuevaEscuderia = (Escuderia) comboEscuderia.getSelectedItem();
+//                
+//                // 2. Validar
+//                if (auto == null || nuevaEscuderia == null) {
+//                    JOptionPane.showMessageDialog(this, "Debe seleccionar un Auto y la Nueva Escudería.", "Error", JOptionPane.ERROR_MESSAGE);
+//                    break;
+//                }
+//
+//                // 3. Llamar a la lógica
+//                gestion.reasignarAuto(auto, nuevaEscuderia); 
+//                JOptionPane.showMessageDialog(this, "Auto reasignado exitosamente.");
+//                break;
+//            }
+
+            // --- FLUJO MECÁNICO (N-a-N simple) ---
+            case "MECANICO": {
+                // 1. Leer datos
+                Mecanico mec = (Mecanico) comboCampoMecanico.getSelectedItem();
+                Escuderia escMec = (Escuderia) comboCampoEsc.getSelectedItem();
+                String desde = txtCampodF.getText();
+                String hasta = txtCampohF.getText();
+                
+                // 2. Validar
+                if (mec == null || escMec == null || desde == null || hasta == null) {
+                    JOptionPane.showMessageDialog(this, "Debe seleccionar un Mecánico y una Escudería.", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+                
+                // 3. Llamar a la lógica
+                gestion.gestionarMecanicoEscuderia(mec, escMec, desde, hasta); 
+                JOptionPane.showMessageDialog(this, "Mecánico asociado exitosamente.");
+                break;
+            }
+        }
+    } catch (Exception e) {
+        // Captura cualquier error de lógica (como "El auto ya pertenece a esa escudería")
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_btnAsociarActionPerformed
 
     private void cargarEscuderias() {

@@ -10,21 +10,21 @@ public class Escuderia {
     private Pais pais;
 
     private List<PilotoEscuderia> pilotoEscuderias;
-    private List<Mecanico> mecanicos;
+    private List<MecanicoEscuderia> mecanicoEscuderias;
     private List<Auto> autos;
 
     public Escuderia() {
         this.autos = new ArrayList<>();
-        this.mecanicos = new ArrayList<>();
+        this.mecanicoEscuderias = new ArrayList<>();
         this.pilotoEscuderias = new ArrayList<>();
     }
 
-    public Escuderia(String nombre, Pais pais, List<PilotoEscuderia> pilotoEscuderias, List<Mecanico> mecanicos, List<Auto> autos) {
+    public Escuderia(String nombre, Pais pais, List<PilotoEscuderia> pilotoEscuderias, List<MecanicoEscuderia> mecanicos, List<Auto> autos) {
         this.nombre = nombre;
         this.pais = pais;
         this.autos = autos;
         this.pilotoEscuderias = pilotoEscuderias;
-        this.mecanicos = mecanicos;
+        this.mecanicoEscuderias = mecanicos;
 
     }
 
@@ -52,20 +52,20 @@ public class Escuderia {
         this.pilotoEscuderias = pilotoEscuderias;
     }
     
-    public void agregarPiloto(PilotoEscuderia p) {
+    public void agregarPilotoEscuderia(PilotoEscuderia p) {
         this.pilotoEscuderias.add(p);
     }
 
-    public List<Mecanico> getMecánicos() {
-        return this.mecanicos;
+    public List<MecanicoEscuderia> getMecánicos() {
+        return this.mecanicoEscuderias;
     }
 
-    public void setMecanicos(List<Mecanico> mecanicos) {
-        this.mecanicos = mecanicos;
+    public void setMecanicos(List<MecanicoEscuderia> mecanicos) {
+        this.mecanicoEscuderias = mecanicos;
     }
 
-    public void agregarMecanico(Mecanico m) {
-        this.mecanicos.add(m);
+    public void agregarMecanicoEscuderia(MecanicoEscuderia m) {
+        this.mecanicoEscuderias.add(m);
     }
 
     public List<Auto> getAutos() {
@@ -78,10 +78,6 @@ public class Escuderia {
 
     public void agregarAuto(Auto a) {
         this.autos.add(a);
-    }
-    
-    public void agregarEscuderia(MecanicoEscuderia e) {
-        this.mecanicoEscuderias.add(e);
     }
     
     @Override
