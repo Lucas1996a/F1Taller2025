@@ -565,6 +565,99 @@ public class Gestion {
     
     // GENERAR INFORMES
     
+    
+    public void generarResultadosPorRangoDeFechas(String fechaDesde, String fechaHasta) {
+    
+       // 🚨 VALIDACIÓN CRÍTICA (Basada en formato YYYYMMDD):
+       // 1. Verificar longitud (8 caracteres)
+        if (fechaDesde.length() != 8 || fechaHasta.length() != 8) {
+           System.out.println("ERROR: El formato de la fecha debe ser YYYYMMDD (8 dígitos, sin separadores).");
+            return;
+        }
+    
+        // 2. Asegurar que la fecha de inicio no sea posterior a la de fin.
+        if (fechaDesde.compareTo(fechaHasta) > 0) {
+            System.out.println("ERROR: La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.");
+            return;
+        }
+
+        System.out.println("=================================================");
+        System.out.printf("RESULTADOS DE CARRERAS ENTRE %s y %s\n", fechaDesde, fechaHasta);
+        System.out.println("=================================================");
+
+        boolean carrerasEncontradas = false;
+
+        // Iterar sobre todas las carreras planificadas
+        for (Carrera carrera : this.listaCarreras) {
+            String fechaCarrera = carrera.getFechaRealizacion();
+
+            // 1. Filtrar las carreras dentro del rango [fechaDesde, fechaHasta]
+            // Comprobamos si la fecha de la carrera es igual o posterior a la fecha de inicio
+            // Y si es igual o anterior a la fecha de fin.
+            // String.compareTo() funciona perfectamente con YYYYMMDD.
+            if (fechaCarrera.compareTo(fechaDesde) >= 0 && fechaCarrera.compareTo(fechaHasta) <= 0) {
+            
+                carrerasEncontradas = true;
+            
+                // --- DETALLE DE CARRERA ---
+                // Asumo que Circuito y Pais no son null aquí.
+                String paisDesc = carrera.getPais() != null ? carrera.getPais().getDescripcion().toUpperCase() : "PAÍS DESCONOCIDO";
+                String nombreCircuito = carrera.getCircuito() != null ? carrera.getCircuito().getNombre() : "N/A";
+                int longitudCircuito = carrera.getCircuito() != null ? carrera.getCircuito().getLongitud() : 0;
+            
+                System.out.printf("\n🏁 **GRAN PREMIO DE %s**\n", paisDesc);
+                System.out.printf("   - Circuito: %s (Longitud: %dkm)\n", nombreCircuito, longitudCircuito);
+                System.out.printf("   - Fecha: %s | Hora: %s | Vueltas: %d\n", fechaCarrera, carrera.getHoraRealizacion(), carrera.getNumeroVueltas());
+                System.out.println("   --- RESULTADOS ---\n");
+
+                int resultadosEncontrados = 0;
+            
+                // 2. Encontrar y mostrar los resultados para esta carrera
+                for (ResultadoCarrera resultado : this.listaResultados) {
+                
+                    // Comparamos el objeto Carrera directamente (debe tener .equals() implementado)
+                    if (resultado.getCarrera().equals(carrera)) { 
+                        resultadosEncontrados++;
+                    
+                        Piloto piloto = resultado.getAutoPiloto().getPiloto();
+                        Auto auto = resultado.getAutoPiloto().getAuto();
+                    
+                        // Formato y puntos
+                        String vr = resultado.isVueltaRapida() ? " (VUELTA RÁPIDA ⏱️)" : "";
+                        String podio = resultado.isPodio() ? " (PODIO 🏆)" : "";
+                        int puntos = calcularPuntos(resultado.getPosicionFinal());
+
+                        System.out.printf("   %d. %s %s (Auto: %s) - Tiempo: %s %s%s\n", 
+                        resultado.getPosicionFinal(),
+                        piloto.getNombre(),
+                        piloto.getApellido(),
+                        auto.getModelo(),
+                        resultado.getTiempoFinal(),
+                        podio,
+                        vr
+                    );
+                    System.out.printf("      [Puntos sumados: %d]\n", puntos);
+                }
+            }
+            
+            if (resultadosEncontrados == 0) {
+                System.out.println("   [!] Aún no hay resultados registrados para esta carrera.");
+            }
+
+            System.out.println("-------------------------------------------------");
+        }
+    }
+
+    if (!carrerasEncontradas) {
+        System.out.println("No se encontraron carreras con resultados registrados en el rango de fechas especificado.");
+    }
+}
+    
+    
+    
+    
+    
+    
     private class PilotoPuntuacion {
         Piloto piloto;
         int puntosAcumulados;
