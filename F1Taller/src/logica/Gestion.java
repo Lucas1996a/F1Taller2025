@@ -509,6 +509,30 @@ public class Gestion {
         System.out.println("El resultado fue: " + piloto.getNombre() + " terminó en posicion" + posicionFinal + ", y sumó " + puntosGanados + " puntos en el GP de " + carrera.getPais().getDescripcion() + "." + podio + vr);    
     }
     
+    
+    
+    public int calcularPuntosTotalesPiloto(Piloto piloto) {
+    
+        int totalPuntos = 0;
+    
+        // 1. Recorre todos los resultados de carreras guardados en el sistema
+        for (ResultadoCarrera resultado : this.listaResultados) {
+    
+            // 2. Verifica si el resultado pertenece al piloto que estamos evaluando
+            if (resultado.getPiloto() == piloto) {  
+                int posicion = resultado.getPosicionFinal();
+            
+                // 3. Usa el método auxiliar para obtener los puntos de esa posición
+                int puntosGanados = calcularPuntos(posicion);
+            
+                // 4. Acumula el total
+                totalPuntos += puntosGanados;
+            }
+        }
+        return totalPuntos;
+    }
+    
+    
    
     
     // GENERAR INFORMES
