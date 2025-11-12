@@ -71,7 +71,7 @@
         <Container class="javax.swing.JPanel" name="jPanel3">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="0" width="430" height="130"/>
+              <AbsoluteConstraints x="0" y="0" width="430" height="110"/>
             </Constraint>
           </Constraints>
 
@@ -95,7 +95,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="20" y="80" width="-1" height="-1"/>
+                  <AbsoluteConstraints x="20" y="60" width="-1" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -130,7 +130,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="130" width="430" height="470"/>
+              <AbsoluteConstraints x="0" y="110" width="430" height="490"/>
             </Constraint>
           </Constraints>
 
@@ -144,7 +144,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="120" y="20" width="190" height="410"/>
+                  <AbsoluteConstraints x="70" y="10" width="280" height="480"/>
                 </Constraint>
               </Constraints>
 
@@ -152,12 +152,13 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnRegistrar" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnRegistrarParticipacion" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnRegistrarResultados" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnCalcularPuntajes" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnGenerarInformes" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnAsociarPilotos" alignment="1" max="32767" attributes="0"/>
                       <Component id="btnGestionar" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnPlanificar" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnGenerarInformes1" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -171,12 +172,14 @@
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Component id="btnAsociarPilotos" min="-2" pref="48" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="btnRegistrarParticipacion" min="-2" pref="48" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="btnRegistrarResultados" min="-2" pref="48" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="btnCalcularPuntajes" min="-2" pref="48" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="btnGenerarInformes" min="-2" pref="48" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="btnGenerarInformes1" min="-2" pref="48" max="-2" attributes="0"/>
+                          <EmptySpace pref="12" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -218,6 +221,15 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAsociarPilotosActionPerformed"/>
                   </Events>
                 </Component>
+                <Component class="javax.swing.JButton" name="btnRegistrarParticipacion">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="REGISTRAR PARTICIPACIONES DE CARRERA"/>
+                    <Property name="focusPainted" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRegistrarParticipacionActionPerformed"/>
+                  </Events>
+                </Component>
                 <Component class="javax.swing.JButton" name="btnRegistrarResultados">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="REGISTRAR RESULTADOS"/>
@@ -229,12 +241,18 @@
                     <Property name="text" type="java.lang.String" value="CALCULAR PUNTAJES"/>
                     <Property name="focusPainted" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCalcularPuntajesActionPerformed"/>
+                  </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="btnGenerarInformes">
+                <Component class="javax.swing.JButton" name="btnGenerarInformes1">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="GENERAR INFORMES"/>
                     <Property name="focusPainted" type="boolean" value="false"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGenerarInformes1ActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

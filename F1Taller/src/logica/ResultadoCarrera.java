@@ -11,7 +11,7 @@ package logica;
 public class ResultadoCarrera {
     
     private Carrera carrera;
-    private Piloto piloto;
+    private AutoPiloto piloto;
     private int posicionFinal;
     private String tiempoFinal;
     private boolean vueltaRapida;
@@ -22,7 +22,7 @@ public class ResultadoCarrera {
         
     }
     
-    public ResultadoCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida, boolean podio) {
+    public ResultadoCarrera(Carrera carrera, AutoPiloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida, boolean podio) {
         this.carrera = carrera;
         this.piloto = piloto;
         this.posicionFinal = posicionFinal;
@@ -41,11 +41,11 @@ public class ResultadoCarrera {
         this.carrera = carrera;
     }
 
-    public Piloto getPiloto() {
+    public AutoPiloto getAutoPiloto() {
         return this.piloto;
     }
 
-    public void setPiloto(Piloto piloto) {
+    public void setAutoPiloto(AutoPiloto piloto) {
         this.piloto = piloto;
     }
 
