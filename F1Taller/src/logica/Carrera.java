@@ -80,8 +80,23 @@ public class Carrera {
     }
     
     @Override
-    public String toString(){
-        return "GP " + getPais().getDescripcion() + " (" + this.fechaRealizacion + ")";
+    public String toString() {
+    String nombreCarrera;
+    
+    // Primero, intenta obtener el nombre desde el Circuito (que es más específico)
+    if (getCircuito() != null && getCircuito().getPais() != null) {
+        nombreCarrera = "GP " + getCircuito().getPais().getDescripcion();
+    
+    // Si no tiene circuito, intenta obtenerlo desde el País (por si acaso)
+    } else if (getPais() != null) {
+        nombreCarrera = "GP " + getPais().getDescripcion();
+        
+    // Si no tiene ninguno, muestra un texto genérico
+    } else {
+        nombreCarrera = "Carrera (Datos Incompletos)";
     }
+    
+    return nombreCarrera + " (" + this.fechaRealizacion + ")";
+}
 
 }

@@ -40,42 +40,67 @@ public class Gestion {
  */
     
     public Gestion(){
-        this.listaPais = gestorPersistencia.cargarPaises();
-        this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
-        this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
-        this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
-        this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
-        this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
-        this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
-        this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
-        this.listaPilotos, this.listaEscuderias);
-        this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(this.listaMecanicos, this.listaEscuderias);
-        this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(this.listaPilotos, this.listaAutos);
-        this.listaResultados = gestorPersistencia.cargarResultadosCarrera(this.listaAutoPilotos, this.listaCarreras);
+        // --- 1. CARGA DE ENTIDADES BÁSICAS (Nivel 1) ---
+    // (No dependen de nadie, o solo de Pais)
+    this.listaPais = gestorPersistencia.cargarPaises();
+    if (this.listaPais == null) this.listaPais = new ArrayList<>();
     
-        if (this.listaPais == null) this.listaPais = new ArrayList<>();
-        if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
-        if (this.listaPilotos == null)this.listaPilotos = new ArrayList<>();
-        if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
-        if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
-        if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
-        if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
-        if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
-        if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
-        if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
-        if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
-        
-        for (ResultadoCarrera res : this.listaResultados) {
-        // Re-ejecutamos la lógica de cálculo
-        resultadosCarreras(res.getAutoPiloto().getPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
-        }
+    this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
+    if (this.listaPilotos == null) this.listaPilotos = new ArrayList<>();
+
+    this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
+    if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
+
+    this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
+    if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
+
+    // --- 2. CARGA DE ENTIDADES DEPENDIENTES (Nivel 2) ---
+    // (Dependen de las listas anteriores)
+    
+    // Autos depende de Escuderias
+    this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
+    if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
+    
+    // Carreras depende de Circuitos
+    this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
+    if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
+    
+    // Mecanicos depende de Pais (para crearse)
+    this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
+    if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
+
+    // --- 3. CARGA DE ASOCIACIONES (Nivel 3) ---
+    // (Dependen de que todo lo anterior esté cargado)
+    
+    this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
+        this.listaPilotos, this.listaEscuderias);
+    if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
+    
+    this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(
+        this.listaMecanicos, this.listaEscuderias);
+    if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
+
+    this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(
+        this.listaPilotos, this.listaAutos);
+    if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
+
+    // --- 4. CARGA DE RESULTADOS (Nivel 4 - Depende de Nivel 3) ---
+    this.listaResultados = gestorPersistencia.cargarResultadosCarrera(
+        this.listaAutoPilotos, this.listaCarreras);
+    if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
+    
+    // --- 5. LÓGICA POST-CARGA ---
+    // (Actualiza las stats de los pilotos basándose en los resultados cargados)
+    for (ResultadoCarrera res : this.listaResultados) {
+        resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
+    }
     }
     
     
     public void recargarResultados(){
         for (ResultadoCarrera res : this.listaResultados) {
         // Re-ejecutamos la lógica de cálculo
-        resultadosCarreras(res.getAutoPiloto().getPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
+        resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
         }
     }
     
@@ -199,6 +224,12 @@ public class Gestion {
     public ArrayList<Carrera> getListaCarreras(){
         return this.listaCarreras;
     }
+    
+    public ArrayList<AutoPiloto> getListaAutoPilotos() {
+        return this.listaAutoPilotos;
+    }
+    
+    
     
     public void borrarEscuderia(Escuderia escuderiaABorrar) throws Exception {
     
@@ -390,6 +421,9 @@ public class Gestion {
         nueva.setNumeroVueltas(numeroVueltas);
         nueva.setHoraRealizacion(hora);
         nueva.setCircuito(circuito);
+        if (circuito != null) {
+        nueva.setPais(circuito.getPais()); 
+        }
         listaCarreras.add(nueva);
         gestorPersistencia.guardarCarrera(nueva);
         System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
@@ -646,8 +680,10 @@ public class Gestion {
             int puntosAcumulados = 0;
         
             for (ResultadoCarrera resultado : this.listaResultados) {
-           
-                if (resultado.getPiloto() == piloto) { 
+                AutoPiloto asociacion = resultado.getAutoPiloto();
+                Piloto pilotoDelResultado = asociacion.getPiloto();
+                
+                if (pilotoDelResultado.equals(piloto)) { 
                 int posicion = resultado.getPosicionFinal();
                 int puntosGanados = calcularPuntos(posicion); 
                 puntosAcumulados += puntosGanados;
@@ -860,8 +896,10 @@ public class Gestion {
             if (carrera.getCircuito() == null) {
                 continue; 
             }
+            
+            Piloto pilotoDelResultado = resultado.getAutoPiloto().getPiloto();
         
-            boolean esMismoPiloto = (resultado.getPiloto() == piloto);
+            boolean esMismoPiloto = (pilotoDelResultado.equals(piloto));
             boolean esMismoCircuito = (carrera.getCircuito() == circuito);
         
             if (esMismoPiloto && esMismoCircuito) {
