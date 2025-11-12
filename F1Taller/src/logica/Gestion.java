@@ -398,29 +398,31 @@ public class Gestion {
      
     
     
-//    public void registrarParticipacionCarrera(Piloto piloto, Auto auto, Carrera carrera) {
-//      
-//        // 1. Crear la nueva instancia de la asociación AutoPiloto
-//        // Esta instancia representa la participación específica en ESTA carrera.
-//        AutoPiloto registroParticipacion = new AutoPiloto();
-//    
-//        // 2. Establecer las vinculaciones
-//        registroParticipacion.setPiloto(piloto);
-//        registroParticipacion.setAuto(auto);
-//    
-//        // **CLAVE:** Vinculamos el registro a la Carrera. 
-//        // Asumimos que la clase AutoPiloto tiene un método setCarrera(Carrera c).
-//        registroParticipacion.setCarrera(carrera); 
-//    
-//        // 3. Reutilizamos la fecha de la carrera para marcar la asignación temporal
-//        registroParticipacion.setFechaAsignacion(carrera.getFechaRealizacion());
-//    
-//        // 4. Guardar la asociación en las listas (misma lógica que gestionarPilotoAuto)
-//        piloto.agregarAutoPiloto(registroParticipacion);
-//        auto.agregarAutoPiloto(registroParticipacion);
-//        this.listaAutoPilotos.add(registroParticipacion);
-//        
-//    }
+    public void registrarParticipacionCarrera(Piloto piloto, Auto auto, Carrera carrera) {
+      
+        // 1. Crear la nueva instancia de la asociación AutoPiloto
+        // Esta instancia representa la participación específica en ESTA carrera.
+        AutoPiloto registroParticipacion = new AutoPiloto();
+    
+        // 2. Establecer las vinculaciones
+        registroParticipacion.setPiloto(piloto);
+        registroParticipacion.setAuto(auto);
+    
+        // **CLAVE:** Vinculamos el registro a la Carrera. 
+        // Asumimos que la clase AutoPiloto tiene un método setCarrera(Carrera c).
+        ArrayList<Carrera> listaCarrera = new ArrayList<>();
+        listaCarrera.add(carrera); 
+        registroParticipacion.setCarrera(listaCarrera);
+    
+        // 3. Reutilizamos la fecha de la carrera para marcar la asignación temporal
+        registroParticipacion.setFechaAsignacion(carrera.getFechaRealizacion());
+    
+        // 4. Guardar la asociación en las listas (misma lógica que gestionarPilotoAuto)
+        piloto.agregarAutoPiloto(registroParticipacion);
+        auto.agregarAutoPiloto(registroParticipacion);
+        this.listaAutoPilotos.add(registroParticipacion);
+        
+    }
     
     
     
