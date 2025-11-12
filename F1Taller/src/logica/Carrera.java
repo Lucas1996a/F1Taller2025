@@ -78,5 +78,10 @@ public class Carrera {
     public void setAutoPilotos(List<AutoPiloto> autoPilotos) {
         this.autoPilotos = autoPilotos;
     }
+    
+    @Override
+    public String toString(){
+        return "GP " + getPais().getDescripcion() + " (" + this.fechaRealizacion + ")";
+    }
 
 }

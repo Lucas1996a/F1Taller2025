@@ -187,9 +187,9 @@ public class VentanaPlanificar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Carrera planificada con éxito.");
 
 //            // Opcional: limpiar campos
-//            txtCampo1.setText("");
-//            txtCampo2.setText("");
-//            txtCampo3.setText("");
+            txtCampo1.setText("");
+            txtCampo2.setText("");
+            txtCampo3.setText("");
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "El número de vueltas debe ser un número válido.");

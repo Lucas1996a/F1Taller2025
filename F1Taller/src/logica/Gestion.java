@@ -51,7 +51,7 @@ public class Gestion {
         this.listaPilotos, this.listaEscuderias);
         this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(this.listaMecanicos, this.listaEscuderias);
         this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(this.listaPilotos, this.listaAutos);
-    
+        this.listaResultados = gestorPersistencia.cargarResultadosCarrera(this.listaAutoPilotos, this.listaCarreras);
     
         if (this.listaPais == null) this.listaPais = new ArrayList<>();
         if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
@@ -63,8 +63,21 @@ public class Gestion {
         if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
         if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
         if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
+        if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
+        
+        for (ResultadoCarrera res : this.listaResultados) {
+        // Re-ejecutamos la lógica de cálculo
+        resultadosCarreras(res.getAutoPiloto().getPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
+        }
     }
     
+    
+    public void recargarResultados(){
+        for (ResultadoCarrera res : this.listaResultados) {
+        // Re-ejecutamos la lógica de cálculo
+        resultadosCarreras(res.getAutoPiloto().getPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
+        }
+    }
     
 //    METODOS PARA CREAR OBJETOS
     
@@ -183,31 +196,9 @@ public class Gestion {
         return this.listaMecanicos;
     }
     
-    
-//    public void borrarEscuderiaPorNombre(String nombreEscuderia) {
-//        if (nombreEscuderia == null || nombreEscuderia.isEmpty()) {
-//            System.out.println("ERROR: El nombre de la Escudería no puede estar vacío.");
-//            return;
-//        }
-//        
-//        Escuderia escuderiaEncontrada = null;
-//
-//     for (Escuderia escuderia : this.listaEscuderias) {
-//            if (escuderia.getNombre().equalsIgnoreCase(nombreEscuderia)) {
-//                escuderiaEncontrada = escuderia;
-//                break; 
-//            }
-//        }
-// 
-//        if (escuderiaEncontrada == null) {
-//            System.out.printf("ERROR: La Escudería no se encontró en el sistema.\n", nombreEscuderia);
-//        }   else {
-//            this.listaEscuderias.remove(escuderiaEncontrada);
-//            System.out.printf("Escudería eliminada exitosamente del sistema.\n", nombreEscuderia);
-//        }
-//        
-//        
-//    }
+    public ArrayList<Carrera> getListaCarreras(){
+        return this.listaCarreras;
+    }
     
     public void borrarEscuderia(Escuderia escuderiaABorrar) throws Exception {
     
@@ -454,7 +445,8 @@ public class Gestion {
     }
     
     
-    public void resultadosCarreras(Piloto piloto, int posicionFinal, boolean vueltaRapida){
+    public void resultadosCarreras(AutoPiloto autoPiloto, int posicionFinal, boolean vueltaRapida){
+        Piloto piloto = autoPiloto.getPiloto();
         if (posicionFinal == 1) {
         piloto.setVictorias(piloto.getVictorias() + 1);
     }
@@ -476,11 +468,11 @@ public class Gestion {
     
     
       
-    public void registrarResultadosCarrera(Carrera carrera, Piloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
+    public void registrarResultadosCarrera(Carrera carrera, AutoPiloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
         ResultadoCarrera nuevoResultado = new ResultadoCarrera();
     
         nuevoResultado.setCarrera(carrera);
-        nuevoResultado.setPiloto(piloto);
+        nuevoResultado.setAutoPiloto(piloto);
         nuevoResultado.setPosicionFinal(posicionFinal);
         nuevoResultado.setTiempoFinal(tiempoFinal);
         nuevoResultado.setVueltaRapida(vueltaRapida);
@@ -491,6 +483,7 @@ public class Gestion {
         resultadosCarreras(piloto, posicionFinal, vueltaRapida);
 
         this.listaResultados.add(nuevoResultado);
+        gestorPersistencia.guardarResultadoCarrera(nuevoResultado);
         int puntosGanados = calcularPuntos(posicionFinal);
         String podio = "";
         String vr = "";
@@ -502,8 +495,9 @@ public class Gestion {
         if (vueltaRapida) {
             vr = " (Vuelta Rápida)";
          }
-                      
-        System.out.println("El resultado fue: " + piloto.getNombre() + " terminó en posicion" + posicionFinal + ", y sumó " + puntosGanados + " puntos en el GP de " + carrera.getPais().getDescripcion() + "." + podio + vr);    
+        
+         Piloto pilotoreal = piloto.getPiloto();
+        System.out.println("El resultado fue: " + pilotoreal.getNombre() + " terminó en posicion" + posicionFinal + ", y sumó " + puntosGanados + " puntos en el GP de " + carrera.getPais().getDescripcion() + "." + podio + vr);    
     }
     
     
@@ -512,53 +506,32 @@ public class Gestion {
     
         int totalPuntos = 0;
     
-        // 1. Recorre todos los resultados de carreras guardados en el sistema
+    // 1. Recorre todos los resultados
         for (ResultadoCarrera resultado : this.listaResultados) {
     
-            // 2. Verifica si el resultado pertenece al piloto que estamos evaluando
-            if (resultado.getPiloto() == piloto) {  
+        // ¡AQUÍ ESTÁ EL ARREGLO!
+        // 2. Obtenemos la asociación (ej: "Hamilton (W15)") del resultado
+            AutoPiloto asociacion = resultado.getAutoPiloto();
+        
+        // 3. Obtenemos el Piloto (ej: "Hamilton") de esa asociación
+            Piloto pilotoDelResultado = asociacion.getPiloto();
+        
+        // 4. Comparamos si es el piloto que estamos buscando
+            if (pilotoDelResultado.equals(piloto)) {  
                 int posicion = resultado.getPosicionFinal();
-            
-                // 3. Usa el método auxiliar para obtener los puntos de esa posición
                 int puntosGanados = calcularPuntos(posicion);
-            
-                // 4. Acumula el total
                 totalPuntos += puntosGanados;
             }
         }
-        return totalPuntos;
-    }
+    return totalPuntos;
+}
     
     
    
     
     // GENERAR INFORMES
     
-    
-    
-    
-    
-    /*
-    
-    public int calcularPuntosTotalesPiloto(Piloto piloto) {
-    
-        int totalPuntos = 0;
-    
-        for (ResultadoCarrera resultado : this.listaResultados) {
-        
-            if (resultado.getPiloto() == piloto) {    
-                int posicion = resultado.getPosicionFinal();
-                int puntosGanados = calcularPuntos(posicion);
-            
-                totalPuntos += puntosGanados;
-             }
-        }
-    
-        return totalPuntos;
-    }
-    */
-    
-    private class PilotoPuntuacion {
+        private class PilotoPuntuacion {
         Piloto piloto;
         int puntosAcumulados;
 

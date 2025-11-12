@@ -59,4 +59,9 @@ public class AutoPiloto {
         this.auto = auto;
     }
 
+    @Override
+    public String toString() {
+    // Ejemplo: "Hamilton (W15)"
+    return getPiloto().getApellido() + " (" + getAuto().getModelo() + ")";
+}
 }

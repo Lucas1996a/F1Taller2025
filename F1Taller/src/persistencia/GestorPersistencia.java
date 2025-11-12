@@ -30,6 +30,7 @@ public class GestorPersistencia {
     private static final String PILOTOESCUDERIA_CSV = "src/data/PilotoEscuderia.csv";
     private static final String MECANICOESCUDERIA_CSV = "src/data/MecanicoEscuderia.csv";
     private static final String AUTOPILOTO_CSV = "src/data/AutoPiloto.csv";
+    private static final String RESULTADOS_CSV = "src/data/ResultadosCarrera.csv";
     
     private static final String SEPARADOR = ";";
     
@@ -351,6 +352,43 @@ public class GestorPersistencia {
     } catch (IOException e) {
         System.err.println("Error al guardar carrera en CSV: " + e.getMessage());
         }
+    }
+    
+    public void guardarResultadoCarrera(ResultadoCarrera resultado) {
+    File archivo = new File(RESULTADOS_CSV);
+    boolean noExiste = !archivo.exists();
+
+    try (FileWriter fw = new FileWriter(archivo, true);
+         BufferedWriter bw = new BufferedWriter(fw)) {
+
+        if (noExiste) {
+            // Cabecera del archivo
+            bw.write("dni_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "id_carrera" +
+                     SEPARADOR + "posicion_final" + SEPARADOR + "tiempo_final" + SEPARADOR + "vuelta_rapida");
+            bw.newLine();
+        }
+
+        // --- VINCULACIÓN ---
+        // Sacamos las claves de los objetos
+        String apellidoPiloto = resultado.getAutoPiloto().getPiloto().getApellido();
+        String modeloAuto = resultado.getAutoPiloto().getAuto().getModelo();
+        // Usamos la fecha de la carrera como su ID único
+        String idCarrera = resultado.getCarrera().getFechaRealizacion(); 
+
+        // Escribimos la línea de datos
+        String linea = apellidoPiloto + SEPARADOR +
+                       modeloAuto + SEPARADOR +
+                       idCarrera + SEPARADOR +
+                       resultado.getPosicionFinal() + SEPARADOR +
+                       resultado.getTiempoFinal() + SEPARADOR +
+                       resultado.isVueltaRapida();
+
+        bw.write(linea);
+        bw.newLine();
+
+    } catch (IOException e) {
+        System.err.println("Error al guardar el ResultadoCarrera: " + e.getMessage());
+    }
     }
     
     
@@ -904,6 +942,71 @@ public class GestorPersistencia {
     }
     return carreras;
     }
+    
+    public ArrayList<ResultadoCarrera> cargarResultadosCarrera(
+        ArrayList<AutoPiloto> listaAutoPilotos, ArrayList<Carrera> listaCarreras) {
+
+    ArrayList<ResultadoCarrera> resultados = new ArrayList<>();
+    File archivo = new File(RESULTADOS_CSV);
+    if (!archivo.exists()) {
+        return resultados; // Devuelve lista vacía
+    }
+
+    try (FileReader fr = new FileReader(archivo);
+         BufferedReader br = new BufferedReader(fr)) {
+
+        br.readLine(); // Salteamos cabecera
+
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(SEPARADOR);
+            if (datos.length < 6) continue; // 6 campos
+
+            String dniPiloto = datos[0];
+            String modeloAuto = datos[1];
+            String idCarrera = datos[2];
+            int posicion = Integer.parseInt(datos[3]);
+            String tiempo = datos[4];
+            boolean vueltaRapida = Boolean.parseBoolean(datos[5]);
+
+            // --- VINCULACIÓN ---
+            // 1. Buscamos la asociación AutoPiloto que coincida
+            AutoPiloto autoPiloto = null;
+            for (AutoPiloto ap : listaAutoPilotos) {
+                if (ap.getPiloto().getDni().equals(dniPiloto) && 
+                    ap.getAuto().getModelo().equalsIgnoreCase(modeloAuto)) {
+                    autoPiloto = ap;
+                    break;
+                }
+            }
+
+            // 2. Buscamos la Carrera que coincida
+            Carrera carrera = null;
+            for (Carrera c : listaCarreras) {
+                if (c.getFechaRealizacion().equals(idCarrera)) {
+                    carrera = c;
+                    break;
+                }
+            }
+
+            // 3. Si encontramos ambos, creamos el Resultado
+            if (autoPiloto != null && carrera != null) {
+                ResultadoCarrera res = new ResultadoCarrera();
+                res.setAutoPiloto(autoPiloto); // Vinculamos la asociación
+                res.setCarrera(carrera);
+                res.setPosicionFinal(posicion);
+                res.setTiempoFinal(tiempo);
+                res.setVueltaRapida(vueltaRapida);
+                res.setPodio(posicion <= 3); // Calculamos el podio
+
+                resultados.add(res);
+            }
+        }
+    } catch (IOException | NumberFormatException e) {
+        System.err.println("Error al cargar ResultadosCarrera: " + e.getMessage());
+    }
+    return resultados;
+}
     
         
 //    REESCRIBIR CSV
