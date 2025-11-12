@@ -206,17 +206,17 @@ public class GestorPersistencia {
 
         if (noExiste) {
             // Cabecera del archivo
-            bw.write("dni_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "fecha_asignacion");
+            bw.write("apellido_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "fecha_asignacion");
             bw.newLine();
         }
 
         // --- VINCULACIÓN ---
-        String dniPiloto = asociacion.getPiloto().getDni();
+        String apellidoPiloto = asociacion.getPiloto().getApellido();
         String modeloAuto = asociacion.getAuto().getModelo();
         String fecha = asociacion.getFechaAsignacion();
 
         // Escribimos la línea de datos
-        String linea = dniPiloto + SEPARADOR +
+        String linea = apellidoPiloto + SEPARADOR +
                        modeloAuto + SEPARADOR +
                        fecha;
 
@@ -363,7 +363,7 @@ public class GestorPersistencia {
 
         if (noExiste) {
             // Cabecera del archivo
-            bw.write("dni_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "id_carrera" +
+            bw.write("apellido_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "id_carrera" +
                      SEPARADOR + "posicion_final" + SEPARADOR + "tiempo_final" + SEPARADOR + "vuelta_rapida");
             bw.newLine();
         }
@@ -653,51 +653,180 @@ public class GestorPersistencia {
  * @param listaPilotos La lista de pilotos ya cargada.
  * @param listaAutos La lista de autos ya cargada.
  */
-    public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos) {
+//    public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos, ArrayList<Carrera> listaCarreras) {
+//
+//    ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
+//    File archivo = new File(AUTOPILOTO_CSV);
+//    if (!archivo.exists()) {
+//        return asociaciones; // Devuelve lista vacía
+//    }
+//
+//    try (FileReader fr = new FileReader(archivo);
+//         BufferedReader br = new BufferedReader(fr)) {
+//
+//        br.readLine(); // Salteamos cabecera
+//
+//        String linea;
+//        while ((linea = br.readLine()) != null) {
+//            String[] datos = linea.split(SEPARADOR);
+//            // Ahora buscamos 4 campos
+//            if (datos.length < 4) continue; 
+//
+//            String dniPiloto = datos[0];
+//            String modeloAuto = datos[1];
+//            String fechaAsignacion = datos[2];
+//            String idCarrera = datos[3]; // El ID de la carrera
+//
+//            // --- VINCULACIÓN ---
+//            Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
+//            Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
+//            // ¡La vinculación que faltaba!
+//            Carrera carrera = listaCarreras.stream().filter(c -> c.getFechaRealizacion().equals(idCarrera)).findFirst().orElse(null);
+//
+//            if (piloto != null && auto != null && carrera != null) {
+//                AutoPiloto ap = new AutoPiloto();
+//                ap.setPiloto(piloto);
+//                ap.setAuto(auto);
+//                ap.setFechaAsignacion(fechaAsignacion);
+//                
+//                ArrayList<Carrera> listaDeCarreras = new ArrayList<>();
+//                listaDeCarreras.add(carrera);
+//                ap.setCarrera(listaDeCarreras); 
+//                
+//                // Doble vinculación
+//                piloto.agregarAutoPiloto(ap);
+//                carrera.agregarAutoPiloto(ap); 
+//                
+//                asociaciones.add(ap);
+//            }
+//        }
+//    } catch (IOException e) {
+//        System.err.println("Error al cargar AutoPilotos: " + e.getMessage());
+//    }
+//    return asociaciones;
+//    }
+    
+    // En GestorPersistencia.java
 
+//public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos, ArrayList<Carrera> listaCarreras) {
+//    
+//    ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
+//    File archivo = new File(AUTOPILOTO_CSV);
+//    if (!archivo.exists()) {
+//        System.err.println("DEBUG (cargarAutoPilotos): No se encontró el archivo " + AUTOPILOTO_CSV); // DEBUG 1
+//        return asociaciones;
+//    }
+//
+//    try (FileReader fr = new FileReader(archivo);
+//         BufferedReader br = new BufferedReader(fr)) {
+//
+//        br.readLine(); // Salteamos cabecera
+//
+//        String linea;
+//        while ((linea = br.readLine()) != null) {
+//            String[] datos = linea.split(SEPARADOR);
+//            if (datos.length < 4) continue; 
+//
+//            String dniPiloto = datos[0];
+//            String modeloAuto = datos[1];
+//            String fechaAsignacion = datos[2];
+//            String idCarrera = datos[3]; 
+//
+//            // --- VINCULACIÓN ---
+//            Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
+//            Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
+//            Carrera carrera = listaCarreras.stream().filter(c -> c.getFechaRealizacion().equals(idCarrera)).findFirst().orElse(null);
+//
+//            if (piloto != null && auto != null && carrera != null) {
+//                // ¡Si ves esto, es que SÍ cargó!
+//                System.err.println("DEBUG (cargarAutoPilotos): ¡VINCULACIÓN EXITOSA! -> " + dniPiloto + " con " + modeloAuto); // DEBUG 2
+//                
+//                AutoPiloto ap = new AutoPiloto();
+//                ap.setPiloto(piloto);
+//                ap.setAuto(auto);
+//                ap.setFechaAsignacion(fechaAsignacion);
+//                
+//                ArrayList<Carrera> listaDeCarreras = new ArrayList<>();
+//                listaDeCarreras.add(carrera);
+//                ap.setCarrera(listaDeCarreras); 
+//                
+//                piloto.agregarAutoPiloto(ap);
+//                carrera.agregarAutoPiloto(ap); 
+//                
+//                asociaciones.add(ap);
+//            } else {
+//                // ¡Si ves esto, es que falló la vinculación!
+//                System.err.println("DEBUG (cargarAutoPilotos): VINCULACIÓN FALLIDA. Línea: " + linea); // DEBUG 3
+//                if (piloto == null) System.err.println(" -> Causa: Piloto (DNI " + dniPiloto + ") no encontrado.");
+//                if (auto == null) System.err.println(" -> Causa: Auto (Modelo " + modeloAuto + ") no encontrado.");
+//                if (carrera == null) System.err.println(" -> Causa: Carrera (ID " + idCarrera + ") no encontrada.");
+//            }
+//        }
+//    } catch (IOException e) {
+//        System.err.println("DEBUG (cargarAutoPilotos): ERROR DE LECTURA: " + e.getMessage()); // DEBUG 4
+//    }
+//    
+//    System.err.println("DEBUG (cargarAutoPilotos): Carga finalizada. Total de asociaciones encontradas: " + asociaciones.size()); // DEBUG 5
+//    return asociaciones;
+//}
+    
+    public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos) {
+    
     ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
     File archivo = new File(AUTOPILOTO_CSV);
     if (!archivo.exists()) {
-        return asociaciones; // Devuelve lista vacía
+        System.err.println("DEBUG (cargarAutoPilotos): No se encontró " + AUTOPILOTO_CSV);
+        return asociaciones;
     }
 
     try (FileReader fr = new FileReader(archivo);
          BufferedReader br = new BufferedReader(fr)) {
 
-        br.readLine(); // Salteamos cabecera
+        br.readLine(); // Salteamos cabecera (dni_piloto;modelo_auto;fecha_asignacion)
 
         String linea;
         while ((linea = br.readLine()) != null) {
             String[] datos = linea.split(SEPARADOR);
-            if (datos.length < 3) continue;
+            
+            // ¡ARREGLO! Debe buscar 3 campos
+            if (datos.length < 3) continue; 
 
             String dniPiloto = datos[0];
             String modeloAuto = datos[1];
             String fechaAsignacion = datos[2];
+            // ¡ARREGLO! No leemos la carrera aquí
 
             // --- VINCULACIÓN ---
             Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
             Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
 
             if (piloto != null && auto != null) {
+                // (Opcional) Si querés, podés imprimir esto para confirmar
+                // System.err.println("DEBUG (cargarAutoPilotos): ¡VINCULACIÓN EXITOSA! -> " + dniPiloto);
+                
                 AutoPiloto ap = new AutoPiloto();
                 ap.setPiloto(piloto);
                 ap.setAuto(auto);
                 ap.setFechaAsignacion(fechaAsignacion);
-
-                // Doble vinculación (¡Aquí se usa tu método!)
+                
+                // ¡ARREGLO! No seteamos la carrera aquí
+                
+                // Doble vinculación (N..M)
                 piloto.agregarAutoPiloto(ap);
-
+                auto.agregarAutoPiloto(ap); // Tu método de Auto.java
+                
                 asociaciones.add(ap);
             } else {
-                System.err.println("Error al vincular AutoPiloto: " + linea);
+                 System.err.println("DEBUG (cargarAutoPilotos): VINCULACIÓN FALLIDA. Línea: " + linea);
             }
         }
     } catch (IOException e) {
         System.err.println("Error al cargar AutoPilotos: " + e.getMessage());
     }
-        return asociaciones;
-    }
+    
+    System.err.println("DEBUG (cargarAutoPilotos): Carga finalizada. Total: " + asociaciones.size());
+    return asociaciones;
+}
     
     public ArrayList<Circuito> cargarCircuitos(ArrayList<Pais> listaDePaises) {
         ArrayList<Circuito> circuitos = new ArrayList<>();
@@ -928,6 +1057,7 @@ public class GestorPersistencia {
                         carrera.setHoraRealizacion(hora);
                         carrera.setNumeroVueltas(numeroVueltas);
                         carrera.setCircuito(circuitoDeLaCarrera);
+                        carrera.setPais(circuitoDeLaCarrera.getPais());
                         carreras.add(carrera);
                     } else {
                         System.err.println("No se encontró circuito '" + nombreCircuito + "' para la carrera del " + fecha);
