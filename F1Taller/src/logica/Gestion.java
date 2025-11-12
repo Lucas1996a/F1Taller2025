@@ -28,17 +28,6 @@ public class Gestion {
     
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
-    /*
-    public Gestion(ArrayList<Auto> listaAutos, ArrayList<Escuderia> listaEscuderias, ArrayList<Circuito> listaCircuitos, ArrayList<Piloto> listaPilotos, ArrayList<Mecanicos> listaMecanicos, ArrayList<Pais> listaPais){
-        this.listaAutos = listaAutos;
-        this.listaEscuderias = listaEscuderias;
-        this.listaCircuitos = listaCircuitos;
-        this.listaPilotos = listaPilotos;
-        this.listaMecanicos = listaMecanicos;
-        this.listaPais = listaPais;
-    }
- */
-    
     public Gestion(){
         // --- 1. CARGA DE ENTIDADES BÁSICAS (Nivel 1) ---
     // (No dependen de nadie, o solo de Pais)
@@ -229,7 +218,7 @@ public class Gestion {
         return this.listaAutoPilotos;
     }
     
-    
+    // BORRAR ESCUDERIAS
     
     public void borrarEscuderia(Escuderia escuderiaABorrar) throws Exception {
     
@@ -278,6 +267,9 @@ public class Gestion {
     System.out.println("Escudería " + nombreEscuderia + " y todas sus dependencias han sido eliminadas.");
 }
   
+    
+    // ASOCIAR PILOTOS Y ELIMINAR ASOCIACION  
+    
     public void gestionarPilotoEscuderia(Piloto piloto, Escuderia escuderia, String fechaInicio, String fechaFin) {
         PilotoEscuderia nuevoContrato = new PilotoEscuderia();
         nuevoContrato.setDesdeFecha(fechaInicio);
@@ -319,6 +311,8 @@ public class Gestion {
     }
     
     
+    // ASOCIARLE UN AUTO A LA ESCUDERIA O BORRARSELO    
+    
     public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
         if (auto.getEscuderia() != escuderia) {
             System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
@@ -326,19 +320,6 @@ public class Gestion {
             escuderia.agregarAuto(auto);
             System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
         }
-    }
-       
-    public void gestionarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
-        AutoPiloto nuevaAsociacion = new AutoPiloto();
-        nuevaAsociacion.setPiloto(piloto);
-        nuevaAsociacion.setAuto(auto);
-        nuevaAsociacion.setFechaAsignacion(fechaAsignacion);
-        
-        piloto.agregarAutoPiloto(nuevaAsociacion);
-        auto.agregarAutoPiloto(nuevaAsociacion);
-        this.listaAutoPilotos.add(nuevaAsociacion);
-        gestorPersistencia.guardarAutoPiloto(nuevaAsociacion);
-        System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
     }
     
     public void darDeBajaAutoEscuderia(Auto autoABorrar) throws Exception {
@@ -358,6 +339,35 @@ public class Gestion {
         gestorPersistencia.reescribirAutosCSV(this.listaAutos);
         System.out.println("AUTO DADO DE BAJA: " + autoABorrar.getModelo());
     }
+    
+    // ASOCIAR PILOTOS CON AUTO Y BORRAR LA ASOCIACION
+       
+    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
+       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
+       nuevaAsociacion.setPiloto(piloto);
+       nuevaAsociacion.setEscuderia(escuderia);
+       nuevaAsociacion.setDesdeFecha(desde);
+       nuevaAsociacion.setHastaFecha(hasta);
+       
+       listaPilotoEscuderias.add(nuevaAsociacion);
+       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
+    }
+    
+    public void gestionarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
+        AutoPiloto nuevaAsociacion = new AutoPiloto();
+        nuevaAsociacion.setPiloto(piloto);
+        nuevaAsociacion.setAuto(auto);
+        nuevaAsociacion.setFechaAsignacion(fechaAsignacion);
+        
+        piloto.agregarAutoPiloto(nuevaAsociacion);
+        auto.agregarAutoPiloto(nuevaAsociacion);
+        this.listaAutoPilotos.add(nuevaAsociacion);
+        gestorPersistencia.guardarAutoPiloto(nuevaAsociacion);
+        System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
+    }
+    
+    
+    // ASOCIAR MECANICOS CON ESCUDERIA Y BORRAR LA ASOCIACION
     
     public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin){
         MecanicoEscuderia nuevoContrato = new MecanicoEscuderia();
@@ -400,19 +410,7 @@ public class Gestion {
         System.out.println("Asociación de Mecánico borrada.");
     }
     
-    
-    
-    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
-       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
-       nuevaAsociacion.setPiloto(piloto);
-       nuevaAsociacion.setEscuderia(escuderia);
-       nuevaAsociacion.setDesdeFecha(desde);
-       nuevaAsociacion.setHastaFecha(hasta);
-       
-       listaPilotoEscuderias.add(nuevaAsociacion);
-       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
-    }
-    
+    // MÉTODOS PARA CARRERA    
      
     public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
         Carrera nueva = new Carrera();
@@ -458,10 +456,6 @@ public class Gestion {
         
     }
     
-    
-    
-    
-    
     public int calcularPuntos(int posicion) {
     return switch(posicion){
         case 1 -> 25;
@@ -478,26 +472,23 @@ public class Gestion {
     };
     }
     
-    
     public void resultadosCarreras(AutoPiloto autoPiloto, int posicionFinal, boolean vueltaRapida){
         Piloto piloto = autoPiloto.getPiloto();
         if (posicionFinal == 1) {
-        piloto.setVictorias(piloto.getVictorias() + 1);
-    }
+            piloto.setVictorias(piloto.getVictorias() + 1);
+        }
     
         if (posicionFinal <= 3) {
-        piloto.setPodios(piloto.getPodios() + 1);
-    }
+            piloto.setPodios(piloto.getPodios() + 1);
+        }
     
     
         if (vueltaRapida) {
-        piloto.setVueltasRapidas(piloto.getVueltasRapidas() + 1);
-    }
+            piloto.setVueltasRapidas(piloto.getVueltasRapidas() + 1);
+        }
         
         int puntosObtenidos = calcularPuntos(posicionFinal);
-        
         System.out.println(" el Piloto suma " + puntosObtenidos + " puntos.");
-   
      }
     
     
@@ -560,11 +551,7 @@ public class Gestion {
     return totalPuntos;
 }
     
-    
-   
-    
     // GENERAR INFORMES
-    
     
     public void generarResultadosPorRangoDeFechas(String fechaDesde, String fechaHasta) {
     
@@ -652,11 +639,6 @@ public class Gestion {
         System.out.println("No se encontraron carreras con resultados registrados en el rango de fechas especificado.");
     }
 }
-    
-    
-    
-    
-    
     
     private class PilotoPuntuacion {
         Piloto piloto;
