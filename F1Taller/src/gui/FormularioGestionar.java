@@ -279,12 +279,24 @@ public class FormularioGestionar extends javax.swing.JFrame {
     private void btnBorrarEscActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarEscActionPerformed
         try {
         switch (this.modo) {
-            case "ESCUDERIA":
+            case "BORRAR_ESCUDERIA":
                     Escuderia esc = (Escuderia) comboCampoEsc.getSelectedItem();
-                    this.gestion.borrarEscuderia(esc);
-                    JOptionPane.showMessageDialog(this, "Escudería borrada correctamente.");
+                    int rpta = JOptionPane.showConfirmDialog(this, 
+                "¿ESTÁ SEGURO?\nBorrar '" + esc.getNombre() + 
+                "' también borrará todos sus autos y romperá todos sus contratos de pilotos y mecánicos.", 
+                "Confirmar Borrado en Cascada", 
+            JOptionPane.YES_NO_OPTION, 
+            JOptionPane.WARNING_MESSAGE);
+        
+            if (rpta == JOptionPane.YES_OPTION) {
+            // Llama al método de borrado en cascada que ya tenés en Gestion.java
+            this.gestion.borrarEscuderia(esc); 
+            
+            JOptionPane.showMessageDialog(this, "Escudería borrada exitosamente.");
+            cargarEscuderias(); // Refresca el combo (la escudería ya no existe)
+            }
                     break;
-        }
+            }
         } catch (Exception e) {
     // Si 'parseInt' falla, el código salta acá y la app NO crashea.
         JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.");
@@ -297,7 +309,57 @@ public class FormularioGestionar extends javax.swing.JFrame {
     }//GEN-LAST:event_bntVolverActionPerformed
 
     private void btnEliminarAsociacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAsociacionActionPerformed
-        // TODO add your handling code here:
+        try {
+        // Pedimos confirmación genérica
+        int rpta = JOptionPane.showConfirmDialog(this, 
+                "¿Está seguro que desea borrar esta asociación?", 
+                "Confirmar Borrado", 
+                JOptionPane.YES_NO_OPTION);
+        
+        if (rpta != JOptionPane.YES_OPTION) {
+            return; // El usuario canceló
+        }
+
+        switch (this.modo) {
+            
+            case "PILOTO":
+                Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
+                Escuderia escPil = (Escuderia) comboCampoEsc.getSelectedItem();
+                if (pil == null || escPil == null) {
+                    throw new Exception("Debe seleccionar un Piloto y una Escudería.");
+                }
+                
+                // Llama al método para romper el contrato N-a-N de Piloto
+                // (Este método ya lo tenés en Gestion.java)
+                gestion.darDeBajaPilotoEscuderia(pil, escPil); 
+                
+                JOptionPane.showMessageDialog(this, "Contrato de Piloto borrado.");
+                break;
+
+            case "MECANICO":
+                Mecanico mec = (Mecanico) comboCampoMecanico.getSelectedItem();
+                Escuderia escMec = (Escuderia) comboCampoEsc.getSelectedItem();
+                if (mec == null || escMec == null) {
+                    throw new Exception("Debe seleccionar un Mecánico y una Escudería.");
+                }
+                
+                // Llama al método para romper la asociación N-a-N de Mecánico
+                // (Este método ya lo tenés en Gestion.java)
+                gestion.darDeBajaMecanicoEscuderia(mec, escMec);
+                
+                JOptionPane.showMessageDialog(this, "Asociación de Mecánico borrada.");
+                break;
+                
+            case "AUTO":
+                // Este botón no debería estar visible en el modo AUTO.
+                // La "baja" de un auto (darDeBajaAutoEscuderia) es un borrado completo,
+                // no una desasociación. Si querés un botón de borrar auto,
+                // debería ser el 'bntBorrar' y no 'btnEliminarAsociacion'.
+                break;
+        }
+        } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEliminarAsociacionActionPerformed
 
     private void btnAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarActionPerformed
