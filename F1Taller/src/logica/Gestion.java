@@ -419,7 +419,9 @@ public class Gestion {
     
         // **CLAVE:** Vinculamos el registro a la Carrera. 
         // Asumimos que la clase AutoPiloto tiene un método setCarrera(Carrera c).
-        registroParticipacion.setCarrera(carrera); 
+        ArrayList<Carrera> listaCarrera = new ArrayList<>();
+        listaCarrera.add(carrera); 
+        registroParticipacion.setCarrera(listaCarrera);
     
         // 3. Reutilizamos la fecha de la carrera para marcar la asignación temporal
         registroParticipacion.setFechaAsignacion(carrera.getFechaRealizacion());
@@ -536,7 +538,7 @@ public class Gestion {
     
     
     
-    
+    /*
     
     public int calcularPuntosTotalesPiloto(Piloto piloto) {
     
@@ -554,7 +556,7 @@ public class Gestion {
     
         return totalPuntos;
     }
-    
+    */
     
     private class PilotoPuntuacion {
         Piloto piloto;
