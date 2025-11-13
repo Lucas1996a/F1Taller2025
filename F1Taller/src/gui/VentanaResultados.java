@@ -237,6 +237,8 @@ public class VentanaResultados extends javax.swing.JFrame {
         Object carrObj = comboCampoCarrera.getSelectedItem();
         String posStr = txtPosicion.getText().trim();
         String tiempoStr = txtTiempoFinal.getText().trim();
+        
+        boolean quiereMarcarVueltaRapida = checkVueltaRapida.isSelected();
 
         // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
         if (partObj == null || carrObj == null || posStr.isEmpty() || tiempoStr.isEmpty()) {
@@ -307,6 +309,25 @@ public class VentanaResultados extends javax.swing.JFrame {
                     throw new Exception("Error de Lógica: El piloto " + piloto.getApellido() + 
                                       " ya tiene un resultado registrado para esta carrera.");
                 }
+                
+                int posExistente = res.getPosicionFinal(); 
+
+                // Si es la misma carrera Y la posición ya está ocupada por OTRO piloto...
+                if (mismaCarrera && (posExistente == pos)) {
+                    throw new Exception("Error de Lógica: La posición " + pos + 
+                                        " ya está ocupada por el piloto " + res.getAutoPiloto().getPiloto().getApellido() +
+                                        " en esta carrera.");
+                }
+                
+                // Usamos el método que confirmaste: isVueltaRapida()
+                boolean otroYaLaTiene = res.isVueltaRapida(); 
+                
+                // Si [queremos marcar la vuelta rápida] Y [es la misma carrera] Y [otro ya la tiene]...
+                if (quiereMarcarVueltaRapida && mismaCarrera && otroYaLaTiene) {
+                    throw new Exception("Error de Lógica: La vuelta rápida para esta carrera" +
+                                        " ya fue registrada por el piloto " + res.getAutoPiloto().getPiloto().getApellido() + ".");
+                }
+                
             }
         }
     }
