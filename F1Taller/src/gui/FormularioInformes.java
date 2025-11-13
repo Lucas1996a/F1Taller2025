@@ -505,6 +505,7 @@ public class FormularioInformes extends javax.swing.JFrame {
     // 5. Crear y mostrar la ventana de salida
     SalidaInforme vSalida = new SalidaInforme(informe, this);
     vSalida.setVisible(true);
+    vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarAutosActionPerformed
 
     private void btnGenerarPilotoCircActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPilotoCircActionPerformed
@@ -533,6 +534,7 @@ public class FormularioInformes extends javax.swing.JFrame {
         // 6. Crear y mostrar la ventana de salida
         SalidaInforme vSalida = new SalidaInforme(informe, this);
         vSalida.setVisible(true); 
+        vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarPilotoCircActionPerformed
 
     private void btnGenerarCarreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarCarreraActionPerformed
@@ -560,6 +562,7 @@ public class FormularioInformes extends javax.swing.JFrame {
     
         // 7. Mostrar la ventana de informe
         vSalida.setVisible(true);
+        vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarCarreraActionPerformed
 
 
@@ -583,6 +586,7 @@ public class FormularioInformes extends javax.swing.JFrame {
         // 5. Crear y mostrar la ventana de salida
         SalidaInforme vSalida = new SalidaInforme(informe, this);
         vSalida.setVisible(true);
+        vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarMecActionPerformed
 
     private void comboCampoMecanicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoMecanicoActionPerformed
