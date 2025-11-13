@@ -488,64 +488,81 @@ public class FormularioInformes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarAutosActionPerformed
 
     private void btnGenerarPilotoCircActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPilotoCircActionPerformed
-       // 1. Obtener los OBJETOS seleccionados de los combos
-    // (Asegúrate de que los nombres de variables jComboPiloto y jComboCircuito sean correctos)
-    Object itemPiloto = comboCampoPiloto.getSelectedItem();
-    Object itemCircuito = comboCampoCircuito.getSelectedItem();
+        // 1. Obtener los OBJETOS seleccionados de los combos
+        // (Asegúrate de que los nombres de variables jComboPiloto y jComboCircuito sean correctos)
+        Object itemPiloto = comboCampoPiloto.getSelectedItem();
+        Object itemCircuito = comboCampoCircuito.getSelectedItem();
 
-    // 2. Validar que se haya seleccionado AMBOS
-    if (itemPiloto == null || itemCircuito == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un piloto Y un circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+        // 2. Validar que se haya seleccionado AMBOS
+        if (itemPiloto == null || itemCircuito == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un piloto Y un circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-    // 3. Convertir los 'Objects' a sus tipos correctos
-    Piloto pilotoSeleccionado = (Piloto) itemPiloto;
-    Circuito circuitoSeleccionado = (Circuito) itemCircuito;
+        // 3. Convertir los 'Objects' a sus tipos correctos
+        Piloto pilotoSeleccionado = (Piloto) itemPiloto;
+        Circuito circuitoSeleccionado = (Circuito) itemCircuito;
 
-    // 4. Extraer los Strings que el método de Gestion necesita
-    String dniPiloto = pilotoSeleccionado.getDni();
-    String nombreCircuito = circuitoSeleccionado.getNombre();
+        // 4. Extraer los Strings que el método de Gestion necesita
+        String dniPiloto = pilotoSeleccionado.getDni();
+        String nombreCircuito = circuitoSeleccionado.getNombre();
 
-    // 5. Llamar al método de Gestion que modificamos en el Paso 1
-    ArrayList<String> informe = this.gestion.generarInformePilotoEnCircuito(dniPiloto, nombreCircuito);
+        // 5. Llamar al método de Gestion que modificamos en el Paso 1
+        ArrayList<String> informe = this.gestion.generarInformePilotoEnCircuito(dniPiloto, nombreCircuito);
 
-    // 6. Crear y mostrar la ventana de salida
-    SalidaInforme vSalida = new SalidaInforme(informe, this);
-    vSalida.setVisible(true); 
+        // 6. Crear y mostrar la ventana de salida
+        SalidaInforme vSalida = new SalidaInforme(informe, this);
+        vSalida.setVisible(true); 
     }//GEN-LAST:event_btnGenerarPilotoCircActionPerformed
 
     private void btnGenerarCarreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarCarreraActionPerformed
         // 1. Obtener el *objeto* seleccionado del ComboBox
-    // El JComboBox devuelve un 'Object', que en tu caso es un 'Circuito'
-    Object itemSeleccionado = comboCampoCircuito.getSelectedItem(); // REEMPLAZÁ 'jComboCircuito' si se llama distinto
+        // El JComboBox devuelve un 'Object', que en tu caso es un 'Circuito'
+        Object itemSeleccionado = comboCampoCircuito.getSelectedItem(); // REEMPLAZÁ 'jComboCircuito' si se llama distinto
 
-    // 2. Validar que se haya seleccionado algo
-    if (itemSeleccionado == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "No se ha seleccionado ningún circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+        // 2. Validar que se haya seleccionado algo
+        if (itemSeleccionado == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se ha seleccionado ningún circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     
-    // 3. ¡ESTA ES LA CORRECCIÓN!
-    // En lugar de (String), convertimos el 'Object' a 'Circuito'
-    Circuito circuitoSeleccionado = (Circuito) itemSeleccionado;
+        // En lugar de (String), convertimos el 'Object' a 'Circuito'
+        Circuito circuitoSeleccionado = (Circuito) itemSeleccionado;
     
-    // 4. Ahora que tenemos el objeto, obtenemos el String (el nombre)
-    String nombreCircuito = circuitoSeleccionado.getNombre();
+        // 4. Ahora que tenemos el objeto, obtenemos el String (el nombre)
+        String nombreCircuito = circuitoSeleccionado.getNombre();
 
-    // 5. Llamar al método de Gestion (esta parte ya estaba bien)
-    ArrayList<String> informe = this.gestion.generarInformeCarrerasEnCircuito(nombreCircuito);
+        // 5. Llamar al método de Gestion (esta parte ya estaba bien)
+        ArrayList<String> informe = this.gestion.generarInformeCarrerasEnCircuito(nombreCircuito);
     
-    // 6. Crear la ventana de salida
-    SalidaInforme vSalida = new SalidaInforme(informe, this);
+        // 6. Crear la ventana de salida
+        SalidaInforme vSalida = new SalidaInforme(informe, this);
     
-    // 7. Mostrar la ventana de informe
-    vSalida.setVisible(true);
+        // 7. Mostrar la ventana de informe
+        vSalida.setVisible(true);
     }//GEN-LAST:event_btnGenerarCarreraActionPerformed
 
 
     private void btnGenerarMecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarMecActionPerformed
-        // TODO add your handling code here:
+        // 1. Obtener el OBJETO seleccionado del combo
+        // (Revisá que 'jComboEscuderia' sea el nombre de tu variable)
+        Object itemEscuderia = comboCampoEsc.getSelectedItem();
+
+        // 2. Validar que se haya seleccionado algo
+        if (itemEscuderia == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una escudería.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 3. Convertir el 'Object' a 'Escuderia' (como aprendimos en el error anterior)
+        Escuderia escuderiaSeleccionada = (Escuderia) itemEscuderia;
+
+        // 4. Llamar al NUEVO método de Gestion (el que creamos en el Paso 1)
+        ArrayList<String> informe = this.gestion.generarInformeMecanicos(escuderiaSeleccionada);
+
+        // 5. Crear y mostrar la ventana de salida
+        SalidaInforme vSalida = new SalidaInforme(informe, this);
+        vSalida.setVisible(true);
     }//GEN-LAST:event_btnGenerarMecActionPerformed
 
     private void comboCampoMecanicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoMecanicoActionPerformed
