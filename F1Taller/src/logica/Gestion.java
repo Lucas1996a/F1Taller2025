@@ -29,61 +29,66 @@ public class Gestion {
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
     public Gestion(){
-        // --- 1. CARGA DE ENTIDADES BÁSICAS (Nivel 1) ---
-    // (No dependen de nadie, o solo de Pais)
+    System.err.println("--- [DEBUG] INICIANDO CONSTRUCTOR DE GESTION ---");
+    
+    // --- 1. CARGA DE ENTIDADES BÁSICAS (Nivel 1) ---
     this.listaPais = gestorPersistencia.cargarPaises();
     if (this.listaPais == null) this.listaPais = new ArrayList<>();
-    
+    System.err.println("DEBUG (Gestion): 1. Paises cargados: " + this.listaPais.size());
+
     this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
     if (this.listaPilotos == null) this.listaPilotos = new ArrayList<>();
+    System.err.println("DEBUG (Gestion): 2. Pilotos cargados: " + this.listaPilotos.size());
 
     this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
     if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
+    System.err.println("DEBUG (Gestion): 3. Escuderías cargadas: " + this.listaEscuderias.size());
 
     this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
     if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
 
     // --- 2. CARGA DE ENTIDADES DEPENDIENTES (Nivel 2) ---
-    // (Dependen de las listas anteriores)
     
-    // Autos depende de Escuderias
     this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
     if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
+    System.err.println("DEBUG (Gestion): 4. Autos cargados: " + this.listaAutos.size());
     
-    // Carreras depende de Circuitos
     this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
     if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
     
-    // Mecanicos depende de Pais (para crearse)
     this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
     if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
 
     // --- 3. CARGA DE ASOCIACIONES (Nivel 3) ---
-    // (Dependen de que todo lo anterior esté cargado)
     
     this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
         this.listaPilotos, this.listaEscuderias);
     if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
+    System.err.println("DEBUG (Gestion): 5. Contratos Piloto-Escuderia cargados: " + this.listaPilotoEscuderias.size());
     
     this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(
         this.listaMecanicos, this.listaEscuderias);
     if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
 
+    // --- ¡ESTA ES LA LÍNEA CRÍTICA! ---
     this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(
         this.listaPilotos, this.listaAutos);
     if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
-
-    // --- 4. CARGA DE RESULTADOS (Nivel 4 - Depende de Nivel 3) ---
+    System.err.println("DEBUG (Gestion): 6. AutoPilotos cargados (el combo): " + this.listaAutoPilotos.size());
+    
+    // --- 4. CARGA DE RESULTADOS (Nivel 4) ---
     this.listaResultados = gestorPersistencia.cargarResultadosCarrera(
         this.listaAutoPilotos, this.listaCarreras);
     if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
+    System.err.println("DEBUG (Gestion): 7. Resultados cargados: " + this.listaResultados.size());
     
     // --- 5. LÓGICA POST-CARGA ---
-    // (Actualiza las stats de los pilotos basándose en los resultados cargados)
     for (ResultadoCarrera res : this.listaResultados) {
         resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
     }
-    }
+    
+    System.err.println("--- [DEBUG] CONSTRUCTOR DE GESTION FINALIZADO ---");
+}
     
     
     public void recargarResultados(){

@@ -363,20 +363,20 @@ public class GestorPersistencia {
 
         if (noExiste) {
             // Cabecera del archivo
-            bw.write("apellido_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "id_carrera" +
+            bw.write("dni_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "id_carrera" +
                      SEPARADOR + "posicion_final" + SEPARADOR + "tiempo_final" + SEPARADOR + "vuelta_rapida");
             bw.newLine();
         }
 
         // --- VINCULACIÓN ---
         // Sacamos las claves de los objetos
-        String apellidoPiloto = resultado.getAutoPiloto().getPiloto().getApellido();
+        String dniPiloto = resultado.getAutoPiloto().getPiloto().getDni();
         String modeloAuto = resultado.getAutoPiloto().getAuto().getModelo();
         // Usamos la fecha de la carrera como su ID único
         String idCarrera = resultado.getCarrera().getFechaRealizacion(); 
 
         // Escribimos la línea de datos
-        String linea = apellidoPiloto + SEPARADOR +
+        String linea = dniPiloto + SEPARADOR +
                        modeloAuto + SEPARADOR +
                        idCarrera + SEPARADOR +
                        resultado.getPosicionFinal() + SEPARADOR +
