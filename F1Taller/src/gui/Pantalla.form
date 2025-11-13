@@ -144,7 +144,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="70" y="40" width="280" height="410"/>
+                  <AbsoluteConstraints x="70" y="70" width="280" height="350"/>
                 </Constraint>
               </Constraints>
 
@@ -156,7 +156,6 @@
                       <Component id="btnGestionar" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnPlanificar" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnRegistrarResultados" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnCalcularPuntajes" alignment="1" max="32767" attributes="0"/>
                       <Component id="btnGenerarInformes1" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
@@ -172,8 +171,6 @@
                           <Component id="btnAsociarPilotos" min="-2" pref="48" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="btnRegistrarResultados" min="-2" pref="48" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="btnCalcularPuntajes" min="-2" pref="48" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="btnGenerarInformes1" min="-2" pref="48" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
@@ -225,15 +222,6 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRegistrarResultadosActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnCalcularPuntajes">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="CALCULAR PUNTAJES"/>
-                    <Property name="focusPainted" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCalcularPuntajesActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btnGenerarInformes1">
