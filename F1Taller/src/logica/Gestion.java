@@ -341,17 +341,6 @@ public class Gestion {
     }
     
     // ASOCIAR PILOTOS CON AUTO Y BORRAR LA ASOCIACION
-       
-    public void gestionarEscuderias(Piloto piloto, Auto auto, Mecanico mecanico, Escuderia escuderia, String desde, String hasta){
-       PilotoEscuderia nuevaAsociacion = new PilotoEscuderia();
-       nuevaAsociacion.setPiloto(piloto);
-       nuevaAsociacion.setEscuderia(escuderia);
-       nuevaAsociacion.setDesdeFecha(desde);
-       nuevaAsociacion.setHastaFecha(hasta);
-       
-       listaPilotoEscuderias.add(nuevaAsociacion);
-       System.out.println("Nueva Asociacion: " + piloto.getNombre() + piloto.getApellido() + " con Escudería " + escuderia.getNombre() + ". Auto a usar: " + auto.getModelo() + ". Mecánico asignado: " + mecanico.getNombre());  
-    }
     
     public void gestionarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
         AutoPiloto nuevaAsociacion = new AutoPiloto();
@@ -453,7 +442,7 @@ public class Gestion {
         piloto.agregarAutoPiloto(registroParticipacion);
         auto.agregarAutoPiloto(registroParticipacion);
         this.listaAutoPilotos.add(registroParticipacion);
-        
+        gestorPersistencia.guardarAutoPiloto(registroParticipacion);
     }
     
     public int calcularPuntos(int posicion) {
@@ -716,9 +705,9 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
             return informe;
         }
 
-        informe.add("===================");
+        informe.add("====================================");
         informe.add("HISTORIAL DE ESTADÍSTICAS INDIVIDUAL");
-        informe.add("===================");
+        informe.add("====================================");
    
         int victorias = piloto.getVictorias();
         int podios = piloto.getPodios();
@@ -727,19 +716,71 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
   
         int puntosTotales = calcularPuntosTotalesPiloto(piloto);
     
-        informe.add(String.format("Piloto: ", piloto.getNombre(), piloto.getApellido(), piloto.getNumeroCompetencia()));
+        informe.add(String.format("Piloto: %s %s (#%d)",
+                piloto.getNombre(),
+                piloto.getApellido(),
+                piloto.getNumeroCompetencia()));
                               
-        informe.add("---------------------");
+        informe.add("====================================");
     
-        informe.add(String.format(" Victorias: ", victorias));
-        informe.add(String.format("Podios: ", podios));
-        informe.add(String.format("Pole Positions: ", pole));
-        informe.add(String.format(" Vueltas Rápidas: ", vueltasRapidas));
-        informe.add(String.format(" Puntos Totales Acumulados: ", puntosTotales));
+        informe.add(String.format(" Victorias: %d", victorias));
+        informe.add(String.format(" Podios: %d", podios));
+        informe.add(String.format(" Pole Positions: %d", pole));
+        informe.add(String.format(" Vueltas Rápidas: %d", vueltasRapidas));
     
-        informe.add("=================");
+        informe.add("====================================");
+        informe.add(String.format(" Puntos Totales Acumulados: %d", puntosTotales));
+        informe.add("====================================");
         return informe;
     }
+   
+   
+   /**
+ * Genera un informe de historial (victorias, podios, etc.) 
+ * para TODOS los pilotos registrados.
+ * @return Un ArrayList de Strings con el informe completo.
+ */
+    public ArrayList<String> generarHistoricoTodosPilotos() {
+        ArrayList<String> informe = new ArrayList<>();
+    
+        informe.add("===================");
+        informe.add("HISTORIAL DE ESTADÍSTICAS - TODOS LOS PILOTOS");
+        informe.add("===================");
+
+        if (this.listaPilotos.isEmpty()) {
+            informe.add("No hay pilotos registrados para mostrar.");
+            return informe;
+        }
+
+        // 1. Recorremos la lista completa de pilotos
+        for (Piloto piloto : this.listaPilotos) {
+        
+            // 2. Para cada piloto, obtenemos sus estadísticas
+            int victorias = piloto.getVictorias();
+            int podios = piloto.getPodios();
+            int pole = piloto.getPolePosition();
+            int vueltasRapidas = piloto.getVueltasRapidas();
+        
+            // 3. Llamamos al método que ya tenés para calcular sus puntos
+            int puntosTotales = calcularPuntosTotalesPiloto(piloto);
+        
+            // 4. Agregamos los datos al informe
+            informe.add(String.format("\n--- Piloto: %s %s (#%d) ---", 
+                piloto.getNombre(), 
+                piloto.getApellido(), 
+                piloto.getNumeroCompetencia()
+            ));
+        
+        informe.add(String.format("  Victorias: %d", victorias));
+        informe.add(String.format("  Podios: %d", podios));
+        informe.add(String.format("  Pole Positions: %d", pole));
+        informe.add(String.format("  Vueltas Rápidas: %d", vueltasRapidas));
+        informe.add(String.format("  Puntos Totales: %d", puntosTotales));
+    }
+    
+    informe.add("\n=================");
+    return informe;
+}
   
    
    public Piloto buscarPilotoPorDNI(String dni) {
@@ -756,7 +797,7 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
     }
    
     
-   /*
+   
    public void generarInformeAutosPorEscuderia() {
     
         System.out.println("====================================");
@@ -803,49 +844,6 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
 
         System.out.println("\n=================================================");
     }
-   
-   */
-   
-   
-   /*
-   public void generarInformeMecanicosPorEscuderia() {
-    
-        System.out.println("===============================");
-        System.out.println("INFORME DE MECÁNICOS POR ESCUDERÍA Y ESPECIALIDAD");
-        System.out.println("================================");
-
-        if (this.listaEscuderias.isEmpty() || this.listaMecanicos.isEmpty()) {
-        System.out.println("No hay escuderías o mecánicos registrados para generar el informe.");
-        return;
-        }
-
-        for (Escuderia escuderia : this.listaEscuderias) {
-        
-            boolean tieneMecanicos = false;
-            System.out.printf("ESCUDERÍA: %s\n", escuderia.getNombre());
-            System.out.println("-------------------------------------------------");
-        
-            for (Mecanico mecanico : this.listaMecanicos) {
-            
-                if (mecanico.getEscuderias().contains(escuderia)) { 
-                    tieneMecanicos = true;
-               
-                    System.out.printf("   - Mecánico: %s %s (DNI: %s)\n", mecanico.getNombre(), mecanico.getApellido(), mecanico.getDni());
-                    System.out.printf("     Especialidad: %s | Experiencia: %d años\n", mecanico.getEspecialidad(), mecanico.getAñosExperiencia());
-                }
-            }
-        
-            if (!tieneMecanicos) {
-                System.out.println("Sin mecánicos asignados a esta escudería.");
-            }
-        }
-
-        System.out.println("\n=================================================");
-    }
-   
-   */
-   
-   
    
    public ArrayList<String> generarInformeMecanicos(Escuderia escuderia) {
     
@@ -904,46 +902,6 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
         return null;
     }
    
-   /*
-   public int contarParticipacionesPilotoEnCircuito(String dniPiloto, String nombreCircuito) {
-    
-        Piloto piloto = buscarPilotoPorDNI(dniPiloto);
-        Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
-        int contador = 0;
-
-        if (piloto == null) {
-            System.out.println("ERROR: Piloto con DNI " + dniPiloto + " no encontrado.");
-            return 0;
-        }
-        
-        if (circuito == null) {
-            System.out.println("ERROR: Circuito " + nombreCircuito + " no encontrado.");
-            return 0;
-        }
-
-        for (ResultadoCarrera resultado : this.listaResultados) {
-            Carrera carrera = resultado.getCarrera();
-        
-            if (carrera.getCircuito() == null) {
-                continue; 
-            }
-            
-            Piloto pilotoDelResultado = resultado.getAutoPiloto().getPiloto();
-        
-            boolean esMismoPiloto = (pilotoDelResultado.equals(piloto));
-            boolean esMismoCircuito = (carrera.getCircuito() == circuito);
-        
-            if (esMismoPiloto && esMismoCircuito) {
-                contador++;
-            }
-        }
-        
-        System.out.printf("\n El piloto %s %s ha corrido %d veces en el circuito %s.\n", piloto.getNombre(), piloto.getApellido(), contador, circuito.getNombre());
-                      
-        return contador;
-    }
-   */
-   
    public ArrayList<String> generarInformePilotoEnCircuito(String dniPiloto, String nombreCircuito) {
     
     ArrayList<String> informe = new ArrayList<>();
@@ -996,29 +954,6 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
 
     return informe;
 }
-   
-   /*
-   public int contarCarrerasEnCircuito(String nombreCircuito){
-    
-        Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
-        int contador = 0;
-
-        if (circuito == null) {
-            System.out.println("ERROR: Circuito con nombre '" + nombreCircuito + "' no encontrado.");
-            return 0;
-         }
-
-        for (Carrera carrera : this.listaCarreras) {
-        
-            if (carrera.getCircuito() == circuito) { 
-                contador++;
-            }
-        }
-
-        System.out.printf("\n El circuito %s ha albergado %d carreras planificadas.\n", circuito.getNombre(), contador);            
-        return contador;
-    }
-   */
    
    public ArrayList<String> generarInformeCarrerasEnCircuito(String nombreCircuito) {
     

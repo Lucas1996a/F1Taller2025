@@ -199,13 +199,13 @@ public class FormularioInformes extends javax.swing.JFrame {
         txtCampodF = new javax.swing.JTextField();
         txtCampohF = new javax.swing.JTextField();
         lblO = new javax.swing.JLabel();
+        btnPilotoDeterminado = new javax.swing.JButton();
+        btnGenerarCarrera = new javax.swing.JButton();
         btnGenerarRanking = new javax.swing.JButton();
         btnGenerarResultado = new javax.swing.JButton();
-        btnGenerarCarrera = new javax.swing.JButton();
         btnGenerarPilotoCirc = new javax.swing.JButton();
         btnGenerarAutos = new javax.swing.JButton();
         btnGenerarTodosPil = new javax.swing.JButton();
-        btnPilotoDeterminado = new javax.swing.JButton();
         btnGenerarMec = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         fondoimg = new javax.swing.JLabel();
@@ -284,6 +284,22 @@ public class FormularioInformes extends javax.swing.JFrame {
         lblO.setText("O");
         jPanel3.add(lblO, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 160, 20, 20));
 
+        btnPilotoDeterminado.setText("REALIZAR DETERMINADO");
+        btnPilotoDeterminado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPilotoDeterminadoActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnPilotoDeterminado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 190, 30));
+
+        btnGenerarCarrera.setText("GENERAR INFORME");
+        btnGenerarCarrera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarCarreraActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnGenerarCarrera, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 160, 30));
+
         btnGenerarRanking.setText("GENERAR RANKING");
         btnGenerarRanking.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -299,14 +315,6 @@ public class FormularioInformes extends javax.swing.JFrame {
             }
         });
         jPanel3.add(btnGenerarResultado, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 160, 30));
-
-        btnGenerarCarrera.setText("GENERAR INFORME");
-        btnGenerarCarrera.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGenerarCarreraActionPerformed(evt);
-            }
-        });
-        jPanel3.add(btnGenerarCarrera, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 160, 30));
 
         btnGenerarPilotoCirc.setText("GENERAR INFORME");
         btnGenerarPilotoCirc.addActionListener(new java.awt.event.ActionListener() {
@@ -331,14 +339,6 @@ public class FormularioInformes extends javax.swing.JFrame {
             }
         });
         jPanel3.add(btnGenerarTodosPil, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, 160, 30));
-
-        btnPilotoDeterminado.setText("REALIZAR DETERMINADO");
-        btnPilotoDeterminado.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPilotoDeterminadoActionPerformed(evt);
-            }
-        });
-        jPanel3.add(btnPilotoDeterminado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 240, 190, 30));
 
         btnGenerarMec.setText("GENERAR INFORME");
         btnGenerarMec.addActionListener(new java.awt.event.ActionListener() {
@@ -447,17 +447,19 @@ public class FormularioInformes extends javax.swing.JFrame {
 
     private void btnGenerarTodosPilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarTodosPilActionPerformed
         try {
-        // Llama al método de Gestion (aún no lo creamos)
-        //ArrayList<String> informe = this.gestion.generarHistoricoTodosPilotos();
+        // 1. Llama al NUEVO método de Gestion (el que acabamos de crear)
+        ArrayList<String> informe = this.gestion.generarHistoricoTodosPilotos();
         
-        // (Por ahora, usamos el que ya tenés para probar)
-        ArrayList<String> informe = new ArrayList<>();
-        informe.add("INFORME DE TODOS LOS PILOTOS (EN CONSTRUCCIÓN)");
-        
+        // 2. Crea la ventana de salida
+        // Le pasamos el informe (ArrayList<String>) y 'this' (el FormularioInformes)
         SalidaInforme vSalida = new SalidaInforme(informe, this);
+        
+        // 3. Muestra la ventana de salida
         vSalida.setVisible(true);
         vSalida.setLocationRelativeTo(null);
-        this.dispose();
+        
+        // 4. Cierra esta ventana (FormularioInformes)
+        this.dispose(); 
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error al generar el informe: " + e.getMessage());
