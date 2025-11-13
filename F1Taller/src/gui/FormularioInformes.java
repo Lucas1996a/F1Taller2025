@@ -383,36 +383,33 @@ public class FormularioInformes extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGenerarResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarResultadoActionPerformed
-     try {
-        // 1. Leemos las fechas de los JTextFields
-        String fechaInicio = txtCampodF.getText(); // Asumo que se llama txtFechaInicio
-        String fechaFin = txtCampohF.getText();       // Asumo que se llama txtFechaFin
+        try {
+           // 1. ¡NUEVA VALIDACIÓN!
+           // Llama al método que acabamos de crear.
+           // Si algo está mal, saltará directamente al 'catch'.
+           validarFormularioResultados();
 
-        // 2. Validación
-        if (fechaInicio.isEmpty() || fechaFin.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar una fecha de inicio y una fecha de fin.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        // (Opcional: validación de formato AAAA-MM-DD)
-//        if (!fechaInicio.matches("\\d{4}-\\d{2}-\\d{2}") || !fechaFin.matches("\\d{4}-\\d{2}-\\d{2}")) {
-//             JOptionPane.showMessageDialog(this, "El formato debe ser AAAA-MM-DD (ej: 2025-03-05).", "Error de Formato", JOptionPane.ERROR_MESSAGE);
-//             return;
-//        }
+           // 2. Leemos las fechas (ahora sabemos que son válidas)
+           String fechaInicio = txtCampodF.getText().trim();
+           String fechaFin = txtCampohF.getText().trim();
 
-        // 3. Llamamos al método de la lógica
-        ArrayList<String> informe = this.gestion.generarInformeResultadosPorFecha(fechaInicio, fechaFin);
+           // 3. Llamamos al método de la lógica (esto ya estaba bien)
+           ArrayList<String> informe = this.gestion.generarInformeResultadosPorFecha(fechaInicio, fechaFin);
 
-        // 4. Creamos y mostramos la nueva ventana de resultados
-        SalidaInforme vSalida = new SalidaInforme(informe, this); // Le pasamos el informe y esta ventana
-        vSalida.setVisible(true);
-        vSalida.setLocationRelativeTo(null);
-        
-        this.dispose(); // Ocultamos esta ventana (VentanaInformes)
+           // 4. Creamos y mostramos la nueva ventana de resultados
+           SalidaInforme vSalida = new SalidaInforme(informe, this); // Le pasamos el informe y esta ventana
+           vSalida.setVisible(true);
+           vSalida.setLocationRelativeTo(null);
 
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al generar el informe: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
+           this.dispose(); // Ocultamos esta ventana (FormularioInformes)
+
+       } catch (Exception e) {
+           // 5. El 'catch' ahora atrapa todos nuestros errores de validación
+           JOptionPane.showMessageDialog(this, 
+               "Error al generar el informe: " + e.getMessage(), 
+               "Error de Validación", 
+               JOptionPane.ERROR_MESSAGE);
+       }
         
     }//GEN-LAST:event_btnGenerarResultadoActionPerformed
     
@@ -660,13 +657,70 @@ public class FormularioInformes extends javax.swing.JFrame {
     }
     
     
+    //VALIDACIONES
+            
+    private void validarFormularioResultados() throws Exception {
     
-    
-    
+        // --- 1. LECTURA DE DATOS ---
+        String fechaInicio = txtCampodF.getText().trim();
+        String fechaFin = txtCampohF.getText().trim();
+
+        // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (fechaInicio.isEmpty() || fechaFin.isEmpty()) {
+            throw new Exception("Debe ingresar una 'Fecha Desde' y una 'Fecha Hasta'.");
+        }
+
+        // --- 3. VALIDACIÓN DE FORMATO (YYYYMMDD) ---
+        // (Regla: 8 caracteres numéricos)
+        if (!fechaInicio.matches("\\d{8}")) {
+            throw new Exception("La 'Fecha Desde' debe tener 8 números en formato YYYYMMDD (ej: 20250101).");
+        }
+        if (!fechaFin.matches("\\d{8}")) {
+            throw new Exception("La 'Fecha Hasta' debe tener 8 números en formato YYYYMMDD (ej: 20251231).");
+        }
+
+        // --- 4. VALIDACIÓN DE RANGO (Que 'Desde' no sea mayor que 'Hasta') ---
+        // (Tu regla de que 20250204 no puede ser mayor que 20250115)
+        // String.compareTo() funciona perfecto para formato YYYYMMDD
+        if (fechaInicio.compareTo(fechaFin) > 0) {
+            throw new Exception("Error de Rango: La 'Fecha Desde' (" + fechaInicio + 
+                              ") no puede ser posterior a la 'Fecha Hasta' (" + fechaFin + ").");
+        }
+
+        // --- 5. VALIDACIÓN DE FECHAS "REALES" (Mes/Día) ---
+        // Validamos la 'Fecha Desde'
+        try {
+            int mes = Integer.parseInt(fechaInicio.substring(4, 6)); // (MM)
+            int dia = Integer.parseInt(fechaInicio.substring(6, 8)); // (DD)
+
+            if (mes < 1 || mes > 12) {
+                throw new Exception("Mes inválido en 'Fecha Desde'.");
+            }
+            if (dia < 1 || dia > 31) {
+                throw new Exception("Día inválido en 'Fecha Desde'.");
+            }
+        } catch (Exception e) {
+            throw new Exception("La 'Fecha Desde' (" + fechaInicio + ") no es una fecha válida (Mes 01-12, Día 01-31).");
+        }
+
+        // Validamos la 'Fecha Hasta'
+        try {
+            int mes = Integer.parseInt(fechaFin.substring(4, 6)); // (MM)
+            int dia = Integer.parseInt(fechaFin.substring(6, 8)); // (DD)
+
+            if (mes < 1 || mes > 12) {
+                throw new Exception("Mes inválido en 'Fecha Hasta'.");
+            }
+            if (dia < 1 || dia > 31) {
+                throw new Exception("Día inválido en 'Fecha Hasta'.");
+            }
+        } catch (Exception e) {
+            throw new Exception("La 'Fecha Hasta' (" + fechaFin + ") no es una fecha válida (Mes 01-12, Día 01-31).");
+        }
+    }
     
     
 
-    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
