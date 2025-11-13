@@ -806,7 +806,7 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
    
    */
    
-   
+   /*
    
    public void generarInformeMecanicosPorEscuderia() {
     
@@ -843,7 +843,7 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
         System.out.println("\n=================================================");
     }
    
-   
+   */
    
    public Circuito buscarCircuitoPorNombre(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
@@ -898,7 +898,7 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
         return contador;
     }
    
-   
+   /*
    public int contarCarrerasEnCircuito(String nombreCircuito){
     
         Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
@@ -919,16 +919,51 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
         System.out.printf("\n El circuito %s ha albergado %d carreras planificadas.\n", circuito.getNombre(), contador);            
         return contador;
     }
+   */
    
+   public ArrayList<String> generarInformeCarrerasEnCircuito(String nombreCircuito) {
+    
+    ArrayList<String> informe = new ArrayList<>();
+    Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
+    int contador = 0;
+
+    // Preparamos los encabezados del informe
+    informe.add("====================");
+    informe.add("CANTIDAD DE CARRERAS POR CIRCUITO");
+    informe.add("====================");
+
+    // Validamos si encontramos el circuito
+    if (circuito == null) {
+        informe.add("ERROR: Circuito con nombre '" + nombreCircuito + "' no encontrado.");
+        return informe;
+    }
+
+    // Contamos las carreras
+    for (Carrera carrera : this.listaCarreras) {
+        
+        // ¡CORRECCIÓN IMPORTANTE!
+        // Usamos .equals() para comparar objetos, no '=='
+        // También validamos que el circuito de la carrera no sea null
+        if (carrera.getCircuito() != null && carrera.getCircuito().equals(circuito)) {
+            contador++;
+        }
+    }
+    
+    // Agregamos los resultados al informe
+    informe.add("Circuito: " + circuito.getNombre());
+    informe.add("País: " + circuito.getPais().getDescripcion());
+    informe.add("Longitud: " + circuito.getLongitud() + "km");
+    informe.add("--------------------");
+    informe.add("Total de carreras planificadas: " + contador);
+
+    return informe;
+}
     
    
    
  
    
-   
-   
-   
-   
+  
    
    
    

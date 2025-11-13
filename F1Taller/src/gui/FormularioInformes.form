@@ -93,6 +93,9 @@
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JComboBox" name="comboCampoEsc">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboCampoEscActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Escuderia&gt;"/>
               </AuxValues>
@@ -103,6 +106,9 @@
               </Constraints>
             </Component>
             <Component class="javax.swing.JComboBox" name="comboCampoDeterminado">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboCampoDeterminadoActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Piloto&gt;"/>
               </AuxValues>
@@ -123,6 +129,9 @@
               </Constraints>
             </Component>
             <Component class="javax.swing.JComboBox" name="comboCampoMecanico">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboCampoMecanicoActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Mecanico&gt;"/>
               </AuxValues>
