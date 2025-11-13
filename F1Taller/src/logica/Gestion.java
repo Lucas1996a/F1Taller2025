@@ -218,6 +218,10 @@ public class Gestion {
         return this.listaAutoPilotos;
     }
     
+    public ArrayList<ResultadoCarrera> getListaResultados(){
+         return this.listaResultados;
+    }
+    
     // BORRAR ESCUDERIAS
     
     public void borrarEscuderia(Escuderia escuderiaABorrar) throws Exception {

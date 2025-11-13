@@ -167,32 +167,23 @@ public class VentanaResultados extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        try {
-            // 1. Leer datos
-            AutoPiloto participante = (AutoPiloto) comboCampoPiloto.getSelectedItem();
-            Carrera carrera = (Carrera) comboCampoCarrera.getSelectedItem();
-            String posStr = txtPosicion.getText();
-            String tiempo = txtTiempoFinal.getText();
-            boolean vueltaRapida = checkVueltaRapida.isSelected(); // Lee el checkbox
+            try {
+            // 1. Llama a todas las validaciones
+            // (Si algo falla, salta directamente al 'catch')
+            validarFormularioResultados();
 
-            // 2. Validación
-            if (participante == null || carrera == null || posStr.isEmpty() || tiempo.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar Participante, Carrera y completar Posición y Tiempo.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            // 2. Si las validaciones pasaron, llama a guardar
+            guardarResultado();
 
-            // 3. Conversión
-            int posicion = Integer.parseInt(posStr);
-
-            // 4. Llamar a la lógica (la firma corregida)
-            this.gestion.registrarResultadosCarrera(carrera, participante, posicion, tiempo, vueltaRapida);
-
+            // 3. Muestra el mensaje de éxito
             JOptionPane.showMessageDialog(this, "Resultado de carrera guardado con éxito.");
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "La 'Posición Final' debe ser un número válido.");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
+            // 4. Muestra CUALQUIER error de validación que haya ocurrido
+            JOptionPane.showMessageDialog(this, 
+                "Error al guardar: " + e.getMessage(), // Muestra el mensaje de nuestra validación
+                "Error de Validación", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
     
@@ -234,6 +225,110 @@ public class VentanaResultados extends javax.swing.JFrame {
         if (lista != null) {
             for (Carrera c : lista) comboCampoCarrera.addItem(c);
         }
+    }
+    
+    
+    //VALIDACIONES
+    
+    private void validarFormularioResultados() throws Exception {
+    
+        // --- 1. LECTURA DE DATOS ---
+        Object partObj = comboCampoPiloto.getSelectedItem();
+        Object carrObj = comboCampoCarrera.getSelectedItem();
+        String posStr = txtPosicion.getText().trim();
+        String tiempoStr = txtTiempoFinal.getText().trim();
+
+        // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (partObj == null || carrObj == null || posStr.isEmpty() || tiempoStr.isEmpty()) {
+            throw new Exception("Debe seleccionar un Participante, una Carrera y completar la Posición y el Tiempo.");
+        }
+
+        // --- 3. VALIDACIÓN DE POSICIÓN (Reglas: 1-20, solo números) ---
+        int pos;
+        try {
+            pos = Integer.parseInt(posStr);
+        } catch (NumberFormatException e) {
+            throw new Exception("La 'Posición final' debe ser un número (no se permiten letras).");
+        }
+
+        // ¡Tu validación de 1 a 20!
+        if (pos < 1 || pos > 20) {
+            throw new Exception("La 'Posición final' debe ser un número entre 1 y 20.");
+        }
+
+        // --- 4. VALIDACIÓN DE TIEMPO (Reglas: >1h, <3h, formato HHMMSS) ---
+        // (Asumo el formato HHMMSS, ej: 012545 para 1h 25m 45s)
+        if (!tiempoStr.matches("\\d{6}")) {
+            throw new Exception("El 'Tiempo Final' debe tener 6 números en formato HHMMSS (ej: 012545).");
+        }
+
+        try {
+            int h = Integer.parseInt(tiempoStr.substring(0, 2)); // HH
+            int m = Integer.parseInt(tiempoStr.substring(2, 4)); // MM
+            int s = Integer.parseInt(tiempoStr.substring(4, 6)); // SS
+
+            // ¡Tu validación de >1h y <3h!
+            if (h < 1) { // 00:59:59 no es válido
+                throw new Exception("El tiempo debe ser mayor a 1 hora (HH debe ser 01 o 02).");
+            }
+            if (h >= 3) { // 03:00:00 no es válido
+                throw new Exception("El tiempo debe ser menor a 3 horas (HH debe ser 01 o 02).");
+            }
+
+            // Validación lógica de minutos y segundos
+            if (m > 59 || s > 59) {
+                throw new Exception("Los Minutos (MM) o Segundos (SS) deben estar entre 00 y 59.");
+            }
+
+        } catch (Exception e) {
+            // Si fallan los substrings o las validaciones de rango
+            throw new Exception("El formato del Tiempo (HHMMSS) es inválido.");
+        }
+
+        // --- 5. VALIDACIÓN DE DUPLICADOS (Tu regla principal) ---
+        // "que no se pueda registrar si el mismo participante corrio la carrera dos veces"
+
+        AutoPiloto autoPiloto = (AutoPiloto) partObj;
+        Carrera carrera = (Carrera) carrObj;
+        Piloto piloto = autoPiloto.getPiloto(); // El piloto real
+
+        // Traemos la lista de resultados que ya existen
+        ArrayList<ResultadoCarrera> resultados = this.gestion.getListaResultados();
+
+        if (resultados != null) {
+            for (ResultadoCarrera res : resultados) {
+
+                // Comparamos el piloto y la carrera de CADA resultado existente
+                boolean mismoPiloto = res.getAutoPiloto().getPiloto().equals(piloto);
+                boolean mismaCarrera = res.getCarrera().equals(carrera);
+
+                // Si encontramos un resultado donde el piloto Y la carrera coinciden...
+                if (mismoPiloto && mismaCarrera) {
+                    throw new Exception("Error de Lógica: El piloto " + piloto.getApellido() + 
+                                      " ya tiene un resultado registrado para esta carrera.");
+                }
+            }
+        }
+    }
+    
+    
+    private void guardarResultado() {
+        // 1. Leemos los datos (ya sabemos que son válidos)
+        AutoPiloto participante = (AutoPiloto) comboCampoPiloto.getSelectedItem();
+        Carrera carrera = (Carrera) comboCampoCarrera.getSelectedItem();
+        int posicion = Integer.parseInt(txtPosicion.getText()); // Es seguro
+        String tiempo = txtTiempoFinal.getText();
+        boolean vueltaRapida = checkVueltaRapida.isSelected(); 
+
+        // 2. Llamamos a la lógica de negocio
+        this.gestion.registrarResultadosCarrera(carrera, participante, posicion, tiempo, vueltaRapida);
+
+        // 3. Limpiamos los campos para el próximo registro
+        txtPosicion.setText("");
+        txtTiempoFinal.setText("");
+        checkVueltaRapida.setSelected(false);
+        if (comboCampoPiloto.getItemCount() > 0) comboCampoPiloto.setSelectedIndex(0);
+        if (comboCampoCarrera.getItemCount() > 0) comboCampoCarrera.setSelectedIndex(0);
     }
 
     
