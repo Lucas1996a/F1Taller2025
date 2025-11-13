@@ -44,7 +44,6 @@ public class Pantalla extends javax.swing.JFrame {
         btnPlanificar = new javax.swing.JButton();
         btnAsociarPilotos = new javax.swing.JButton();
         btnRegistrarResultados = new javax.swing.JButton();
-        btnCalcularPuntajes = new javax.swing.JButton();
         btnGenerarInformes1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
@@ -127,14 +126,6 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
-        btnCalcularPuntajes.setText("CALCULAR PUNTAJES");
-        btnCalcularPuntajes.setFocusPainted(false);
-        btnCalcularPuntajes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCalcularPuntajesActionPerformed(evt);
-            }
-        });
-
         btnGenerarInformes1.setText("GENERAR INFORMES");
         btnGenerarInformes1.setFocusPainted(false);
         btnGenerarInformes1.addActionListener(new java.awt.event.ActionListener() {
@@ -152,7 +143,6 @@ public class Pantalla extends javax.swing.JFrame {
             .addComponent(btnGestionar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnPlanificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnRegistrarResultados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnCalcularPuntajes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGenerarInformes1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
@@ -168,14 +158,12 @@ public class Pantalla extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRegistrarResultados, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCalcularPuntajes, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnGenerarInformes1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel4);
-        jPanel4.setBounds(70, 40, 280, 410);
+        jPanel4.setBounds(70, 70, 280, 350);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/2483195.jpg"))); // NOI18N
         jLabel1.setPreferredSize(new java.awt.Dimension(1300, 600));
@@ -235,12 +223,11 @@ public class Pantalla extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAsociarPilotosActionPerformed
 
     private void btnGenerarInformes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarInformes1ActionPerformed
-        // TODO add your handling code here:
+        VentanaInformes vInfo = new VentanaInformes(this.gestion, this);
+        vInfo.setVisible(true);
+        vInfo.setLocationRelativeTo(null);
+        this.dispose();
     }//GEN-LAST:event_btnGenerarInformes1ActionPerformed
-
-    private void btnCalcularPuntajesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularPuntajesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCalcularPuntajesActionPerformed
 
     private void btnRegistrarResultadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarResultadosActionPerformed
     VentanaResultados vPar = new VentanaResultados(this.gestion, this);
@@ -255,7 +242,6 @@ public class Pantalla extends javax.swing.JFrame {
     private javax.swing.JLabel asfalto;
     private javax.swing.JPanel bg;
     private javax.swing.JButton btnAsociarPilotos;
-    private javax.swing.JButton btnCalcularPuntajes;
     private javax.swing.JButton btnGenerarInformes1;
     private javax.swing.JButton btnGestionar;
     private javax.swing.JButton btnPlanificar;
