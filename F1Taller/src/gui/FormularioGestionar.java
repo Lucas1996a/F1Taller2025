@@ -369,20 +369,8 @@ public class FormularioGestionar extends javax.swing.JFrame {
             
             // --- FLUJO PILOTO (N-a-N con Fechas) ---
             case "PILOTO": {
-                // 1. Leer datos
-                Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
-                Escuderia escPil = (Escuderia) comboCampoEsc.getSelectedItem();
-                String desde = txtCampodF.getText();
-                String hasta = txtCampohF.getText();
-                
-                // 2. Validar
-                if (pil == null || escPil == null || desde.isEmpty() || hasta.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Debe seleccionar Piloto, Escudería y completar ambas fechas.", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
-                }
-                
-                // 3. Llamar a la lógica
-                gestion.gestionarPilotoEscuderia(pil, escPil, desde, hasta);
+                validarAsociacionPiloto();
+                guardarAsociacionPiloto();
                 JOptionPane.showMessageDialog(this, "Contrato de Piloto guardado.");
                 break;
             }
@@ -477,9 +465,147 @@ public class FormularioGestionar extends javax.swing.JFrame {
     if (lista != null) {
         for (Mecanico m : lista) comboCampoMecanico.addItem(m);
     }
-}
+    
+    }
+    /**
+     * Ejecuta las 5 reglas de validación para la asociación Piloto-Escudería.
+     * Lee los datos de los combos y textfields.
+     * Lanza una Excepción si alguna regla no se cumple.
+     */
+    private void validarAsociacionPiloto() throws Exception {
+        // 1. LEER DATOS
+        Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
+        Escuderia escSel = (Escuderia) comboCampoEsc.getSelectedItem();
+        String desdeStr = txtCampodF.getText().trim();
+        String hastaStr = txtCampohF.getText().trim();
+        
+        // 2. VALIDAR CAMPOS BÁSICOS
+        if (pil == null || escSel == null) {
+             throw new Exception("Debe seleccionar un Piloto y una Escudería.");
+        }
+        if (desdeStr.isEmpty() || hastaStr.isEmpty()) {
+            throw new Exception("Debe completar ambas fechas (Desde y Hasta).");
+        }
+        
+        // 3. VALIDAR FORMATO DE FECHAS (Reglas 3 y 4)
+        validarFechaComoString(desdeStr, "Fecha Desde"); 
+        validarFechaComoString(hastaStr, "Fecha Hasta"); 
+
+        // 4. VALIDAR ORDEN DE FECHAS (Regla 5)
+        if (desdeStr.compareTo(hastaStr) >= 0) {
+            throw new Exception("La 'Fecha Desde' debe ser anterior a la 'Fecha Hasta'.");
+        }
+        
+        // 5. VALIDAR LÓGICA DE NEGOCIO (Reglas 1 y 2)
+        ArrayList<PilotoEscuderia> contratosExistentes = (ArrayList<PilotoEscuderia>) pil.getPilotoEscuderias();
+        int contadorMismaEscuderia = 0;
+
+        for (PilotoEscuderia contrato : contratosExistentes) {
+            String contDesde = contrato.getDesdeFecha();
+            String contHasta = contrato.getHastaFecha();
+
+            // --- REGLA 1: Contar historial en esta escudería ---
+            // (Esto sigue siendo válido para el límite histórico de 2 contratos)
+            if (contrato.getEscuderia().equals(escSel)) {
+                contadorMismaEscuderia++;
+            }
+
+            // --- REGLA 2 (CORREGIDA): Validar CUALQUIER traslape de fechas ---
+            boolean hayTraslape = hayTraslapeDeStrings(desdeStr, hastaStr, contDesde, contHasta);
+
+            // Si hay traslape, es un error. No importa con qué escudería sea.
+            if (hayTraslape) {
+                throw new Exception("Conflicto de contrato: El período ingresado (" + desdeStr + " al " + hastaStr + ") " +
+                                    "se superpone con un contrato existente (" + contDesde + " al " + contHasta + ") " +
+                                    "con la escudería '" + contrato.getEscuderia().getNombre() + "'.");
+            }
+        }
+
+        // 6. Verificación final de Regla 1 (límite histórico)
+        if (contadorMismaEscuderia >= 2) {
+            throw new Exception("Límite alcanzado: El piloto '" + pil.getApellido() + 
+                                "' ya ha sido asignado 2 veces a la escudería '" + 
+                                escSel.getNombre() + "' (límite histórico).");
+        }
+        
+        // --- SI LLEGA HASTA AQUÍ, ES VÁLIDO ---
+    }
+
+    /**
+     * Guarda la asociación Piloto-Escudería.
+     * Lee los datos de la GUI y los pasa a la capa de lógica.
+     * Se llama solo después de que 'validarAsociacionPiloto' fue exitoso.
+     */
+    
+    /**
+     * Valida manualmente un String YYYYMMDD (Reglas 3 y 4).
+     * No usa LocalDate. No valida años bisiestos (como pediste).
+     */
+    private void validarFechaComoString(String fechaStr, String nombreCampo) throws Exception {
+        
+        // REGLA 3: Formato numérico YYYYMMDD
+        if (!fechaStr.matches("\\d{8}")) {
+            throw new Exception("El campo '" + nombreCampo + "' debe tener 8 números (YYYYMMDD).");
+        }
+
+        try {
+            int anio = Integer.parseInt(fechaStr.substring(0, 4));
+            int mes = Integer.parseInt(fechaStr.substring(4, 6));
+            int dia = Integer.parseInt(fechaStr.substring(6, 8));
+
+            // Días por mes (Índice 0 es dummy, 1=Enero, 2=Feb, etc.)
+            // No manejamos bisiestos (Feb siempre 28)
+            int[] diasEnMes = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+            if (anio < 1900 || anio > 2100) {
+                 throw new Exception("El año en '" + nombreCampo + "' debe ser razonable (ej: 1900-2100).");
+            }
+
+            // REGLA 4: Validar mes y día
+            if (mes < 1 || mes > 12) {
+                throw new Exception("El mes en '" + nombreCampo + "' debe estar entre 01 y 12.");
+            }
+            if (dia < 1 || dia > diasEnMes[mes]) {
+                throw new Exception("El día en '" + nombreCampo + "' (" + dia + ") no es válido para el mes " + mes + ".");
+            }
+            
+        } catch (Exception e) {
+            // Si algo falla (ej: el substring, o un error ya lanzado)
+            throw new Exception("Fecha '" + nombreCampo + "' no válida: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Comprueba si dos rangos de fechas (como Strings YYYYMMDD) se traslapan.
+     * Fórmula: (InicioA <= FinB) Y (FinA >= InicioB)
+     */
+    private boolean hayTraslapeDeStrings(String inicioA, String finA, String inicioB, String finB) {
+        // Usamos compareTo. Devuelve 0 (igual), <0 (menor), >0 (mayor)
+        boolean inicioAMenorOIgualFinB = inicioA.compareTo(finB) <= 0;
+        boolean finAMayorOIgualInicioB = finA.compareTo(inicioB) >= 0;
+        
+        return inicioAMenorOIgualFinB && finAMayorOIgualInicioB;
+    }
     
     
+    
+    private void guardarAsociacionPiloto() {
+        // 1. Leer datos (ya sabemos que son válidos)
+        Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
+        Escuderia escSel = (Escuderia) comboCampoEsc.getSelectedItem();
+        String desdeStr = txtCampodF.getText().trim();
+        String hastaStr = txtCampohF.getText().trim();
+        
+        // 2. Llamar a la lógica
+        gestion.gestionarPilotoEscuderia(pil, escSel, desdeStr, hastaStr);
+    }
+    
+    
+    
+    
+
+    
+
     
 
     
