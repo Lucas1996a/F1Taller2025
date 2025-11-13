@@ -806,8 +806,8 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
    
    */
    
-   /*
    
+   /*
    public void generarInformeMecanicosPorEscuderia() {
     
         System.out.println("===============================");
@@ -844,6 +844,51 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
     }
    
    */
+   
+   
+   
+   public ArrayList<String> generarInformeMecanicos(Escuderia escuderia) {
+    
+     ArrayList<String> informe = new ArrayList<>();
+    
+        // Encabezados del informe
+        informe.add("====================");
+        informe.add("INFORME DE MECÁNICOS");
+        informe.add("Escudería: " + escuderia.getNombre());
+        informe.add("====================");
+
+        boolean tieneMecanicos = false;
+    
+        // Iteramos sobre la lista de CONTRATOS/ASOCIACIONES (MecanicoEscuderia)
+        // Esta es la forma más eficiente de encontrar la relación
+        for (MecanicoEscuderia asociacion : this.listaMecanicoEscuderias) {
+        
+            // Verificamos si esta asociación pertenece a la escudería que buscamos
+            if (asociacion.getEscuderia().equals(escuderia)) {
+            
+                tieneMecanicos = true;
+            
+                // Si coincide, obtenemos el mecánico de esa asociación
+                Mecanico mecanico = asociacion.getMecanico();
+            
+                // Formateamos los datos del mecánico para el informe
+                informe.add(String.format("- Mecánico: %s %s", mecanico.getNombre(), mecanico.getApellido()));
+                informe.add(String.format("  Especialidad: %s", mecanico.getEspecialidad()));
+                informe.add(String.format("  Experiencia: %d años", mecanico.getAñosExperiencia()));
+                informe.add("--------------------");
+            }
+        }
+
+        // Si, después de recorrer todo, no encontramos mecánicos para esa escudería
+        if (!tieneMecanicos) {
+            informe.add("No hay mecánicos asignados a esta escudería.");
+        }
+    
+        return informe;
+    }
+   
+   
+   
    
    public Circuito buscarCircuitoPorNombre(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
