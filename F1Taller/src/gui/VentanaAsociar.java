@@ -141,37 +141,97 @@ public class VentanaAsociar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarActionPerformed
-        try{
-             Auto auto = (Auto) comboCampoAuto.getSelectedItem(); 
-             Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
-             String fecAs = txtFecha.getText();
-             if (pil == null || auto == null || fecAs.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar todos los campos y completar la fecha.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+            try {
+            // --- 1. LECTURA DE DATOS ---
+            Auto auto = (Auto) comboCampoAuto.getSelectedItem();
+            Piloto pil = (Piloto) comboCampoPiloto.getSelectedItem();
+            String fecAs = txtFecha.getText().trim(); // Usamos .trim()
+
+            // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+            // (Esto ya lo tenías, un poco modificado el mensaje)
+            if (pil == null || auto == null || fecAs.isEmpty()) {
+                throw new Exception("Debe seleccionar un Piloto, un Auto y completar la Fecha.");
             }
-             
+
+            // --- 3. ¡NUEVA VALIDACIÓN DE FECHA! (Formato YYYYMMDD y Lógica) ---
+            if (!fecAs.matches("\\d{8}")) {
+                throw new Exception("La 'Fecha' debe tener 8 números en formato YYYYMMDD (ej: 20251026).");
+            }
+            try {
+                int mes = Integer.parseInt(fecAs.substring(4, 6)); // (MM)
+                int dia = Integer.parseInt(fecAs.substring(6, 8)); // (DD)
+
+                if (mes < 1 || mes > 12) {
+                    throw new Exception("El Mes (MM) en la fecha debe estar entre 01 y 12.");
+                }
+                if (dia < 1 || dia > 31) {
+                    throw new Exception("El Día (DD) en la fecha debe estar entre 01 y 31.");
+                }
+            } catch (NumberFormatException e) {
+                throw new Exception("La fecha '" + fecAs + "' tiene un formato numérico inválido.");
+            }
+            // --- (Fin de validación de fecha) ---
+
+
+            // --- 4. ¡NUEVA VALIDACIÓN LÓGICA (PILOTO YA ASOCIADO)! ---
+            // "Un piloto no puede estar asociado a un auto distinto del que ya existe"
+            Auto autoYaAsociado = null;
+            // Recorremos la lista de todas las asociaciones existentes
+            for (AutoPiloto ap : gestion.getListaAutoPilotos()) {
+                if (ap.getPiloto().equals(pil)) {
+                    // Si encontramos a este piloto, guardamos el auto que YA tiene
+                    autoYaAsociado = ap.getAuto();
+                    break; 
+                }
+            }
+
+            // Si encontramos un auto (autoYaAsociado no es null)
+            // Y ESE auto es DIFERENTE al que estamos intentando asociar...
+            if (autoYaAsociado != null && !autoYaAsociado.equals(auto)) {
+                throw new Exception("Error de Lógica: El piloto " + pil.getNombre() + 
+                                  " ya está asociado a otro auto (" + autoYaAsociado.getModelo() + ").");
+            }
+            // --- (Fin de validación de piloto duplicado) ---
+
+
+            // --- 5. VALIDACIÓN DE EQUIPO (Este bloque ya lo tenías, pero MEJORADO) ---
             Escuderia escuderiaDelAuto = auto.getEscuderia();
-             
-            Escuderia escuderiaDelPiloto = null;
+            Escuderia escuderiaDelPiloto = null; // Empezamos asumiendo que no tiene contrato
+
             if (pil.getPilotoEscuderias() != null && !pil.getPilotoEscuderias().isEmpty()) {
-            // (Esto es simple, toma el primer contrato que encuentra)
-            // (Para hacerlo 100% robusto, deberías chequear la 'fecAs' contra 'desdeFecha' y 'hastaFecha')
-            escuderiaDelPiloto = pil.getPilotoEscuderias().get(0).getEscuderia();
+
+                // Buscamos si el piloto tiene contrato con la escudería del auto
+                for (PilotoEscuderia pe : pil.getPilotoEscuderias()) {
+                    if (pe.getEscuderia().equals(escuderiaDelAuto)) {
+                        escuderiaDelPiloto = pe.getEscuderia(); // ¡Coincidencia! Encontramos el contrato.
+                        break;
+                    }
+                }
             }
-            
-            if (escuderiaDelPiloto == null || !escuderiaDelAuto.equals(escuderiaDelPiloto)) {
-            String msg = String.format("Error de Validación:\nEl Piloto (%s) y el Auto (%s) no pertenecen a la misma escudería.",
-                                       (escuderiaDelPiloto != null ? escuderiaDelPiloto.getNombre() : "Sin equipo"),
-                                       escuderiaDelAuto.getNombre());
-            throw new Exception(msg);
+
+            // Si, después de buscar, no encontramos contrato (sigue siendo null)...
+            if (escuderiaDelPiloto == null) {
+                String msg = String.format("Error de Validación:\nEl Piloto (%s) no tiene contrato vigente con la escudería del Auto (%s).",
+                                            pil.getNombre(),
+                                            escuderiaDelAuto.getNombre());
+                throw new Exception(msg);
             }
-            
-            
-            
-             gestion.gestionarPilotoAuto(pil, auto, fecAs);
-             JOptionPane.showMessageDialog(this, "El auto " + auto.getModelo() + " ha sido correctamente asociado al piloto: " + pil.getNombre());
-        }   catch (Exception e){
-            JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
+            // --- (Fin de la validación de equipo) ---
+
+
+            // --- 6. GUARDADO ---
+            // Si llegamos aquí, todas las validaciones pasaron
+            gestion.gestionarPilotoAuto(pil, auto, fecAs);
+            JOptionPane.showMessageDialog(this, "El auto " + auto.getModelo() + " ha sido correctamente asociado al piloto: " + pil.getNombre());
+
+            // Opcional: Limpiar campos después de guardar
+            txtFecha.setText("");
+            if (comboCampoAuto.getItemCount() > 0) comboCampoAuto.setSelectedIndex(0);
+            if (comboCampoPiloto.getItemCount() > 0) comboCampoPiloto.setSelectedIndex(0);
+
+        } catch (Exception e) {
+            // El 'catch' general atrapa cualquier 'throw new Exception' que hayamos lanzado
+            JOptionPane.showMessageDialog(this, "Error al asociar: " + e.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAsociarActionPerformed
     
