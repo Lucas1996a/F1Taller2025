@@ -166,36 +166,23 @@ public class VentanaPlanificar extends javax.swing.JFrame {
 
     private void bntGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntGuardarActionPerformed
         try {
-            // 1. Leer datos de los campos
-            String fecha = txtCampo1.getText();
-            String hora = txtCampo2.getText();
-            String vueltasStr = txtCampo3.getText();
-            Circuito circuito = (Circuito) comboCampoCircuitos.getSelectedItem();
+         // 1. Llama a todas las validaciones
+         // (Si algo falla, salta directamente al 'catch')
+         validarFormularioPlanificar();
 
-            // 2. Validación
-            if (fecha.isEmpty() || hora.isEmpty() || vueltasStr.isEmpty() || circuito == null) {
-                JOptionPane.showMessageDialog(this, "Debe completar fecha, hora, vueltas y seleccionar un circuito.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+         // 2. Si las validaciones pasaron, llama a guardar
+         guardarPlanificar();
 
-            // 3. Conversión
-            int vueltas = Integer.parseInt(vueltasStr);
+         // 3. Muestra el mensaje de éxito
+         JOptionPane.showMessageDialog(this, "Carrera planificada con éxito.");
 
-            // 4. Llamar a la lógica
-            this.gestion.planificarCarrera(fecha, vueltas, hora, circuito);
-
-            JOptionPane.showMessageDialog(this, "Carrera planificada con éxito.");
-
-//            // Opcional: limpiar campos
-            txtCampo1.setText("");
-            txtCampo2.setText("");
-            txtCampo3.setText("");
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El número de vueltas debe ser un número válido.");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al guardar: " + e.getMessage());
-        }
+         // 4. Muestra cualquier error de validación que haya ocurrido
+         JOptionPane.showMessageDialog(this, 
+             "Error al guardar: " + e.getMessage(), // Muestra el mensaje de nuestra validación
+             "Error de Validación", 
+             JOptionPane.ERROR_MESSAGE);
+         }
     }//GEN-LAST:event_bntGuardarActionPerformed
 
     private void comboCampoCircuitosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoCircuitosActionPerformed
@@ -225,43 +212,126 @@ public class VentanaPlanificar extends javax.swing.JFrame {
         }
     }
     
-//  private void cargarPaises() {
-//        try {
-//            // 1. Limpia el combo (borra "Item 1", "Item 2", etc.)
-//            comboCampo2.removeAllItems(); 
-//            comboCampoCircuito.removeAllItems(); 
-//            
-//            // 2. Le pide la lista de países a tu objeto 'miGestion'
-//            //    (Esto usa el método que creamos en Gestion.java)
-//            ArrayList<Pais> listaDePaises = this.gestion.getListaPais();
-//
-//            // 3. Recorre la lista y añade cada OBJETO 'Pais' al combo
-//            if (listaDePaises != null) {
-//                for (Pais p : listaDePaises) {
-//                    comboCampo2.addItem(p);
-//                    comboCampoCircuito.addItem(p);
-//                }
-//            }
-//            
-//            // 4. (Opcional) Pone el primero como seleccionado
-//            if (comboCampo2.getItemCount() > 0) {
-//                comboCampo2.setSelectedIndex(0);
-//            }
-//            if (comboCampoCircuito.getItemCount() > 0) {
-//                comboCampoCircuito.setSelectedIndex(0);
-//            }
-//
-//        } catch (Exception e) {
-//            // Muestra un error si 'miGestion' falla
-//            JOptionPane.showMessageDialog(this, 
-//                "Error fatal: No se pudo cargar la lista de países.", 
-//                "Error de Carga", 
-//                JOptionPane.ERROR_MESSAGE);
-//            
-//            // También usamos el 'logger' que ya tienes en tu clase
-//            logger.severe("Error al cargar países: " + e.getMessage());
-//        }
-//  }
+    
+    
+    //validaciones
+    
+    
+   private void validarFormularioPlanificar() throws Exception {
+    
+        // --- 1. LECTURA DE DATOS ---
+        String fechaStr = txtCampo1.getText().trim();
+        String horaStr = txtCampo2.getText().trim();
+        String vueltasStr = txtCampo3.getText().trim();
+        Object circuitoObj = comboCampoCircuitos.getSelectedItem();
+
+        // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (fechaStr.isEmpty() || horaStr.isEmpty() || vueltasStr.isEmpty() || circuitoObj == null) {
+            throw new Exception("Debe completar todos los campos (Fecha, Hora, Vueltas y Circuito).");
+        }
+
+        // --- 3. VALIDACIÓN DE FORMATO (FECHA) ---
+        if (!fechaStr.matches("\\d{8}")) {
+            throw new Exception("La 'Fecha' debe tener 8 números en formato YYYYMMDD (ej: 20251026).");
+        }
+
+        // --- 4. VALIDACIÓN DE FORMATO (HORA) ---
+        if (!horaStr.matches("\\d{4}")) {
+            throw new Exception("La 'Hora' debe tener 4 números en formato HHMM (ej: 1430).");
+        }
+
+        // --- 5. VALIDACIÓN DE RANGOS LÓGICOS (FECHA Y HORA) ---
+        try {
+            // Extraemos las partes de la fecha
+            String anioNuevo = fechaStr.substring(0, 4);
+            int mes = Integer.parseInt(fechaStr.substring(4, 6)); // (MM)
+            int dia = Integer.parseInt(fechaStr.substring(6, 8)); // (DD)
+
+            // ¡Validación de Mes (01-12)!
+            if (mes < 1 || mes > 12) {
+                throw new Exception("El Mes (MM) en la fecha debe estar entre 01 y 12.");
+            }
+
+            // ¡Validación de Día (01-31)!
+            // (No validamos 30, 31 o bisiesto para simplificar, solo el rango básico)
+            if (dia < 1 || dia > 31) {
+                throw new Exception("El Día (DD) en la fecha debe estar entre 01 y 31.");
+            }
+
+            // Extraemos las partes de la hora
+            int hora = Integer.parseInt(horaStr.substring(0, 2)); // (HH)
+            int min = Integer.parseInt(horaStr.substring(2, 4)); // (MM)
+
+            // ¡Validación de Hora (00-23)!
+            if (hora < 0 || hora > 23) {
+                throw new Exception("La Hora (HH) debe estar entre 00 y 23.");
+            }
+
+            // ¡Validación de Minutos (00-59)!
+            if (min < 0 || min > 59) {
+                throw new Exception("Los Minutos (MM) deben estar entre 00 y 59.");
+            }
+
+        } catch (Exception e) {
+            // Si falla el substring o el parseInt (aunque ya validamos el formato)
+            throw new Exception("La fecha o la hora tienen un formato numérico inválido.");
+        }
+
+
+        // --- 6. VALIDACIÓN DE FORMATO Y RANGO (VUELTAS) ---
+        int vueltas;
+        try {
+            vueltas = Integer.parseInt(vueltasStr);
+        } catch (NumberFormatException e) {
+            throw new Exception("El 'Número de vueltas' debe ser un número (no se permiten letras).");
+        }
+
+        // ¡Validación de rango 20-80! (Esto ya cubre los negativos)
+        if (vueltas < 20 || vueltas > 80) {
+            throw new Exception("El 'Número de vueltas' debe estar entre 20 y 80.");
+        }
+
+        // --- 7. VALIDACIÓN DE LÓGICA (Circuito duplicado en el año) ---
+        String anioNuevo = fechaStr.substring(0, 4); // Re-leemos el año (String)
+        Circuito circuitoSeleccionado = (Circuito) circuitoObj;
+
+        ArrayList<Carrera> carrerasExistentes = this.gestion.getListaCarreras();
+
+        if (carrerasExistentes != null) {
+            for (Carrera carrera : carrerasExistentes) {
+                if (carrera.getCircuito() == null || carrera.getFechaRealizacion() == null || carrera.getFechaRealizacion().length() < 8) {
+                    continue;
+                }
+
+                boolean mismoCircuito = carrera.getCircuito().equals(circuitoSeleccionado);
+                String anioExistente = carrera.getFechaRealizacion().substring(0, 4);
+                boolean mismoAnio = anioExistente.equals(anioNuevo);
+
+                if (mismoCircuito && mismoAnio) {
+                    throw new Exception("Ya existe una carrera planificada en '" + 
+                                      circuitoSeleccionado.getNombre() + "' para el año " + anioNuevo + ".");
+                }
+            }
+        }
+    }
+    
+    
+   private void guardarPlanificar() {
+        // Leemos los datos (ya sabemos que son válidos y tienen el formato correcto)
+        String fecha = txtCampo1.getText().trim();
+        String hora = txtCampo2.getText().trim();
+        int vueltas = Integer.parseInt(txtCampo3.getText().trim()); // Es seguro parsear
+        Circuito circuito = (Circuito) comboCampoCircuitos.getSelectedItem();
+
+        // Llamamos a la lógica de negocio
+        this.gestion.planificarCarrera(fecha, vueltas, hora, circuito);
+
+        // Opcional: limpiar campos después de guardar
+        txtCampo1.setText("");
+        txtCampo2.setText("");
+        txtCampo3.setText("");
+    }
+ 
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
