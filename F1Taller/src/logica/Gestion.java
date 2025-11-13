@@ -29,20 +29,20 @@ public class Gestion {
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
     public Gestion(){
-    System.err.println("--- [DEBUG] INICIANDO CONSTRUCTOR DE GESTION ---");
+    
     
     // --- 1. CARGA DE ENTIDADES BÁSICAS (Nivel 1) ---
     this.listaPais = gestorPersistencia.cargarPaises();
     if (this.listaPais == null) this.listaPais = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 1. Paises cargados: " + this.listaPais.size());
+    
 
     this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
     if (this.listaPilotos == null) this.listaPilotos = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 2. Pilotos cargados: " + this.listaPilotos.size());
+    
 
     this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
     if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 3. Escuderías cargadas: " + this.listaEscuderias.size());
+    
 
     this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
     if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Gestion {
     
     this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
     if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 4. Autos cargados: " + this.listaAutos.size());
+    
     
     this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
     if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
@@ -64,7 +64,7 @@ public class Gestion {
     this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
         this.listaPilotos, this.listaEscuderias);
     if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 5. Contratos Piloto-Escuderia cargados: " + this.listaPilotoEscuderias.size());
+    
     
     this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(
         this.listaMecanicos, this.listaEscuderias);
@@ -74,20 +74,18 @@ public class Gestion {
     this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(
         this.listaPilotos, this.listaAutos);
     if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 6. AutoPilotos cargados (el combo): " + this.listaAutoPilotos.size());
+    
     
     // --- 4. CARGA DE RESULTADOS (Nivel 4) ---
     this.listaResultados = gestorPersistencia.cargarResultadosCarrera(
         this.listaAutoPilotos, this.listaCarreras);
     if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
-    System.err.println("DEBUG (Gestion): 7. Resultados cargados: " + this.listaResultados.size());
+    
     
     // --- 5. LÓGICA POST-CARGA ---
     for (ResultadoCarrera res : this.listaResultados) {
         resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
     }
-    
-    System.err.println("--- [DEBUG] CONSTRUCTOR DE GESTION FINALIZADO ---");
 }
     
     
@@ -107,8 +105,6 @@ public class Gestion {
         nuevoAuto.setEscuderia(escuderia);
         this.listaAutos.add(nuevoAuto);
         gestorPersistencia.guardarAuto(nuevoAuto);
-        System.out.println("Auto Registrado: " + modelo + motor + escuderia);
-       
     }
     
     public void crearEscuderias(String nombre, Pais pais){
@@ -116,7 +112,6 @@ public class Gestion {
         nuevaEsc.setNombre(nombre);
         nuevaEsc.setPais(pais);
         this.listaEscuderias.add(nuevaEsc);
-        System.out.println("¡NUEVA ESCUDERÍA REGISTRADA: " + nombre);
         
         gestorPersistencia.guardarEscuderia(nuevaEsc);
     }
@@ -129,11 +124,15 @@ public class Gestion {
         nuevo.setPais(pais);
         this.listaCircuitos.add(nuevo);
         gestorPersistencia.guardarCircuito(nuevo);
-        System.out.println("Circuito registrado: " + nombre);
       
     }
     
-    public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios){
+    public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios) throws Exception{
+        
+        if (buscarPilotoPorDNI(dni) != null) {
+            throw new Exception("Error: Ya existe un piloto registrado con  el DNI " + dni);
+        }
+        
         Piloto nuevo = new Piloto();
         nuevo.setDni(dni);
         nuevo.setNombre(nombre);
@@ -146,7 +145,6 @@ public class Gestion {
         nuevo.setPodios(podios);
         
         this.listaPilotos.add(nuevo);
-        System.out.println("Piloto registrado: " + nombre);
         
         gestorPersistencia.guardarPiloto(nuevo);
     }
@@ -162,7 +160,6 @@ public class Gestion {
         listaMecanicos.add(nuevo);
         
         gestorPersistencia.guardarMecanico(nuevo);
-        System.out.println("Mecánico registrado: " + nombre);
     }
     
     
@@ -172,8 +169,7 @@ public class Gestion {
         nuevo.setNumeroVueltas(numeroVueltas);
         nuevo.setHoraRealizacion(hora);
         nuevo.setPais(pais);
-        listaCarreras.add(nuevo);
-        System.out.println("Carrera registrada: " + fecha + pais);      
+        listaCarreras.add(nuevo);    
     }
     
     public void crearPais(int id, String descrip){
@@ -181,8 +177,7 @@ public class Gestion {
         nuevo.setIdPais(id);
         nuevo.setDescripcion(descrip);
         this.listaPais.add(nuevo);
-        gestorPersistencia.guardarPais(nuevo);
-        System.out.println("Pais registrado: " + id + descrip);   
+        gestorPersistencia.guardarPais(nuevo); 
     }
     
 //    GETTERS
@@ -268,8 +263,6 @@ public class Gestion {
     this.listaEscuderias.remove(escuderiaABorrar);
     // Re-escribimos el CSV de Escuderías
     gestorPersistencia.reescribirEscuderiasCSV(this.listaEscuderias);
-    
-    System.out.println("Escudería " + nombreEscuderia + " y todas sus dependencias han sido eliminadas.");
 }
   
     
@@ -281,7 +274,6 @@ public class Gestion {
         nuevoContrato.setHastaFecha(fechaFin);
         nuevoContrato.setPiloto(piloto);
         nuevoContrato.setEscuderia(escuderia);
-        System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", piloto.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
         
         piloto.agregarPilotoEscuderia(nuevoContrato);
         escuderia.agregarPilotoEscuderia(nuevoContrato);
@@ -312,7 +304,6 @@ public class Gestion {
     
     // 3. Re-escribir el CSV
         gestorPersistencia.reescribirPilotoEscuderiaCSV(this.listaPilotoEscuderias);
-        System.out.println("Contrato de Piloto borrado.");
     }
     
     
@@ -320,10 +311,9 @@ public class Gestion {
     
     public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
         if (auto.getEscuderia() != escuderia) {
-            System.out.printf("ERROR: El Auto '%s' no está registrado como propiedad de la Escudería '%s'.\n", auto.getModelo(), auto.getEscuderia());
+            
         } else {
-            escuderia.agregarAuto(auto);
-            System.out.printf("AUTO ASOCIADO: El Auto '%s' ha sido añadido al inventario activo de %s.\n",  auto.getModelo(), auto.getEscuderia());
+            
         }
     }
     
@@ -342,7 +332,7 @@ public class Gestion {
     
     // 3. Re-escribir el CSV de Autos (¡Importante!)
         gestorPersistencia.reescribirAutosCSV(this.listaAutos);
-        System.out.println("AUTO DADO DE BAJA: " + autoABorrar.getModelo());
+        
     }
     
     // ASOCIAR PILOTOS CON AUTO Y BORRAR LA ASOCIACION
@@ -357,7 +347,7 @@ public class Gestion {
         auto.agregarAutoPiloto(nuevaAsociacion);
         this.listaAutoPilotos.add(nuevaAsociacion);
         gestorPersistencia.guardarAutoPiloto(nuevaAsociacion);
-        System.out.println("La Asignacion quedo registrada: " + piloto.getNombre() + " conducirá el " + auto.getModelo() + " desde " + fechaAsignacion + ".");
+        
     }
     
     
@@ -376,7 +366,7 @@ public class Gestion {
         this.listaMecanicoEscuderias.add(nuevoContrato);
         
         gestorPersistencia.guardarMecanicoEscuderia(nuevoContrato);
-        System.out.printf("CONTRATO CREADO: %s asociado a %s desde %s hasta %s.\n", mecanico.getNombre(), escuderia.getNombre(), fechaInicio, fechaFin);
+        
     } 
   
     public void darDeBajaMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia) throws Exception {
@@ -401,7 +391,6 @@ public class Gestion {
     
     // 3. Re-escribir el CSV
         gestorPersistencia.reescribirMecanicoEscuderiaCSV(this.listaMecanicoEscuderias);
-        System.out.println("Asociación de Mecánico borrada.");
     }
     
     // MÉTODOS PARA CARRERA    
@@ -418,7 +407,6 @@ public class Gestion {
         }
         listaCarreras.add(nueva);
         gestorPersistencia.guardarCarrera(nueva);
-        System.out.println("La Carrera quedo planificada para el : Gran Premio de " + circuito.getPais().getDescripcion() + " en el circuito " + circuito.getNombre() + ", el " + fecha + " a las " + hora);
        
     }
      
@@ -479,7 +467,6 @@ public class Gestion {
         }
         
         int puntosObtenidos = calcularPuntos(posicionFinal);
-        System.out.println(" El Piloto suma " + puntosObtenidos + " puntos.");
      }
     
     
@@ -501,19 +488,8 @@ public class Gestion {
         this.listaResultados.add(nuevoResultado);
         gestorPersistencia.guardarResultadoCarrera(nuevoResultado);
         int puntosGanados = calcularPuntos(posicionFinal);
-        String podio = "";
-        String vr = "";
-
-        if (esPodio) {
-           podio = " (Podio!)";
-        }
-
-        if (vueltaRapida) {
-            vr = " (Vuelta Rápida)";
-         }
         
          Piloto pilotoreal = piloto.getPiloto();
-        System.out.println("El resultado fue: " + pilotoreal.getNombre() + " terminó en posicion" + posicionFinal + ", y sumó " + puntosGanados + " puntos en el GP de " + carrera.getPais().getDescripcion() + "." + podio + vr);    
     }
     
     
@@ -1012,13 +988,5 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
 
     return informe;
 }
-    
-   
-   
- 
-   
-  
-   
-   
    
 }

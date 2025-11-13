@@ -271,8 +271,8 @@ public class FormularioRegistro extends javax.swing.JFrame {
         comboCampo4 = new javax.swing.JComboBox<>();
         txtCampo4 = new javax.swing.JTextField();
         comboCampoEsp = new javax.swing.JComboBox<>();
-        lblCampo5 = new javax.swing.JLabel();
         txtCampo5 = new javax.swing.JTextField();
+        lblCampo5 = new javax.swing.JLabel();
         lblCampo6 = new javax.swing.JLabel();
         txtCampo6 = new javax.swing.JTextField();
         lblCampo7 = new javax.swing.JLabel();
@@ -347,11 +347,11 @@ public class FormularioRegistro extends javax.swing.JFrame {
             }
         });
         jPanel3.add(comboCampoEsp, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 150, -1));
+        jPanel3.add(txtCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 150, -1));
 
         lblCampo5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo5.setText("lbl5");
         jPanel3.add(lblCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 175, 25));
-        jPanel3.add(txtCampo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 150, -1));
 
         lblCampo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCampo6.setText("lbl6");
@@ -425,36 +425,22 @@ public class FormularioRegistro extends javax.swing.JFrame {
     try {
         switch (this.tipoRegistro) {
             case "PILOTO":
-            // 1. Lee los datos de los text fields
-                String dni = txtCampo1.getText();
-                String nombrePil = txtCampo2.getText();
-                String apellido = txtCampo3.getText();
-                Pais paisPil = (Pais) comboCampo4.getSelectedItem();
-                int numeroComp = Integer.parseInt(txtCampo5.getText());
-                int victorias = Integer.parseInt(txtCampo6.getText());
-                int poles = Integer.parseInt(txtCampo7.getText());
-                int fastLap = Integer.parseInt(txtCampo8.getText());
-                int podios =  Integer.parseInt(txtCampo9.getText());
-            
-            // 2. Llama a la controladora de lógica
-                this.gestion.crearPilotos(dni, nombrePil, apellido, paisPil, numeroComp, victorias, poles, fastLap, podios);
+                validarFormularioPiloto();
+                guardarPiloto();
                 JOptionPane.showMessageDialog(this, "Piloto guardado correctamente.");
+                break;
+                
+                
+            case "MECANICO":
+                validarFormularioMecanico();
+                guardarMecanico();
+                JOptionPane.showMessageDialog(this, "Mecánico guardado correctamente.");
                 break;
             
             case "PAIS":
-                    String idStr = txtCampo1.getText();
-                    String descripcion = txtCampo2.getText();
-                    
-                    // 3. Conversión de datos
-                    // (El try-catch exterior se encargará del error si idStr no es un número)
-                    int id = Integer.parseInt(idStr);
-                    
-                    // 4. Llama a la controladora de lógica (tu objeto 'gestion')
-                    this.gestion.crearPais(id, descripcion);
-                    
-                    // 5. Mensaje de éxito
-                    JOptionPane.showMessageDialog(this, "País guardado correctamente.");
-                    
+                validarFormularioPais();
+                guardarPais();
+                JOptionPane.showMessageDialog(this, "País guardado correctamente.");
                     break;
             
             
@@ -485,30 +471,18 @@ public class FormularioRegistro extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Circuito guardado correctamente.");
                     break;
 //            
-            case "MECANICO":
-                    String dniMec = txtCampo1.getText();
-                    String nombreMec = txtCampo2.getText();
-                    String apellidoMec = txtCampo3.getText();
-                    Pais paisMec = (Pais) comboCampo4.getSelectedItem();
-                    Especialidad especialidad = (Especialidad) comboCampoEsp.getSelectedItem();
-                    int aniosExp = Integer.parseInt(txtCampo6.getText());
-
-                    this.gestion.crearMecanicos(dniMec, nombreMec, apellidoMec, paisMec, especialidad, aniosExp);
-                    JOptionPane.showMessageDialog(this, "Mecánico guardado correctamente.");
-                    break;
-//            
-//          case "MECANICO":
-//              String nombreMec = txtCampo1.getText();
-//              String apellidoMec = txtCampo2.getText();
-//              String especialidad = txtCampo3.getText();
-//            
-//              // controladora.registrarMecanico(nombreMec, apellidoMec, especialidad);
-//              break;
             }
     
     } catch (NumberFormatException e) {
     // Si 'parseInt' falla, el código salta acá y la app NO crashea.
         JOptionPane.showMessageDialog(this, "El ID debe ser un número válido.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+            this, // La ventana actual
+            "Error al guardar: " + e.getMessage(), // Muestra el mensaje que lanzamos
+            "Error de Validación", // Título de la ventana
+            JOptionPane.ERROR_MESSAGE // Ícono de error
+        );
         }
          
     }//GEN-LAST:event_bntGuardarActionPerformed
@@ -611,6 +585,233 @@ public class FormularioRegistro extends javax.swing.JFrame {
             JOptionPane.ERROR_MESSAGE);
     }
 }
+ 
+    
+//    MÉTODOS PARA VALIDACIÓN.
+    
+    
+    /**
+    * Valida todos los campos del formulario de Piloto.
+    * Si algo está mal, Lanza una Excepción (throws Exception).
+    */
+    private void validarFormularioPiloto() throws Exception {
+    
+    // --- 1. LECTURA DE DATOS ---
+    String dni = txtCampo1.getText();
+    String nombre = txtCampo2.getText();
+    String apellido = txtCampo3.getText();
+    Object pais = comboCampo4.getSelectedItem();
+    String numComp = txtCampo5.getText();
+    String victorias = txtCampo6.getText();
+    String poles = txtCampo7.getText();
+    String fastLap = txtCampo8.getText();
+    String podios = txtCampo9.getText();
+
+    // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+    if (dni.isEmpty() || nombre.isEmpty() || apellido.isEmpty() || numComp.isEmpty() || 
+        victorias.isEmpty() || poles.isEmpty() || fastLap.isEmpty() || podios.isEmpty() || 
+        pais == null) {
+        
+        throw new Exception("Debe completar todos los 9 campos.");
+    }
+    
+    
+    // 3a. DNI (exactamente 8 números)
+    if (!dni.matches("\\d{8}")) {
+        throw new Exception("El DNI debe tener exactamente 8 números (sin puntos, comas, ni letras).");
+    }
+    
+    
+    // 3b. Nombre y apellido, sin números, que empiece en mayúscula, sin caracteres especiales. 
+    String regexMayusculaYLetras = "^\\p{Lu}[\\p{L} ]*$";
+
+    if (!nombre.matches(regexMayusculaYLetras)) {
+        throw new Exception("El 'Nombre' debe empezar con mayúscula y solo contener letras y espacios (ej: 'Lucas', 'José Luis').");
+    }
+    
+    if (!apellido.matches(regexMayusculaYLetras)) {
+        throw new Exception("El 'Apellido' debe empezar con mayúscula y solo contener letras y espacios (ej: 'Teze', 'De La Cruz').");
+    }
+    
+    // 3b. Campos numéricos (solo números, cualquier longitud >= 1)
+    // Usamos la expresión regular "\\d+" (uno o más dígitos)
+    
+    if (!numComp.matches("\\d+")) {
+        throw new Exception("El 'N° Competencia' solo debe contener números enteros.");
+    }
+    if (!victorias.matches("\\d+")) {
+        throw new Exception("El campo 'Victorias' solo debe contener números enteros.");
+    }
+    if (!poles.matches("\\d+")) {
+        throw new Exception("El campo 'Pole Positions' solo debe contener números enteros.");
+    }
+    if (!fastLap.matches("\\d+")) {
+        throw new Exception("El campo 'Vueltas Rápidas' solo debe contener números enteros.");
+    }
+    if (!podios.matches("\\d+")) {
+        throw new Exception("El campo 'Podios' solo debe contener números enteros.");
+    }
+    
+    // 4. Validamos que una persona no tenga más victorias que podios (Debido a que cada victoria es un podio)
+    int numVictorias = Integer.parseInt(victorias);
+    int numPodios = Integer.parseInt(podios);
+
+    if (numVictorias > numPodios) {
+        throw new Exception("Error Lógico: No se pueden tener más victorias (" + numVictorias + 
+                            ") que podios (" + numPodios + ").");
+    }
+    
+    
+    }
+    
+    private void guardarPiloto() throws Exception {
+    
+    // 1. Leemos los datos de nuevo (no hay problema en leerlos 2 veces)
+    String dni = txtCampo1.getText();
+    String nombrePiloto = txtCampo2.getText();
+    String apellido = txtCampo3.getText();
+    Pais paisPiloto = (Pais) comboCampo4.getSelectedItem();
+    
+    // 2. Conversión (El try-catch exterior se ocupa del NumberFormatException)
+    int numeroComp = Integer.parseInt(txtCampo5.getText());
+    int victorias = Integer.parseInt(txtCampo6.getText());
+    int poles = Integer.parseInt(txtCampo7.getText());
+    int fastLap = Integer.parseInt(txtCampo8.getText());
+    int podios = Integer.parseInt(txtCampo9.getText());
+
+    // 3. Llamar a la lógica
+    // (Si 'crearPilotos' lanza el error "DNI Duplicado", el catch lo atrapará)
+    this.gestion.crearPilotos(dni, nombrePiloto, apellido, paisPiloto, numeroComp, victorias, poles, fastLap, podios);
+}
+    
+    /**
+    * Valida todos los campos del formulario de Mecánico.
+    * Si algo está mal, Lanza una Excepción (throws Exception).
+    */
+    private void validarFormularioMecanico() throws Exception {
+    
+    // --- 1. LECTURA DE DATOS ---
+    // (Asumo los campos que definimos en el constructor para "MECANICO")
+    String dni = txtCampo1.getText();
+    String nombre = txtCampo2.getText();
+    String apellido = txtCampo3.getText();
+    Object especialidad = comboCampoEsp.getSelectedItem(); // El combo de Enum
+    String experiencia = txtCampo6.getText();
+    Object pais = comboCampo4.getSelectedItem(); // El combo de País
+
+    // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+    if (dni.isEmpty() || nombre.isEmpty() || apellido.isEmpty() || 
+        experiencia.isEmpty() || pais == null || especialidad == null) {
+        
+        throw new Exception("Debe completar todos los 6 campos.");
+    }
+    
+    // --- 3. VALIDACIÓN DE FORMATO (DNI) ---
+    // (Reutilizamos la misma lógica de Piloto)
+    if (!dni.matches("\\d{8}")) {
+        throw new Exception("El DNI debe tener exactamente 8 números (sin puntos, comas ni letras).");
+    }
+    
+    // --- 4. VALIDACIÓN DE FORMATO (Nombre y Apellido) ---
+    // (Reutilizamos la misma lógica de Piloto)
+    String regexMayusculaYLetras = "^\\p{Lu}[\\p{L} ]*$";
+    if (!nombre.matches(regexMayusculaYLetras)) {
+        throw new Exception("El 'Nombre' debe empezar con mayúscula y solo contener letras y espacios.");
+    }
+    if (!apellido.matches(regexMayusculaYLetras)) {
+        throw new Exception("El 'Apellido' debe empezar con mayúscula y solo contener letras y espacios.");
+    }
+
+    // --- 5. VALIDACIÓN DE FORMATO (Años de Experiencia) ---
+    // (Reutilizamos la misma lógica de stats de Piloto)
+    if (!experiencia.matches("\\d+")) {
+        throw new Exception("El campo 'Años de experiencia' solo debe contener números.");
+    }
+    }
+    
+    private void guardarMecanico() throws Exception {
+    
+    // 1. Leemos los datos de nuevo
+    String dni = txtCampo1.getText();
+    String nombre = txtCampo2.getText();
+    String apellido = txtCampo3.getText();
+    Pais pais = (Pais) comboCampo4.getSelectedItem();
+    Especialidad especialidad = (Especialidad) comboCampoEsp.getSelectedItem();
+    
+    // 2. Conversión (El try-catch exterior se ocupa del NumberFormatException)
+    int experiencia = Integer.parseInt(txtCampo6.getText());
+
+    // 3. Llamar a la lógica
+    // (Necesitamos añadir la validación de DNI duplicado a crearMecanicos)
+    this.gestion.crearMecanicos(dni, nombre, apellido, pais, especialidad, experiencia);
+}
+    
+    /**
+    * Valida todos los campos del formulario de País.
+    * Si algo está mal, Lanza una Excepción (throws Exception).
+    */
+    
+    private void validarFormularioPais() throws Exception {
+        // --- 1. LECTURA DE DATOS ---
+        String idStr = txtCampo1.getText().trim();
+        String nombrePais = txtCampo2.getText().trim();
+
+        // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (idStr.isEmpty() || nombrePais.isEmpty()) {
+            throw new Exception("Debe completar tanto el ID como la Descripción del país.");
+        }
+
+        // --- 3. VALIDACIÓN DE FORMATO (ID) ---
+        // Solo permite números (sin letras ni símbolos)
+        if (!idStr.matches("\\d+")) {
+            throw new Exception("El 'idPais' solo debe contener números enteros.");
+        }
+
+        // --- 4. VALIDACIÓN DE FORMATO (Nombre/Descripción) ---
+        // Debe empezar con mayúscula y solo tener letras y espacios.
+        // Usamos la misma regex que en Piloto: ^ indica inicio, \p{Lu} mayúscula, [\p{L} ]* resto letras/espacios.
+        String regexMayusculaYLetras = "^\\p{Lu}[\\p{L} ]*$";
+        
+        if (!nombrePais.matches(regexMayusculaYLetras)) {
+            throw new Exception("El nombre del País debe iniciar con mayúscula y solo contener letras (Ej: 'Argentina', 'Italia').");
+        }
+        
+        // --- 5. VALIDACIÓN DE DUPLICADOS (Lógica de Negocio) ---
+        // Convertimos el ID a int para comparar (ya sabemos que es numérico por el paso 3)
+        int idNuevo = Integer.parseInt(idStr);
+        
+        // Obtenemos la lista actual desde tu gestión
+        ArrayList<Pais> listaPaises = this.gestion.getListaPais();
+        
+        if (listaPaises != null) {
+            for (Pais p : listaPaises) {
+                // A. Validar que el ID no exista
+                if (p.getIdPais() == idNuevo) {
+                    throw new Exception("El ID " + idNuevo + " ya pertenece a otro país (" + p.getDescripcion() + ").");
+                }
+                
+                // B. Validar que el Nombre no exista (ignorando mayúsculas/minúsculas)
+                // NOTA: Si tu getter se llama 'getDescripcion()', cámbialo aquí.
+                if (p.getDescripcion().equalsIgnoreCase(nombrePais)) { 
+                    throw new Exception("El país '" + nombrePais + "' ya está registrado.");
+                }
+            }
+        }
+    }
+
+    private void guardarPais() throws Exception {
+        // 1. Leemos y limpiamos los datos
+        String idStr = txtCampo1.getText().trim();
+        String nombrePais = txtCampo2.getText().trim();
+
+        // 2. Conversión (El parseo seguro ya está garantizado por la validación previa)
+        int id = Integer.parseInt(idStr);
+
+        // 3. Llamar a la lógica
+        this.gestion.crearPais(id, nombrePais);
+    }
+    
+    
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
