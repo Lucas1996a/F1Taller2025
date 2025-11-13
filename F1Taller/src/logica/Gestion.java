@@ -550,91 +550,98 @@ public class Gestion {
     
     // GENERAR INFORMES
     
-    public void generarResultadosPorRangoDeFechas(String fechaDesde, String fechaHasta) {
+      /**
+ * Genera un informe de resultados detallados de todas las carreras
+ * que ocurrieron entre dos fechas, ORDENADOS por posición.
+ *
+ * @param fechaInicio La fecha de inicio (ej: "2025-01-01")
+ * @param fechaFin La fecha de fin (ej: "2025-12-31")
+ * @return Un ArrayList de Strings con el informe listo para mostrar.
+ */
+public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, String fechaFin) {
+    ArrayList<String> informe = new ArrayList<>();
     
-       // 🚨 VALIDACIÓN CRÍTICA (Basada en formato YYYYMMDD):
-       // 1. Verificar longitud (8 caracteres)
-        if (fechaDesde.length() != 8 || fechaHasta.length() != 8) {
-           System.out.println("ERROR: El formato de la fecha debe ser YYYYMMDD (8 dígitos, sin separadores).");
-            return;
-        }
-    
-        // 2. Asegurar que la fecha de inicio no sea posterior a la de fin.
-        if (fechaDesde.compareTo(fechaHasta) > 0) {
-            System.out.println("ERROR: La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.");
-            return;
-        }
+    informe.add("=========================================");
+    informe.add(" INFORME DE RESULTADOS DE CARRERAS");
+    informe.add(" Período: " + fechaInicio + " al " + fechaFin);
+    informe.add("=========================================");
 
-        System.out.println("=================================================");
-        System.out.printf("RESULTADOS DE CARRERAS ENTRE %s y %s\n", fechaDesde, fechaHasta);
-        System.out.println("=================================================");
+    StringBuilder sb = new StringBuilder();
+    int carrerasEncontradas = 0;
 
-        boolean carrerasEncontradas = false;
-
-        // Iterar sobre todas las carreras planificadas
-        for (Carrera carrera : this.listaCarreras) {
-            String fechaCarrera = carrera.getFechaRealizacion();
-
-            // 1. Filtrar las carreras dentro del rango [fechaDesde, fechaHasta]
-            // Comprobamos si la fecha de la carrera es igual o posterior a la fecha de inicio
-            // Y si es igual o anterior a la fecha de fin.
-            // String.compareTo() funciona perfectamente con YYYYMMDD.
-            if (fechaCarrera.compareTo(fechaDesde) >= 0 && fechaCarrera.compareTo(fechaHasta) <= 0) {
+    // 1. Recorremos todas las carreras
+    for (Carrera carrera : this.listaCarreras) {
+        
+        String fechaCarrera = carrera.getFechaRealizacion();
+        
+        // 2. Comparamos las fechas
+        if (fechaCarrera.compareTo(fechaInicio) >= 0 && fechaCarrera.compareTo(fechaFin) <= 0) {
             
-                carrerasEncontradas = true;
+            carrerasEncontradas++;
+            sb.append("\n--- CARRERA: " + carrera.toString() + " ---\n"); // ej: GP de Bahréin (2025-03-05)
             
-                // --- DETALLE DE CARRERA ---
-                // Asumo que Circuito y Pais no son null aquí.
-                String paisDesc = carrera.getPais() != null ? carrera.getPais().getDescripcion().toUpperCase() : "PAÍS DESCONOCIDO";
-                String nombreCircuito = carrera.getCircuito() != null ? carrera.getCircuito().getNombre() : "N/A";
-                int longitudCircuito = carrera.getCircuito() != null ? carrera.getCircuito().getLongitud() : 0;
+            // --- INICIO DE LA MEJORA ---
             
-                System.out.printf("\n🏁 **GRAN PREMIO DE %s**\n", paisDesc);
-                System.out.printf("   - Circuito: %s (Longitud: %dkm)\n", nombreCircuito, longitudCircuito);
-                System.out.printf("   - Fecha: %s | Hora: %s | Vueltas: %d\n", fechaCarrera, carrera.getHoraRealizacion(), carrera.getNumeroVueltas());
-                System.out.println("   --- RESULTADOS ---\n");
-
-                int resultadosEncontrados = 0;
-            
-                // 2. Encontrar y mostrar los resultados para esta carrera
-                for (ResultadoCarrera resultado : this.listaResultados) {
-                
-                    // Comparamos el objeto Carrera directamente (debe tener .equals() implementado)
-                    if (resultado.getCarrera().equals(carrera)) { 
-                        resultadosEncontrados++;
-                    
-                        Piloto piloto = resultado.getAutoPiloto().getPiloto();
-                        Auto auto = resultado.getAutoPiloto().getAuto();
-                    
-                        // Formato y puntos
-                        String vr = resultado.isVueltaRapida() ? " (VUELTA RÁPIDA ⏱️)" : "";
-                        String podio = resultado.isPodio() ? " (PODIO 🏆)" : "";
-                        int puntos = calcularPuntos(resultado.getPosicionFinal());
-
-                        System.out.printf("   %d. %s %s (Auto: %s) - Tiempo: %s %s%s\n", 
-                        resultado.getPosicionFinal(),
-                        piloto.getNombre(),
-                        piloto.getApellido(),
-                        auto.getModelo(),
-                        resultado.getTiempoFinal(),
-                        podio,
-                        vr
-                    );
-                    System.out.printf("      [Puntos sumados: %d]\n", puntos);
+            // 3. Recolectamos TODOS los resultados de ESTA carrera
+            ArrayList<ResultadoCarrera> resultadosDeEstaCarrera = new ArrayList<>();
+            for (ResultadoCarrera resultado : this.listaResultados) {
+                if (resultado.getCarrera().equals(carrera)) {
+                    resultadosDeEstaCarrera.add(resultado);
                 }
             }
-            
-            if (resultadosEncontrados == 0) {
-                System.out.println("   [!] Aún no hay resultados registrados para esta carrera.");
+
+            // 4. Si encontramos resultados, los ordenamos por posición
+            if (resultadosDeEstaCarrera.isEmpty()) {
+                sb.append("  [Sin resultados registrados para esta carrera]\n");
+            } else {
+                
+                // Ordenamos la lista por PosicionFinal (de 1 a 20)
+                Collections.sort(resultadosDeEstaCarrera, new Comparator<ResultadoCarrera>() {
+                    @Override
+                    public int compare(ResultadoCarrera r1, ResultadoCarrera r2) {
+                        return Integer.compare(r1.getPosicionFinal(), r2.getPosicionFinal());
+                    }
+                });
+
+                // 5. Ahora sí, creamos el informe ordenado y con detalles
+                for (ResultadoCarrera resultado : resultadosDeEstaCarrera) {
+                    
+                    Piloto piloto = resultado.getAutoPiloto().getPiloto();
+                    String nombrePiloto = piloto.getNombre() + " " + piloto.getApellido();
+                    int posicion = resultado.getPosicionFinal();
+                    
+                    String prefijo = "  " + posicion + "°: ";
+                    String sufijo = "";
+
+                    // Distinguir ganador y podio
+                    if (posicion == 1) prefijo = "🥇 1°: ";
+                    else if (posicion == 2) prefijo = "🥈 2°: ";
+                    else if (posicion == 3) prefijo = "🥉 3°: ";
+                    
+                    // Marcar vuelta rápida
+                    if (resultado.isVueltaRapida()) sufijo = " (🏁 Vuelta Rápida)";
+                    
+                    String linea = String.format("%s%s (Tiempo: %s)%s",
+                                     prefijo,
+                                     nombrePiloto,
+                                     resultado.getTiempoFinal(),
+                                     sufijo
+                                 );
+                    sb.append(linea).append("\n");
+                }
             }
-
-            System.out.println("-------------------------------------------------");
+            // --- FIN DE LA MEJORA ---
         }
-    }
+    } // Fin del bucle de carreras
 
-    if (!carrerasEncontradas) {
-        System.out.println("No se encontraron carreras con resultados registrados en el rango de fechas especificado.");
+    // 6. Verificación final
+    if (carrerasEncontradas == 0) {
+        informe.add("\nNo se encontraron carreras en el rango de fechas especificado.");
+    } else {
+        informe.add(sb.toString()); // Agregamos todos los resultados encontrados
     }
+    
+    return informe;
 }
     
     private class PilotoPuntuacion {
@@ -913,106 +920,10 @@ public class Gestion {
         return contador;
     }
    
-     
-   
-   
-   
-   
-   
-   
-   /**
- * Genera un informe de resultados detallados de todas las carreras
- * que ocurrieron entre dos fechas, ORDENADOS por posición.
- *
- * @param fechaInicio La fecha de inicio (ej: "2025-01-01")
- * @param fechaFin La fecha de fin (ej: "2025-12-31")
- * @return Un ArrayList de Strings con el informe listo para mostrar.
- */
-public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, String fechaFin) {
-    ArrayList<String> informe = new ArrayList<>();
     
-    informe.add("=========================================");
-    informe.add(" INFORME DE RESULTADOS DE CARRERAS");
-    informe.add(" Período: " + fechaInicio + " al " + fechaFin);
-    informe.add("=========================================");
-
-    StringBuilder sb = new StringBuilder();
-    int carrerasEncontradas = 0;
-
-    // 1. Recorremos todas las carreras
-    for (Carrera carrera : this.listaCarreras) {
-        
-        String fechaCarrera = carrera.getFechaRealizacion();
-        
-        // 2. Comparamos las fechas
-        if (fechaCarrera.compareTo(fechaInicio) >= 0 && fechaCarrera.compareTo(fechaFin) <= 0) {
-            
-            carrerasEncontradas++;
-            sb.append("\n--- CARRERA: " + carrera.toString() + " ---\n"); // ej: GP de Bahréin (2025-03-05)
-            
-            // --- INICIO DE LA MEJORA ---
-            
-            // 3. Recolectamos TODOS los resultados de ESTA carrera
-            ArrayList<ResultadoCarrera> resultadosDeEstaCarrera = new ArrayList<>();
-            for (ResultadoCarrera resultado : this.listaResultados) {
-                if (resultado.getCarrera().equals(carrera)) {
-                    resultadosDeEstaCarrera.add(resultado);
-                }
-            }
-
-            // 4. Si encontramos resultados, los ordenamos por posición
-            if (resultadosDeEstaCarrera.isEmpty()) {
-                sb.append("  [Sin resultados registrados para esta carrera]\n");
-            } else {
-                
-                // Ordenamos la lista por PosicionFinal (de 1 a 20)
-                Collections.sort(resultadosDeEstaCarrera, new Comparator<ResultadoCarrera>() {
-                    @Override
-                    public int compare(ResultadoCarrera r1, ResultadoCarrera r2) {
-                        return Integer.compare(r1.getPosicionFinal(), r2.getPosicionFinal());
-                    }
-                });
-
-                // 5. Ahora sí, creamos el informe ordenado y con detalles
-                for (ResultadoCarrera resultado : resultadosDeEstaCarrera) {
-                    
-                    Piloto piloto = resultado.getAutoPiloto().getPiloto();
-                    String nombrePiloto = piloto.getNombre() + " " + piloto.getApellido();
-                    int posicion = resultado.getPosicionFinal();
-                    
-                    String prefijo = "  " + posicion + "°: ";
-                    String sufijo = "";
-
-                    // Distinguir ganador y podio
-                    if (posicion == 1) prefijo = "🥇 1°: ";
-                    else if (posicion == 2) prefijo = "🥈 2°: ";
-                    else if (posicion == 3) prefijo = "🥉 3°: ";
-                    
-                    // Marcar vuelta rápida
-                    if (resultado.isVueltaRapida()) sufijo = " (🏁 Vuelta Rápida)";
-                    
-                    String linea = String.format("%s%s (Tiempo: %s)%s",
-                                     prefijo,
-                                     nombrePiloto,
-                                     resultado.getTiempoFinal(),
-                                     sufijo
-                                 );
-                    sb.append(linea).append("\n");
-                }
-            }
-            // --- FIN DE LA MEJORA ---
-        }
-    } // Fin del bucle de carreras
-
-    // 6. Verificación final
-    if (carrerasEncontradas == 0) {
-        informe.add("\nNo se encontraron carreras en el rango de fechas especificado.");
-    } else {
-        informe.add(sb.toString()); // Agregamos todos los resultados encontrados
-    }
-    
-    return informe;
-}
+   
+   
+ 
    
    
    
