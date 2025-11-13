@@ -445,15 +445,16 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             
             case "AUTO":
-                    String modelo = txtCampo1.getText();
-                    String motor = txtCampo2.getText();
-                    Escuderia escuderia = (Escuderia) comboCampo3.getSelectedItem();
-            
-            
-                    this.gestion.crearAutos(modelo,motor,escuderia);
-                    JOptionPane.showMessageDialog(this, "Auto guardado correctamente.");
-                    break;
-//            
+                    // 1. Llama a la validación
+                validarFormularioAuto();
+                
+                // 2. Si pasa, llama a guardar
+                guardarAuto();
+                
+                // 3. Muestra el mensaje de éxito
+                JOptionPane.showMessageDialog(this, "Auto guardado correctamente.");
+                break;
+                
             case "ESCUDERIA":
                     String nombreEsc = txtCampo1.getText();
                     Pais paisEsc = (Pais) comboCampo2.getSelectedItem();
@@ -463,13 +464,17 @@ public class FormularioRegistro extends javax.swing.JFrame {
                     break;
 //            
             case "CIRCUITO":
-                    String nombreCircuito = txtCampo1.getText();
-                    int longitud = Integer.parseInt(txtCampo2.getText());
-                    Pais paisCircuito = (Pais) comboCampo4.getSelectedItem();
-
-                    this.gestion.crearCircuitos(nombreCircuito, longitud, paisCircuito);
-                    JOptionPane.showMessageDialog(this, "Circuito guardado correctamente.");
-                    break;
+                    
+                // 1. Llama a la validación.
+                // Si algo está mal, lanzará una excepción y saltará al 'catch'
+                validarFormularioCircuito();
+                
+                // 2. Si la validación pasó, llama a guardar
+                guardarCircuito();
+                
+                // 3. Muestra el mensaje de éxito
+                JOptionPane.showMessageDialog(this, "Circuito guardado correctamente.");
+                break;
 //            
             }
     
@@ -811,7 +816,143 @@ public class FormularioRegistro extends javax.swing.JFrame {
         this.gestion.crearPais(id, nombrePais);
     }
     
+   
+    private void validarFormularioCircuito() throws Exception {
     
+        // --- 1. LECTURA DE DATOS ---
+        // (Usamos .trim() para limpiar espacios en blanco al inicio o fin)
+        String nombreCircuito = txtCampo1.getText().trim();
+        String longitudStr = txtCampo2.getText().trim();
+        Object pais = comboCampo4.getSelectedItem();
+
+        // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (nombreCircuito.isEmpty() || longitudStr.isEmpty() || pais == null) {
+            throw new Exception("Debe completar todos los campos (Nombre, Longitud y País).");
+        }
+
+        // --- 3. VALIDACIÓN DE FORMATO (Longitud) ---
+        // (Revisamos que sea un número y que CUMPLA TUS REGLAS)
+        int longitud;
+        try {
+            longitud = Integer.parseInt(longitudStr);
+        } catch (NumberFormatException e) {
+            // Si no es un número, lanzamos un error
+        throw new Exception("La 'Longitud' debe ser un número entero (ej: 5).");
+        }
+    
+        // *** ¡AQUÍ TU VALIDACIÓN DE LONGITUD NEGATIVA! ***
+        // (Incluyo también el 0, ya que un circuito no puede tener 0km)
+        if (longitud <= 0) {
+            throw new Exception("La 'Longitud' debe ser un número positivo (mayor a 0).");
+        }
+
+        // --- 4. VALIDACIÓN DE FORMATO (Nombre) ---
+        // (Reutilizamos la misma lógica de País y Piloto)
+        String regexMayusculaYLetras = "^\\p{Lu}[\\p{L} ]*$";
+        if (!nombreCircuito.matches(regexMayusculaYLetras)) {
+            throw new Exception("El 'Nombre' del circuito debe iniciar con mayúscula y solo contener letras y espacios (Ej: 'Monza').");
+        }
+    
+        // --- 5. VALIDACIÓN DE DUPLICADOS (Lógica de Negocio) ---
+        // *** ¡AQUÍ TU VALIDACIÓN DE NOMBRE EXISTENTE! ***
+    
+        // Obtenemos la lista actual desde tu gestión
+        ArrayList<Circuito> listaCircuitos = this.gestion.getListaCircuitos();
+    
+        if (listaCircuitos != null) {
+            for (Circuito c : listaCircuitos) {
+                // Comparamos el nombre (ignorando mayúsculas/minúsculas)
+                if (c.getNombre().equalsIgnoreCase(nombreCircuito)) {
+                    throw new Exception("El circuito '" + nombreCircuito + "' ya está registrado.");
+                }
+            }
+        }
+    }
+    
+    
+    private void guardarCircuito() throws Exception {
+        // 1. Leemos los datos (ya sabemos que son válidos)
+        String nombreCircuito = txtCampo1.getText().trim();
+        int longitud = Integer.parseInt(txtCampo2.getText().trim()); // Es seguro parsear
+        Pais paisCircuito = (Pais) comboCampo4.getSelectedItem();
+
+        // 2. Llamar a la lógica
+        this.gestion.crearCircuitos(nombreCircuito, longitud, paisCircuito);
+    }
+    
+    
+    private void validarFormularioAuto() throws Exception {
+    
+        // --- 1. LECTURA DE DATOS ---
+        String modelo = txtCampo1.getText().trim();
+        String motor = txtCampo2.getText().trim();
+        Object escuderiaObj = comboCampo3.getSelectedItem(); // El combo de Escudería
+
+        // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (modelo.isEmpty() || motor.isEmpty() || escuderiaObj == null) {
+            throw new Exception("Debe completar todos los campos (Modelo, Motor y Escudería).");
+        }
+    
+        // Convertimos la escudería ELEGIDA (la del combo) para usarla en la validación
+        Escuderia escuderiaSeleccionada = (Escuderia) escuderiaObj;
+
+        // --- 3. VALIDACIÓN DE FORMATO (Tu nueva regla) ---
+        // Esta expresión regular:
+        // ^\p{Lu}         -> Empezar con Mayúscula
+        // [\p{L}\p{N} \-]* -> Seguido de letras, NÚMEROS, espacios y guiones.
+        // ¡Esto NO permite comas (,) ni puntos (.)!
+        String regexModeloMotor = "^\\p{Lu}[\\p{L}\\p{N} \\-]*$";
+    
+        if (!modelo.matches(regexModeloMotor)) {
+            throw new Exception("El 'Modelo' debe empezar con mayúscula y solo puede contener letras, números, espacios y guiones (Ej: 'SF-24').");
+        }
+    
+        if (!motor.matches(regexModeloMotor)) {
+            throw new Exception("El 'Motor' debe empezar con mayúscula y solo puede contener letras, números, espacios y guiones (Ej: 'Ferrari 066/12').");
+        }
+    
+        // --- 4. VALIDACIÓN DE DUPLICADOS Y REGLAS DE NEGOCIO ---
+        ArrayList<Auto> listaAutos = this.gestion.getListaAutos();
+    
+        if (listaAutos != null) {
+            // Recorremos la lista de autos existentes para validar
+            for (Auto autoExistente : listaAutos) {
+            
+                // REGLA 1 (Tu nueva regla): "que no tenga distintos modelos una misma escuderia"
+                // Verificamos si la escudería que ELEGIMOS ya tiene un auto registrado.
+                if (autoExistente.getEscuderia().equals(escuderiaSeleccionada)) {
+                    throw new Exception("La escudería '" + escuderiaSeleccionada.getNombre() + 
+                                  "' ya tiene un modelo registrado (" + autoExistente.getModelo() + "). " +
+                                  "No se puede registrar un segundo modelo.");
+                }
+            
+                // REGLA 2: "validar que [modelo] ya exista y si existe que tire error"
+                // (Verifica que el nombre del modelo no lo tenga OTRA escudería)
+                if (autoExistente.getModelo().equalsIgnoreCase(modelo)) {
+                    throw new Exception("El modelo '" + modelo + "' ya está registrado (pertenece a " + 
+                                  autoExistente.getEscuderia().getNombre() + ").");
+                }
+            
+                // REGLA 3: "motor tambien validar que ya no exista"
+                if (autoExistente.getMotor().equalsIgnoreCase(motor)) {
+                    throw new Exception("El motor '" + motor + "' ya está registrado (pertenece al modelo " + 
+                                  autoExistente.getModelo() + ").");
+                }
+            }
+         }
+    }
+    
+    
+    
+    private void guardarAuto() throws Exception {
+        // 1. Leemos los datos (ya validados)
+        String modelo = txtCampo1.getText().trim();
+        String motor = txtCampo2.getText().trim();
+        Escuderia escuderia = (Escuderia) comboCampo3.getSelectedItem();
+
+        // 2. Llamar a la lógica
+        this.gestion.crearAutos(modelo, motor, escuderia);
+    }
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
