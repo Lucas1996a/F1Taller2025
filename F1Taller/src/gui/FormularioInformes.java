@@ -224,7 +224,7 @@ public class FormularioInformes extends javax.swing.JFrame {
             }
         });
         jPanel2.add(bntVolver);
-        bntVolver.setBounds(6, 10, 90, 27);
+        bntVolver.setBounds(6, 10, 90, 23);
 
         tituloRegistro.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         tituloRegistro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -236,9 +236,27 @@ public class FormularioInformes extends javax.swing.JFrame {
         bg.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 380, 60));
 
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        comboCampoEsc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCampoEscActionPerformed(evt);
+            }
+        });
         jPanel3.add(comboCampoEsc, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 70, 150, 30));
+
+        comboCampoDeterminado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCampoDeterminadoActionPerformed(evt);
+            }
+        });
         jPanel3.add(comboCampoDeterminado, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 200, 190, 30));
         jPanel3.add(comboCampoAuto, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 70, 150, 30));
+
+        comboCampoMecanico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCampoMecanicoActionPerformed(evt);
+            }
+        });
         jPanel3.add(comboCampoMecanico, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, 150, 30));
         jPanel3.add(comboCampoCircuito, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, 150, 30));
         jPanel3.add(comboCampoCarrera, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, 150, 30));
@@ -472,16 +490,94 @@ public class FormularioInformes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarAutosActionPerformed
 
     private void btnGenerarPilotoCircActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPilotoCircActionPerformed
-        // TODO add your handling code here:
+        // 1. Obtener los OBJETOS seleccionados de los combos
+        // (Asegúrate de que los nombres de variables jComboPiloto y jComboCircuito sean correctos)
+        Object itemPiloto = comboCampoPiloto.getSelectedItem();
+        Object itemCircuito = comboCampoCircuito.getSelectedItem();
+
+        // 2. Validar que se haya seleccionado AMBOS
+        if (itemPiloto == null || itemCircuito == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un piloto Y un circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 3. Convertir los 'Objects' a sus tipos correctos
+        Piloto pilotoSeleccionado = (Piloto) itemPiloto;
+        Circuito circuitoSeleccionado = (Circuito) itemCircuito;
+
+        // 4. Extraer los Strings que el método de Gestion necesita
+        String dniPiloto = pilotoSeleccionado.getDni();
+        String nombreCircuito = circuitoSeleccionado.getNombre();
+
+        // 5. Llamar al método de Gestion que modificamos en el Paso 1
+        ArrayList<String> informe = this.gestion.generarInformePilotoEnCircuito(dniPiloto, nombreCircuito);
+
+        // 6. Crear y mostrar la ventana de salida
+        SalidaInforme vSalida = new SalidaInforme(informe, this);
+        vSalida.setVisible(true); 
     }//GEN-LAST:event_btnGenerarPilotoCircActionPerformed
 
     private void btnGenerarCarreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarCarreraActionPerformed
-        
+        // 1. Obtener el *objeto* seleccionado del ComboBox
+        // El JComboBox devuelve un 'Object', que en tu caso es un 'Circuito'
+        Object itemSeleccionado = comboCampoCircuito.getSelectedItem(); // REEMPLAZÁ 'jComboCircuito' si se llama distinto
+
+        // 2. Validar que se haya seleccionado algo
+        if (itemSeleccionado == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se ha seleccionado ningún circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    
+        // En lugar de (String), convertimos el 'Object' a 'Circuito'
+        Circuito circuitoSeleccionado = (Circuito) itemSeleccionado;
+    
+        // 4. Ahora que tenemos el objeto, obtenemos el String (el nombre)
+        String nombreCircuito = circuitoSeleccionado.getNombre();
+
+        // 5. Llamar al método de Gestion (esta parte ya estaba bien)
+        ArrayList<String> informe = this.gestion.generarInformeCarrerasEnCircuito(nombreCircuito);
+    
+        // 6. Crear la ventana de salida
+        SalidaInforme vSalida = new SalidaInforme(informe, this);
+    
+        // 7. Mostrar la ventana de informe
+        vSalida.setVisible(true);
     }//GEN-LAST:event_btnGenerarCarreraActionPerformed
 
+
     private void btnGenerarMecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarMecActionPerformed
-        // TODO add your handling code here:
+        // 1. Obtener el OBJETO seleccionado del combo
+        // (Revisá que 'jComboEscuderia' sea el nombre de tu variable)
+        Object itemEscuderia = comboCampoEsc.getSelectedItem();
+
+        // 2. Validar que se haya seleccionado algo
+        if (itemEscuderia == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una escudería.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 3. Convertir el 'Object' a 'Escuderia' (como aprendimos en el error anterior)
+        Escuderia escuderiaSeleccionada = (Escuderia) itemEscuderia;
+
+        // 4. Llamar al NUEVO método de Gestion (el que creamos en el Paso 1)
+        ArrayList<String> informe = this.gestion.generarInformeMecanicos(escuderiaSeleccionada);
+
+        // 5. Crear y mostrar la ventana de salida
+        SalidaInforme vSalida = new SalidaInforme(informe, this);
+        vSalida.setVisible(true);
     }//GEN-LAST:event_btnGenerarMecActionPerformed
+
+    private void comboCampoMecanicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoMecanicoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboCampoMecanicoActionPerformed
+
+    private void comboCampoEscActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoEscActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboCampoEscActionPerformed
+
+    private void comboCampoDeterminadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoDeterminadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboCampoDeterminadoActionPerformed
 
     private void cargarEscuderias() {
         try {
