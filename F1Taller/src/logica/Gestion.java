@@ -220,6 +220,7 @@ public class Gestion {
     
     public ArrayList<ResultadoCarrera> getListaResultados(){
          return this.listaResultados;
+    }
     public ArrayList<PilotoEscuderia> getListaPilotoEscuderia() {
         return this.listaPilotoEscuderias;
     }
