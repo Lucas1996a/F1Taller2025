@@ -456,10 +456,8 @@ public class FormularioRegistro extends javax.swing.JFrame {
                 break;
                 
             case "ESCUDERIA":
-                    String nombreEsc = txtCampo1.getText();
-                    Pais paisEsc = (Pais) comboCampo2.getSelectedItem();
-            
-                    this.gestion.crearEscuderias(nombreEsc, paisEsc);
+                    validarFormularioEscuderia();
+                    guardarEscuderia();
                     JOptionPane.showMessageDialog(this, "Escudería guardada correctamente.");
                     break;
 //            
@@ -755,7 +753,6 @@ public class FormularioRegistro extends javax.swing.JFrame {
     * Valida todos los campos del formulario de País.
     * Si algo está mal, Lanza una Excepción (throws Exception).
     */
-    
     private void validarFormularioPais() throws Exception {
         // --- 1. LECTURA DE DATOS ---
         String idStr = txtCampo1.getText().trim();
@@ -907,6 +904,8 @@ public class FormularioRegistro extends javax.swing.JFrame {
             throw new Exception("El 'Modelo' debe empezar con mayúscula y solo puede contener letras, números, espacios y guiones (Ej: 'SF-24').");
         }
     
+    
+    
         if (!motor.matches(regexModeloMotor)) {
             throw new Exception("El 'Motor' debe empezar con mayúscula y solo puede contener letras, números, espacios y guiones (Ej: 'Ferrari 066/12').");
         }
@@ -952,6 +951,54 @@ public class FormularioRegistro extends javax.swing.JFrame {
 
         // 2. Llamar a la lógica
         this.gestion.crearAutos(modelo, motor, escuderia);
+    }
+  
+  /**
+     * Valida datos de Escudería:
+     * - Campos no vacíos.
+     * - Nombre con formato Capitalizado (Mayúscula inicial, solo letras y espacios).
+     * - Que no exista otra escudería con el mismo nombre.
+     */
+    private void validarFormularioEscuderia() throws Exception {
+        // --- 1. LECTURA ---
+        String nombreEsc = txtCampo1.getText().trim();
+        Object paisEsc = comboCampo2.getSelectedItem();
+
+        // --- 2. VALIDACIÓN VACÍOS ---
+        if (nombreEsc.isEmpty()) {
+            throw new Exception("El nombre de la escudería no puede estar vacío.");
+        }
+        if (paisEsc == null) {
+            throw new Exception("Debe seleccionar un País de origen.");
+        }
+
+        // --- 3. VALIDACIÓN FORMATO (Regex) ---
+        // Inicia con Mayúscula, seguido de letras o espacios.
+        String regexNombre = "^\\p{Lu}[\\p{L} ]*$"; 
+        if (!nombreEsc.matches(regexNombre)) {
+            throw new Exception("El nombre debe iniciar con mayúscula y solo contener letras (Ej: 'Red Bull', 'Ferrari').");
+        }
+
+        // --- 4. VALIDACIÓN DUPLICADOS ---
+        ArrayList<Escuderia> listaEscuderias = this.gestion.getListaEscuderias();
+        
+        if (listaEscuderias != null) {
+            for (Escuderia e : listaEscuderias) {
+                // Comparamos nombres ignorando mayúsculas/minúsculas
+                if (e.getNombre().equalsIgnoreCase(nombreEsc)) {
+                    throw new Exception("La escudería '" + nombreEsc + "' ya está registrada.");
+                }
+            }
+        }
+    }
+
+    private void guardarEscuderia() {
+        // 1. Recuperar datos limpios
+        String nombreEsc = txtCampo1.getText().trim();
+        Pais paisEsc = (Pais) comboCampo2.getSelectedItem();
+
+        // 2. Llamar a la gestión
+        this.gestion.crearEscuderias(nombreEsc, paisEsc);
     }
     
     
