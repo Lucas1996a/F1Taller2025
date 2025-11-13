@@ -859,7 +859,7 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
         return null;
     }
    
-   
+   /*
    public int contarParticipacionesPilotoEnCircuito(String dniPiloto, String nombreCircuito) {
     
         Piloto piloto = buscarPilotoPorDNI(dniPiloto);
@@ -897,6 +897,60 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
                       
         return contador;
     }
+   */
+   
+   public ArrayList<String> generarInformePilotoEnCircuito(String dniPiloto, String nombreCircuito) {
+    
+    ArrayList<String> informe = new ArrayList<>();
+    informe.add("====================");
+    informe.add("PARTICIPACIONES DE PILOTO EN CIRCUITO");
+    informe.add("====================");
+
+    Piloto piloto = buscarPilotoPorDNI(dniPiloto);
+    Circuito circuito = buscarCircuitoPorNombre(nombreCircuito);
+    int contador = 0;
+
+    // Validación Piloto
+    if (piloto == null) {
+        informe.add("ERROR: Piloto con DNI " + dniPiloto + " no encontrado.");
+        return informe;
+    }
+    
+    // Validación Circuito
+    if (circuito == null) {
+        informe.add("ERROR: Circuito " + nombreCircuito + " no encontrado.");
+        return informe;
+    }
+
+    // Empezamos el conteo
+    for (ResultadoCarrera resultado : this.listaResultados) {
+        Carrera carrera = resultado.getCarrera();
+        
+        // Ignoramos resultados sin carrera, sin circuito, o sin piloto asignado
+        if (carrera == null || carrera.getCircuito() == null || resultado.getAutoPiloto() == null) {
+            continue; 
+        }
+        
+        Piloto pilotoDelResultado = resultado.getAutoPiloto().getPiloto();
+        
+        // ¡CORRECCIÓN IMPORTANTE! Usamos .equals() para ambos objetos
+        boolean esMismoPiloto = pilotoDelResultado.equals(piloto);
+        boolean esMismoCircuito = carrera.getCircuito().equals(circuito);
+        
+        if (esMismoPiloto && esMismoCircuito) {
+            contador++;
+        }
+    }
+    
+    // Agregamos los resultados finales al informe
+    informe.add("Consulta:");
+    informe.add("Piloto: " + piloto.getNombre() + " " + piloto.getApellido());
+    informe.add("Circuito: " + circuito.getNombre());
+    informe.add("--------------------");
+    informe.add("Total de participaciones: " + contador);
+
+    return informe;
+}
    
    /*
    public int contarCarrerasEnCircuito(String nombreCircuito){

@@ -488,7 +488,31 @@ public class FormularioInformes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarAutosActionPerformed
 
     private void btnGenerarPilotoCircActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPilotoCircActionPerformed
-        // TODO add your handling code here:
+       // 1. Obtener los OBJETOS seleccionados de los combos
+    // (Asegúrate de que los nombres de variables jComboPiloto y jComboCircuito sean correctos)
+    Object itemPiloto = comboCampoPiloto.getSelectedItem();
+    Object itemCircuito = comboCampoCircuito.getSelectedItem();
+
+    // 2. Validar que se haya seleccionado AMBOS
+    if (itemPiloto == null || itemCircuito == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar un piloto Y un circuito.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 3. Convertir los 'Objects' a sus tipos correctos
+    Piloto pilotoSeleccionado = (Piloto) itemPiloto;
+    Circuito circuitoSeleccionado = (Circuito) itemCircuito;
+
+    // 4. Extraer los Strings que el método de Gestion necesita
+    String dniPiloto = pilotoSeleccionado.getDni();
+    String nombreCircuito = circuitoSeleccionado.getNombre();
+
+    // 5. Llamar al método de Gestion que modificamos en el Paso 1
+    ArrayList<String> informe = this.gestion.generarInformePilotoEnCircuito(dniPiloto, nombreCircuito);
+
+    // 6. Crear y mostrar la ventana de salida
+    SalidaInforme vSalida = new SalidaInforme(informe, this);
+    vSalida.setVisible(true); 
     }//GEN-LAST:event_btnGenerarPilotoCircActionPerformed
 
     private void btnGenerarCarreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarCarreraActionPerformed
