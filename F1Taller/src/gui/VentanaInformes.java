@@ -4,6 +4,8 @@
  */
 package gui;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import logica.Gestion;
 
 /**
@@ -225,10 +227,23 @@ public class VentanaInformes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnResultadosCarrerasActionPerformed
 
     private void btnRankingPilotosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRankingPilotosActionPerformed
-        FormularioInformes form = new FormularioInformes("RANKING", this.gestion, this);
-        form.setVisible(true);
-        form.setLocationRelativeTo(null);
-        this.dispose();
+//        FormularioInformes form = new FormularioInformes("RANKING", this.gestion, this);
+//        form.setVisible(true);
+//        form.setLocationRelativeTo(null);
+//        this.dispose();
+
+try {
+                    ArrayList<String> informe = this.gestion.generarRankingPilotos();
+                    SalidaInforme vSalida = new SalidaInforme(informe, this); // Importante: pasamos ventanaAnterior
+                    vSalida.setVisible(true);
+                    vSalida.setLocationRelativeTo(null);
+                    this.dispose(); // Cierra esta ventana FormularioInformes
+                    
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, "Error al generar el ranking: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    this.setVisible(true); // Vuelve a la ventana anterior
+                    this.dispose(); // Cierra esta ventana FormularioInformes
+                }
     }//GEN-LAST:event_btnRankingPilotosActionPerformed
 
     private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
