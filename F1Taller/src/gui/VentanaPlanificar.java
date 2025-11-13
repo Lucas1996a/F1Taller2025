@@ -225,43 +225,7 @@ public class VentanaPlanificar extends javax.swing.JFrame {
         }
     }
     
-//  private void cargarPaises() {
-//        try {
-//            // 1. Limpia el combo (borra "Item 1", "Item 2", etc.)
-//            comboCampo2.removeAllItems(); 
-//            comboCampoCircuito.removeAllItems(); 
-//            
-//            // 2. Le pide la lista de países a tu objeto 'miGestion'
-//            //    (Esto usa el método que creamos en Gestion.java)
-//            ArrayList<Pais> listaDePaises = this.gestion.getListaPais();
-//
-//            // 3. Recorre la lista y añade cada OBJETO 'Pais' al combo
-//            if (listaDePaises != null) {
-//                for (Pais p : listaDePaises) {
-//                    comboCampo2.addItem(p);
-//                    comboCampoCircuito.addItem(p);
-//                }
-//            }
-//            
-//            // 4. (Opcional) Pone el primero como seleccionado
-//            if (comboCampo2.getItemCount() > 0) {
-//                comboCampo2.setSelectedIndex(0);
-//            }
-//            if (comboCampoCircuito.getItemCount() > 0) {
-//                comboCampoCircuito.setSelectedIndex(0);
-//            }
-//
-//        } catch (Exception e) {
-//            // Muestra un error si 'miGestion' falla
-//            JOptionPane.showMessageDialog(this, 
-//                "Error fatal: No se pudo cargar la lista de países.", 
-//                "Error de Carga", 
-//                JOptionPane.ERROR_MESSAGE);
-//            
-//            // También usamos el 'logger' que ya tienes en tu clase
-//            logger.severe("Error al cargar países: " + e.getMessage());
-//        }
-//  }
+
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

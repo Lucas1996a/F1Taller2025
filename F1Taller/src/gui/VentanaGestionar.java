@@ -173,7 +173,7 @@ public class VentanaGestionar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnMecanicosActionPerformed
 
-    
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
