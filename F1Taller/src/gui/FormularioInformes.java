@@ -662,6 +662,9 @@ public class FormularioInformes extends javax.swing.JFrame {
     
     
     
+    
+    
+    
 
     
     
