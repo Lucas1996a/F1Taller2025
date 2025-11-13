@@ -797,53 +797,68 @@ public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, St
     }
    
     
+  
    
-   public void generarInformeAutosPorEscuderia() {
+   public ArrayList<String> generarInformeAutosEnCarreras(Escuderia escuderia) {
     
-        System.out.println("====================================");
-        System.out.println(" INFORME DE USO DE AUTOS POR ESCUDERÍA EN CARRERAS️");
-        System.out.println("=====================================");
+    ArrayList<String> informe = new ArrayList<>();
+    
+    // Encabezados del informe
+    informe.add("====================");
+    informe.add("INFORME DE AUTOS UTILIZADOS");
+    informe.add("Escudería: " + escuderia.getNombre());
+    informe.add("====================");
 
-        if (this.listaEscuderias.isEmpty() || this.listaAutoPilotos.isEmpty()) {
-            System.out.println("No hay escuderías o registros de participación de autos para generar el informe.");
-            return; 
+    boolean tieneRegistros = false;
+    
+    // Usamos una lista de "claves únicas" para no repetir el mismo auto/carrera/piloto
+    ArrayList<String> registrosUnicos = new ArrayList<>();
+    
+    // Iteramos sobre la lista de RESULTADOS. Es la fuente de datos más fiable.
+    for (ResultadoCarrera resultado : this.listaResultados) {
+        
+        // Obtenemos las partes del resultado
+        AutoPiloto autoPiloto = resultado.getAutoPiloto();
+        Carrera carrera = resultado.getCarrera();
+        
+        // Validamos que todo exista
+        if (autoPiloto == null || autoPiloto.getAuto() == null || carrera == null || carrera.getCircuito() == null) {
+            continue;
         }
         
-        for (Escuderia escuderia : this.listaEscuderias) {
+        Auto autoUsado = autoPiloto.getAuto();
         
-            boolean tieneRegistros = false;
-            System.out.printf("ESCUDERÍA: %s (%s)\n", escuderia.getNombre(), escuderia.getPais().getDescripcion());
-            System.out.println("----------------------------------------");
-        
-            ArrayList<String> registrosUnicos = new ArrayList<>();
+        // 1. FILTRAMOS: ¿El auto es de la escudería que buscamos?
+        if (autoUsado.getEscuderia().equals(escuderia)) {
             
-            for (AutoPiloto registro : this.listaAutoPilotos) {
-                Auto autoUsado = registro.getAuto();
+            tieneRegistros = true;
+            Piloto piloto = autoPiloto.getPiloto();
             
-                if (autoUsado.getEscuderia() == escuderia) {
+            // Creamos una clave para evitar duplicados
+            String clave = autoUsado.getModelo() + "|" + carrera.getFechaRealizacion() + "|" + piloto.getDni();
+            
+            if (!registrosUnicos.contains(clave)) {
+                registrosUnicos.add(clave);
                 
-                    tieneRegistros = true;
-                    Carrera carrera = registro.getCarrera();
-                    Piloto piloto = registro.getPiloto();
-
-                    String claveRegistro = autoUsado.getModelo() + "|" + carrera.getFechaRealizacion();
-
-               
-                    if (!registrosUnicos.contains(claveRegistro)) {
-                 
-                        System.out.printf("- Auto: %s (Motor: %s) corrió en el GP de %s con %s.\n",autoUsado.getModelo(), autoUsado.getMotor(), carrera.getPais().getDescripcion(), piloto.getNombre());
-                        registrosUnicos.add(claveRegistro);
-                    }
-                }
-            }
-        
-            if (!tieneRegistros) {
-                System.out.println("   [!] Sin registros de participación de autos en carreras.");
+                // Formateamos la línea del informe
+                String linea = String.format("- Auto: %s (Motor: %s)", autoUsado.getModelo(), autoUsado.getMotor());
+                informe.add(linea);
+                informe.add(String.format("  Usado por: %s %s", piloto.getNombre(), piloto.getApellido()));
+                informe.add(String.format("  En: GP de %s (%s)", carrera.getPais().getDescripcion(), carrera.getFechaRealizacion()));
+                informe.add("--------------------");
             }
         }
-
-        System.out.println("\n=================================================");
     }
+
+    if (!tieneRegistros) {
+        informe.add("No hay registros de autos de esta escudería");
+        informe.add("utilizados en carreras.");
+    }
+    
+    return informe;
+}
+   
+   
    
    public ArrayList<String> generarInformeMecanicos(Escuderia escuderia) {
     

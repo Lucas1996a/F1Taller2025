@@ -486,7 +486,25 @@ public class FormularioInformes extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarRankingActionPerformed
 
     private void btnGenerarAutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAutosActionPerformed
-        // TODO add your handling code here:
+        // 1. Obtener el OBJETO seleccionado del combo
+    // (Revisá que 'jComboEscuderia' sea el nombre de tu variable)
+    Object itemEscuderia = comboCampoEsc.getSelectedItem();
+
+    // 2. Validar que se haya seleccionado algo
+    if (itemEscuderia == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar una escudería.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 3. Convertir el 'Object' a 'Escuderia'
+    Escuderia escuderiaSeleccionada = (Escuderia) itemEscuderia;
+
+    // 4. Llamar al NUEVO método de Gestion (el que creamos en el Paso 1)
+    ArrayList<String> informe = this.gestion.generarInformeAutosEnCarreras(escuderiaSeleccionada);
+
+    // 5. Crear y mostrar la ventana de salida
+    SalidaInforme vSalida = new SalidaInforme(informe, this);
+    vSalida.setVisible(true);
     }//GEN-LAST:event_btnGenerarAutosActionPerformed
 
     private void btnGenerarPilotoCircActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPilotoCircActionPerformed
