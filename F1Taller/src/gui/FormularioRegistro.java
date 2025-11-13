@@ -441,36 +441,24 @@ public class FormularioRegistro extends javax.swing.JFrame {
                 validarFormularioPais();
                 guardarPais();
                 JOptionPane.showMessageDialog(this, "País guardado correctamente.");
-                    break;
+                break;
             
             
             case "AUTO":
-                    // 1. Llama a la validación
                 validarFormularioAuto();
-                
-                // 2. Si pasa, llama a guardar
                 guardarAuto();
-                
-                // 3. Muestra el mensaje de éxito
                 JOptionPane.showMessageDialog(this, "Auto guardado correctamente.");
                 break;
                 
             case "ESCUDERIA":
-                    validarFormularioEscuderia();
-                    guardarEscuderia();
-                    JOptionPane.showMessageDialog(this, "Escudería guardada correctamente.");
-                    break;
+                validarFormularioEscuderia();
+                guardarEscuderia();
+                JOptionPane.showMessageDialog(this, "Escudería guardada correctamente.");
+                break;
 //            
             case "CIRCUITO":
-                    
-                // 1. Llama a la validación.
-                // Si algo está mal, lanzará una excepción y saltará al 'catch'
                 validarFormularioCircuito();
-                
-                // 2. Si la validación pasó, llama a guardar
                 guardarCircuito();
-                
-                // 3. Muestra el mensaje de éxito
                 JOptionPane.showMessageDialog(this, "Circuito guardado correctamente.");
                 break;
 //            
