@@ -349,13 +349,6 @@ public class FormularioGestionar extends javax.swing.JFrame {
                 
                 JOptionPane.showMessageDialog(this, "Asociación de Mecánico borrada.");
                 break;
-                
-            case "AUTO":
-                // Este botón no debería estar visible en el modo AUTO.
-                // La "baja" de un auto (darDeBajaAutoEscuderia) es un borrado completo,
-                // no una desasociación. Si querés un botón de borrar auto,
-                // debería ser el 'bntBorrar' y no 'btnEliminarAsociacion'.
-                break;
         }
         } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
@@ -396,20 +389,8 @@ public class FormularioGestionar extends javax.swing.JFrame {
 
             // --- FLUJO MECÁNICO (N-a-N simple) ---
             case "MECANICO": {
-                // 1. Leer datos
-                Mecanico mec = (Mecanico) comboCampoMecanico.getSelectedItem();
-                Escuderia escMec = (Escuderia) comboCampoEsc.getSelectedItem();
-                String desde = txtCampodF.getText();
-                String hasta = txtCampohF.getText();
-                
-                // 2. Validar
-                if (mec == null || escMec == null || desde == null || hasta == null) {
-                    JOptionPane.showMessageDialog(this, "Debe seleccionar un Mecánico y una Escudería.", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
-                }
-                
-                // 3. Llamar a la lógica
-                gestion.gestionarMecanicoEscuderia(mec, escMec, desde, hasta); 
+                validarAsociacionMecanico();
+                guardarAsociacionMecanico();
                 JOptionPane.showMessageDialog(this, "Mecánico asociado exitosamente.");
                 break;
             }
@@ -598,6 +579,82 @@ public class FormularioGestionar extends javax.swing.JFrame {
         
         // 2. Llamar a la lógica
         gestion.gestionarPilotoEscuderia(pil, escSel, desdeStr, hastaStr);
+    }
+    
+    
+    /**
+     * Ejecuta las 5 reglas de validación para la asociación Mecanico-Escudería.
+     * (Asume que Mecanico tiene las mismas reglas de negocio que Piloto)
+     */
+    private void validarAsociacionMecanico() throws Exception {
+        // 1. LEER DATOS
+        Mecanico mec = (Mecanico) comboCampoMecanico.getSelectedItem();
+        Escuderia escSel = (Escuderia) comboCampoEsc.getSelectedItem();
+        String desdeStr = txtCampodF.getText().trim();
+        String hastaStr = txtCampohF.getText().trim();
+        
+        // 2. VALIDAR CAMPOS BÁSICOS
+        if (mec == null || escSel == null) {
+             throw new Exception("Debe seleccionar un Mecánico y una Escudería.");
+        }
+        if (desdeStr.isEmpty() || hastaStr.isEmpty()) {
+            throw new Exception("Debe completar ambas fechas (Desde y Hasta).");
+        }
+        
+        // 3. VALIDAR FORMATO DE FECHAS (Reglas 3 y 4)
+        validarFechaComoString(desdeStr, "Fecha Desde"); 
+        validarFechaComoString(hastaStr, "Fecha Hasta"); 
+
+        // 4. VALIDAR ORDEN DE FECHAS (Regla 5)
+        if (desdeStr.compareTo(hastaStr) >= 0) {
+            throw new Exception("La 'Fecha Desde' debe ser anterior a la 'Fecha Hasta'.");
+        }
+        
+        // 5. VALIDAR LÓGICA DE NEGOCIO (Reglas 1 y 2)
+        
+        // *** ASUNCIÓN IMPORTANTE (ver nota abajo) ***
+        ArrayList<MecanicoEscuderia> contratosExistentes = (ArrayList<MecanicoEscuderia>) mec.getMecanicoEscuderias();
+        int contadorMismaEscuderia = 0;
+
+        for (MecanicoEscuderia contrato : contratosExistentes) {
+            String contDesde = contrato.getDesdeFecha();
+            String contHasta = contrato.getHastaFecha();
+
+            // --- REGLA 1: Contar historial en esta escudería ---
+            if (contrato.getEscuderia().equals(escSel)) {
+                contadorMismaEscuderia++;
+            }
+
+            // --- REGLA 2: Validar CUALQUIER traslape de fechas ---
+            boolean hayTraslape = hayTraslapeDeStrings(desdeStr, hastaStr, contDesde, contHasta);
+
+            if (hayTraslape) {
+                throw new Exception("Conflicto de contrato: El período ingresado (" + desdeStr + " al " + hastaStr + ") " +
+                                    "se superpone con un contrato existente (" + contDesde + " al " + contHasta + ") " +
+                                    "con la escudería '" + contrato.getEscuderia().getNombre() + "'.");
+            }
+        }
+
+        // 6. Verificación final de Regla 1 (límite histórico)
+        if (contadorMismaEscuderia >= 2) {
+            throw new Exception("Límite alcanzado: El mecánico '" + mec.getApellido() + 
+                                "' ya ha sido asignado 2 veces a la escudería '" + 
+                                escSel.getNombre() + "' (límite histórico).");
+        }
+    }
+
+    /**
+     * Guarda la asociación Mecánico-Escudería.
+     */
+    private void guardarAsociacionMecanico() {
+        // 1. Leer datos (ya sabemos que son válidos)
+        Mecanico mec = (Mecanico) comboCampoMecanico.getSelectedItem();
+        Escuderia escSel = (Escuderia) comboCampoEsc.getSelectedItem();
+        String desdeStr = txtCampodF.getText().trim();
+        String hastaStr = txtCampohF.getText().trim();
+        
+        // 2. Llamar a la lógica
+        gestion.gestionarMecanicoEscuderia(mec, escSel, desdeStr, hastaStr);
     }
     
     
