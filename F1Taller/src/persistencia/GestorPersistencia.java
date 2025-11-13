@@ -206,17 +206,17 @@ public class GestorPersistencia {
 
         if (noExiste) {
             // Cabecera del archivo
-            bw.write("apellido_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "fecha_asignacion");
+            bw.write("dni_piloto" + SEPARADOR + "modelo_auto" + SEPARADOR + "fecha_asignacion");
             bw.newLine();
         }
 
         // --- VINCULACIÓN ---
-        String apellidoPiloto = asociacion.getPiloto().getApellido();
+        String dniPiloto = asociacion.getPiloto().getDni();
         String modeloAuto = asociacion.getAuto().getModelo();
         String fecha = asociacion.getFechaAsignacion();
 
         // Escribimos la línea de datos
-        String linea = apellidoPiloto + SEPARADOR +
+        String linea = dniPiloto + SEPARADOR +
                        modeloAuto + SEPARADOR +
                        fecha;
 
@@ -552,50 +552,59 @@ public class GestorPersistencia {
     }
     
     public ArrayList<PilotoEscuderia> cargarPilotosEscuderias(
-            ArrayList<Piloto> listaPilotos, ArrayList<Escuderia> listaEscuderias) {
-        
-        ArrayList<PilotoEscuderia> asociaciones = new ArrayList<>();
-        File archivo = new File(PILOTOESCUDERIA_CSV);
+        ArrayList<Piloto> listaPilotos, ArrayList<Escuderia> listaEscuderias) {
+    
+    ArrayList<PilotoEscuderia> asociaciones = new ArrayList<>();
+    File archivo = new File(PILOTOESCUDERIA_CSV); // "src/data/PilotoEscuderia.csv"
 
-        if (!archivo.exists()) {
-            return asociaciones; 
-        }
-
-        try (FileReader fr = new FileReader(archivo);
-             BufferedReader br = new BufferedReader(fr)) {
-
-            br.readLine(); 
-
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] datos = linea.split(SEPARADOR);
-                if (datos.length < 4) continue; 
-
-                String dniPiloto = datos[0];
-                String nombreEscuderia = datos[1];
-                String fechaDesde = datos[2];
-                String fechaHasta = datos[3];
-
-                // --- VINCULACIÓN ---
-                Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
-                Escuderia escuderia = listaEscuderias.stream().filter(e -> e.getNombre().equalsIgnoreCase(nombreEscuderia)).findFirst().orElse(null);
-
-                if (piloto != null && escuderia != null) {
-                    PilotoEscuderia pe = new PilotoEscuderia();
-                    pe.setPiloto(piloto);
-                    pe.setEscuderia(escuderia);
-                    pe.setDesdeFecha(fechaDesde);
-                    pe.setHastaFecha(fechaHasta);
-                    asociaciones.add(pe);
-                } else {
-                    System.err.println("Error al vincular asociación (Piloto/Escudería no encontrados): " + linea);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error al cargar PilotosEscuderias: " + e.getMessage());
-        }
+    if (!archivo.exists()) {
         return asociaciones;
     }
+
+    try (FileReader fr = new FileReader(archivo);
+         BufferedReader br = new BufferedReader(fr)) {
+
+        br.readLine(); // Salteamos cabecera (dni_piloto;nombre_escuderia;fecha_desde;fecha_hasta)
+
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(SEPARADOR);
+            
+            // Tu CSV tiene 4 campos
+            if (datos.length < 4) {
+                continue;
+            }
+
+            String dniPiloto = datos[0].trim(); // Añado .trim() por si acaso
+            String nombreEscuderia = datos[1].trim();
+            String fechaDesde = datos[2];
+            String fechaHasta = datos[3];
+
+            // --- VINCULACIÓN ---
+            Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
+            Escuderia escuderia = listaEscuderias.stream().filter(e -> e.getNombre().equalsIgnoreCase(nombreEscuderia)).findFirst().orElse(null);
+
+            if (piloto != null && escuderia != null) {
+                
+                PilotoEscuderia pe = new PilotoEscuderia();
+                pe.setPiloto(piloto);
+                pe.setEscuderia(escuderia);
+                pe.setDesdeFecha(fechaDesde);
+                pe.setHastaFecha(fechaHasta);
+                
+                // Doble vinculación
+                piloto.agregarPilotoEscuderia(pe); // (Tu método en Piloto)
+                escuderia.agregarPilotoEscuderia(pe); // (Tu método en Escuderia)
+                
+                asociaciones.add(pe);
+            }
+        }
+    }
+     catch (IOException e) {
+    }
+    
+    return asociaciones;
+}
     
     public ArrayList<Auto> cargarAutos(ArrayList<Escuderia> listaDeEscuderias) {
         ArrayList<Auto> autos = new ArrayList<>();
@@ -648,134 +657,11 @@ public class GestorPersistencia {
             return autos;
     }
     
-    /**
- * Lee AutoPiloto.csv y devuelve un ArrayList de asociaciones.
- * @param listaPilotos La lista de pilotos ya cargada.
- * @param listaAutos La lista de autos ya cargada.
- */
-//    public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos, ArrayList<Carrera> listaCarreras) {
-//
-//    ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
-//    File archivo = new File(AUTOPILOTO_CSV);
-//    if (!archivo.exists()) {
-//        return asociaciones; // Devuelve lista vacía
-//    }
-//
-//    try (FileReader fr = new FileReader(archivo);
-//         BufferedReader br = new BufferedReader(fr)) {
-//
-//        br.readLine(); // Salteamos cabecera
-//
-//        String linea;
-//        while ((linea = br.readLine()) != null) {
-//            String[] datos = linea.split(SEPARADOR);
-//            // Ahora buscamos 4 campos
-//            if (datos.length < 4) continue; 
-//
-//            String dniPiloto = datos[0];
-//            String modeloAuto = datos[1];
-//            String fechaAsignacion = datos[2];
-//            String idCarrera = datos[3]; // El ID de la carrera
-//
-//            // --- VINCULACIÓN ---
-//            Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
-//            Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
-//            // ¡La vinculación que faltaba!
-//            Carrera carrera = listaCarreras.stream().filter(c -> c.getFechaRealizacion().equals(idCarrera)).findFirst().orElse(null);
-//
-//            if (piloto != null && auto != null && carrera != null) {
-//                AutoPiloto ap = new AutoPiloto();
-//                ap.setPiloto(piloto);
-//                ap.setAuto(auto);
-//                ap.setFechaAsignacion(fechaAsignacion);
-//                
-//                ArrayList<Carrera> listaDeCarreras = new ArrayList<>();
-//                listaDeCarreras.add(carrera);
-//                ap.setCarrera(listaDeCarreras); 
-//                
-//                // Doble vinculación
-//                piloto.agregarAutoPiloto(ap);
-//                carrera.agregarAutoPiloto(ap); 
-//                
-//                asociaciones.add(ap);
-//            }
-//        }
-//    } catch (IOException e) {
-//        System.err.println("Error al cargar AutoPilotos: " + e.getMessage());
-//    }
-//    return asociaciones;
-//    }
-    
-    // En GestorPersistencia.java
-
-//public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos, ArrayList<Carrera> listaCarreras) {
-//    
-//    ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
-//    File archivo = new File(AUTOPILOTO_CSV);
-//    if (!archivo.exists()) {
-//        System.err.println("DEBUG (cargarAutoPilotos): No se encontró el archivo " + AUTOPILOTO_CSV); // DEBUG 1
-//        return asociaciones;
-//    }
-//
-//    try (FileReader fr = new FileReader(archivo);
-//         BufferedReader br = new BufferedReader(fr)) {
-//
-//        br.readLine(); // Salteamos cabecera
-//
-//        String linea;
-//        while ((linea = br.readLine()) != null) {
-//            String[] datos = linea.split(SEPARADOR);
-//            if (datos.length < 4) continue; 
-//
-//            String dniPiloto = datos[0];
-//            String modeloAuto = datos[1];
-//            String fechaAsignacion = datos[2];
-//            String idCarrera = datos[3]; 
-//
-//            // --- VINCULACIÓN ---
-//            Piloto piloto = listaPilotos.stream().filter(p -> p.getDni().equals(dniPiloto)).findFirst().orElse(null);
-//            Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
-//            Carrera carrera = listaCarreras.stream().filter(c -> c.getFechaRealizacion().equals(idCarrera)).findFirst().orElse(null);
-//
-//            if (piloto != null && auto != null && carrera != null) {
-//                // ¡Si ves esto, es que SÍ cargó!
-//                System.err.println("DEBUG (cargarAutoPilotos): ¡VINCULACIÓN EXITOSA! -> " + dniPiloto + " con " + modeloAuto); // DEBUG 2
-//                
-//                AutoPiloto ap = new AutoPiloto();
-//                ap.setPiloto(piloto);
-//                ap.setAuto(auto);
-//                ap.setFechaAsignacion(fechaAsignacion);
-//                
-//                ArrayList<Carrera> listaDeCarreras = new ArrayList<>();
-//                listaDeCarreras.add(carrera);
-//                ap.setCarrera(listaDeCarreras); 
-//                
-//                piloto.agregarAutoPiloto(ap);
-//                carrera.agregarAutoPiloto(ap); 
-//                
-//                asociaciones.add(ap);
-//            } else {
-//                // ¡Si ves esto, es que falló la vinculación!
-//                System.err.println("DEBUG (cargarAutoPilotos): VINCULACIÓN FALLIDA. Línea: " + linea); // DEBUG 3
-//                if (piloto == null) System.err.println(" -> Causa: Piloto (DNI " + dniPiloto + ") no encontrado.");
-//                if (auto == null) System.err.println(" -> Causa: Auto (Modelo " + modeloAuto + ") no encontrado.");
-//                if (carrera == null) System.err.println(" -> Causa: Carrera (ID " + idCarrera + ") no encontrada.");
-//            }
-//        }
-//    } catch (IOException e) {
-//        System.err.println("DEBUG (cargarAutoPilotos): ERROR DE LECTURA: " + e.getMessage()); // DEBUG 4
-//    }
-//    
-//    System.err.println("DEBUG (cargarAutoPilotos): Carga finalizada. Total de asociaciones encontradas: " + asociaciones.size()); // DEBUG 5
-//    return asociaciones;
-//}
-    
     public ArrayList<AutoPiloto> cargarAutoPilotos(ArrayList<Piloto> listaPilotos, ArrayList<Auto> listaAutos) {
     
     ArrayList<AutoPiloto> asociaciones = new ArrayList<>();
     File archivo = new File(AUTOPILOTO_CSV);
     if (!archivo.exists()) {
-        System.err.println("DEBUG (cargarAutoPilotos): No se encontró " + AUTOPILOTO_CSV);
         return asociaciones;
     }
 
@@ -801,8 +687,6 @@ public class GestorPersistencia {
             Auto auto = listaAutos.stream().filter(a -> a.getModelo().equalsIgnoreCase(modeloAuto)).findFirst().orElse(null);
 
             if (piloto != null && auto != null) {
-                // (Opcional) Si querés, podés imprimir esto para confirmar
-                // System.err.println("DEBUG (cargarAutoPilotos): ¡VINCULACIÓN EXITOSA! -> " + dniPiloto);
                 
                 AutoPiloto ap = new AutoPiloto();
                 ap.setPiloto(piloto);
@@ -816,15 +700,11 @@ public class GestorPersistencia {
                 auto.agregarAutoPiloto(ap); // Tu método de Auto.java
                 
                 asociaciones.add(ap);
-            } else {
-                 System.err.println("DEBUG (cargarAutoPilotos): VINCULACIÓN FALLIDA. Línea: " + linea);
             }
         }
     } catch (IOException e) {
         System.err.println("Error al cargar AutoPilotos: " + e.getMessage());
     }
-    
-    System.err.println("DEBUG (cargarAutoPilotos): Carga finalizada. Total: " + asociaciones.size());
     return asociaciones;
 }
     
