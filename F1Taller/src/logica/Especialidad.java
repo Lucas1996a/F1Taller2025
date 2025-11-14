@@ -1,7 +1,7 @@
 package logica;
 
 /**
- * Define las áreas de especialización que puede tener un {@link Ingeniero}
+ * Define las áreas de especialización que puede tener un {@link Mecanico}
  * dentro de una escudería.
  */
 public enum Especialidad {
