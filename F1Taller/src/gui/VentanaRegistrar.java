@@ -7,16 +7,28 @@ package gui;
 import logica.Gestion;
 
 /**
+ * Representa el sub-menú de la sección "Registrar" de la aplicación.
+ * Esta ventana (JFrame) muestra una lista de botones para cada tipo de entidad
+ * que se puede crear (Piloto, Mecanico, Auto, Pais, etc.).
  *
- * @author Admin
+ * Su único propósito es actuar como un navegador, abriendo la
+ * ventana {@link FormularioRegistro} en el modo correcto (pasando un String
+ * como "PILOTO", "AUTO", etc.) según la selección del usuario.
+ *
+ * @author Admin 
  */
 public class VentanaRegistrar extends javax.swing.JFrame {
+    /** Referencia al controlador principal de la lógica de negocio ({@link Gestion}). */
     private Gestion gestion;
+    /** Referencia a la pantalla principal ({@link Pantalla}) que la invocó, para poder volver. */
     private Pantalla pantallaAnterior;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRegistrar.class.getName());
 
     /**
-     * Creates new form VentanaRegistrar
+     * Crea un nuevo formulario VentanaRegistrar (el sub-menú de registro).
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion}).
+     * @param pantallaAnterior La pantalla principal ({@link Pantalla}) a la que se debe volver.
      */
     public VentanaRegistrar(Gestion gestion, Pantalla pantallaAnterior) {
         initComponents();
@@ -194,11 +206,23 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra (dispose) esta ventana y vuelve a hacer visible la pantalla
+     * principal ({@link Pantalla}).
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.pantallaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar Piloto'.
+     * Abre el {@link FormularioRegistro} en modo "PILOTO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void bntRegistrarPilotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarPilotoActionPerformed
         FormularioRegistro formularioRegistro = new FormularioRegistro("PILOTO", this.gestion, this);
         formularioRegistro.setVisible(true);
@@ -206,6 +230,12 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntRegistrarPilotoActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar Mecánico'.
+     * Abre el {@link FormularioRegistro} en modo "MECANICO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void bntRegistrarMecanicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarMecanicoActionPerformed
         FormularioRegistro formularioRegistro = new FormularioRegistro("MECANICO", this.gestion, this);
         formularioRegistro.setVisible(true);
@@ -213,6 +243,12 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntRegistrarMecanicoActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar Auto'.
+     * Abre el {@link FormularioRegistro} en modo "AUTO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void bntRegistrarAutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarAutoActionPerformed
         FormularioRegistro formularioRegistro = new FormularioRegistro("AUTO", this.gestion, this);
         formularioRegistro.setVisible(true);
@@ -220,6 +256,12 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntRegistrarAutoActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar Escudería'.
+     * Abre el {@link FormularioRegistro} en modo "ESCUDERIA".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void bntRegistrarEscuderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarEscuderiaActionPerformed
         FormularioRegistro formularioRegistro = new FormularioRegistro("ESCUDERIA", this.gestion, this);
         formularioRegistro.setVisible(true);
@@ -227,6 +269,12 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntRegistrarEscuderiaActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar Circuito'.
+     * Abre el {@link FormularioRegistro} en modo "CIRCUITO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void bntRegistrarCircuitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarCircuitoActionPerformed
         FormularioRegistro formularioRegistro = new FormularioRegistro("CIRCUITO", this.gestion, this);
         formularioRegistro.setVisible(true);
@@ -234,6 +282,12 @@ public class VentanaRegistrar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_bntRegistrarCircuitoActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar País'.
+     * Abre el {@link FormularioRegistro} en modo "PAIS".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void bntRegistrarPaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntRegistrarPaisActionPerformed
         FormularioRegistro formularioRegistro = new FormularioRegistro("PAIS", this.gestion, this);
         formularioRegistro.setVisible(true);

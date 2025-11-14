@@ -1,22 +1,33 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package gui;
 
 import logica.Gestion;
 
 /**
+ * Representa la pantalla principal (menú principal) de la aplicación.
+ * Esta es la primera ventana gráfica que ve el usuario, lanzada por {@link logica.ProgramaF1}.
  *
- * @author Admin
+ * Su función es actuar como un centro de navegación (hub), abriendo
+ * las diferentes ventanas secundarias (Registrar, Gestionar, Informes, etc.)
+ * y pasándoles la instancia única de {@link Gestion}.
+ *
+ * @author Admin 
  */
+
 public class Pantalla extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Pantalla.class.getName());
 
     /**
-     * Creates new form Pantalla
+     * Referencia a la instancia única del controlador de lógica de negocio ({@link Gestion}).
+     * Esta instancia se pasa a todas las sub-ventanas que se abren desde aquí.
      */
     private Gestion gestion;
+    
+    /**
+     * Crea un nuevo formulario Pantalla (el menú principal).
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion})
+     * que se pasará a todas las ventanas secundarias.
+     */
     public Pantalla(Gestion gestion) {
         initComponents();
         this.gestion = gestion;
@@ -185,7 +196,13 @@ public class Pantalla extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    /**
+     * Manejador del botón 'Planificar Carreras'.
+     * Abre la ventana {@link VentanaPlanificar}, pasándole la gestión y
+     * una referencia a esta pantalla, y luego cierra (dispose) la actual.
+     * @param evt El evento de acción.
+     */
     private void btnPlanificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlanificarActionPerformed
         VentanaPlanificar ventanaPlanificar = new VentanaPlanificar(this.gestion, this);
         
@@ -194,6 +211,13 @@ public class Pantalla extends javax.swing.JFrame {
         this.dispose(); 
     }//GEN-LAST:event_btnPlanificarActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Registrar'.
+     * Abre la ventana {@link VentanaRegistrar}, pasándole la gestión y
+     * una referencia a esta pantalla, y luego cierra (dispose) la actual.
+     * @param evt El evento de acción.
+     */
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
     // Crea una instancia de la ventana nueva a abrir
         VentanaRegistrar pantallaRegistro = new VentanaRegistrar(this.gestion, this);
@@ -208,6 +232,12 @@ public class Pantalla extends javax.swing.JFrame {
             this.dispose();
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
+    /**
+     * Manejador del botón 'Gestionar Escuderías'.
+     * Abre la ventana {@link VentanaGestionar}, pasándole la gestión y
+     * una referencia a esta pantalla, y luego cierra (dispose) la actual.
+     * @param evt El evento de acción.
+     */
     private void btnGestionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionarActionPerformed
         VentanaGestionar vGestionar = new VentanaGestionar(this.gestion, this);
         vGestionar.setVisible(true);
@@ -215,6 +245,12 @@ public class Pantalla extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnGestionarActionPerformed
 
+    /**
+     * Manejador del botón 'Asociar Pilotos a Autos'.
+     * Abre la ventana {@link VentanaAsociar}, pasándole la gestión y
+     * una referencia a esta pantalla, y luego cierra (dispose) la actual.
+     * @param evt El evento de acción.
+     */
     private void btnAsociarPilotosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarPilotosActionPerformed
         VentanaAsociar vAsociar = new VentanaAsociar(this.gestion, this);
         vAsociar.setVisible(true);
@@ -222,6 +258,12 @@ public class Pantalla extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnAsociarPilotosActionPerformed
 
+    /**
+     * Manejador del botón 'Generar Informes'.
+     * Abre la ventana {@link VentanaInformes}, pasándole la gestión y
+     * una referencia a esta pantalla, y luego cierra (dispose) la actual.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarInformes1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarInformes1ActionPerformed
         VentanaInformes vInfo = new VentanaInformes(this.gestion, this);
         vInfo.setVisible(true);
@@ -229,6 +271,12 @@ public class Pantalla extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnGenerarInformes1ActionPerformed
 
+    /**
+     * Manejador del botón 'Registrar Resultados'.
+     * Abre la ventana {@link VentanaResultados}, pasándole la gestión y
+     * una referencia a esta pantalla, y luego cierra (dispose) la actual.
+     * @param evt El evento de acción.
+     */
     private void btnRegistrarResultadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarResultadosActionPerformed
     VentanaResultados vPar = new VentanaResultados(this.gestion, this);
     vPar.setVisible(true);

@@ -5,18 +5,33 @@ import javax.swing.JOptionPane;
 import logica.*;
 
 /**
+ * Representa un formulario (ventana JFrame) multipropósito para gestionar asociaciones complejas y operaciones destructivas (como borrar).
  *
- * @author Admin
+ * Esta ventana cambia dinámicamente su diseño y funcionalidad basándose en un parámetro 'modo' (ej: "PILOTO", "MECANICO", "AUTO", "BORRAR_ESCUDERIA" que recibe en su constructor.
+ *
+ * @author Admin 
  */
 public class FormularioGestionar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioGestionar.class.getName());
+    /**
+    * El modo de operación ('PILOTO', 'MECANICO', 'AUTO', 'BORRAR_ESCUDERIA')
+    * que define el comportamiento de este formulario.
+    */
     private final String modo;
+    /** Referencia al controlador principal de la lógica */
     private final Gestion gestion;
+    /** Referencia a la ventana 'Gestionar' que invocó este formulario, para poder volver. */
     private final VentanaGestionar ventanaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo formulario de gestión.
+     * Su comportamiento y diseño visual se adaptan según el 'modo' proporcionado.
+     * Carga inicial de todos los JComboBox para cualquier escenario.
+     *
+     * @param modo El modo de operación (ej: "PILOTO").
+     * @param gestion La instancia del controlador de lógica.
+     * @param ventanaAnterior La ventana padre a la que se debe volver.
      */
     public FormularioGestionar(String modo, Gestion gestion, VentanaGestionar ventanaAnterior) {
         initComponents();
@@ -25,6 +40,7 @@ public class FormularioGestionar extends javax.swing.JFrame {
         this.gestion = gestion;
         this.ventanaAnterior = ventanaAnterior;
         
+        // Carga todos los combos, la lógica del switch los mostrará/ocultará
         cargarEscuderias();
         cargarAutos();
         cargarPilotos();
@@ -270,7 +286,14 @@ public class FormularioGestionar extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    
+    /**
+     * Manejador del evento del botón 'Borrar' (visible solo en modo 'BORRAR_ESCUDERIA').
+     * Muestra una advertencia de borrado en cascada y, si se confirma,
+     * invoca a la lógica de gestión para eliminar la escudería seleccionada.
+     * @param evt El evento de acción.
+     */
     private void btnBorrarEscActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarEscActionPerformed
         try {
         switch (this.modo) {
@@ -298,11 +321,22 @@ public class FormularioGestionar extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBorrarEscActionPerformed
     }
     
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra este formulario (dispose) y vuelve a hacer visible la ventana anterior.
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.ventanaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    /**
+     * Manejador del botón 'Eliminar Asociación'.
+     * Lee el modo actual (PILOTO o MECANICO) y llama a la lógica de gestión
+     * para deshacer una relación N-a-N existente (ej. romper un contrato).
+     * @param evt El evento de acción.
+     */
     private void btnEliminarAsociacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAsociacionActionPerformed
         try {
         // Pedimos confirmación genérica
@@ -350,6 +384,12 @@ public class FormularioGestionar extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEliminarAsociacionActionPerformed
 
+    /**
+     * Manejador del botón principal 'Asociar'/'Guardar'/'Reasignar'.
+     * Delega la acción a métodos específicos según el 'modo' del formulario.
+     * Captura excepciones de validación o lógica de negocio.
+     * @param evt El evento de acción.
+     */
     private void btnAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarActionPerformed
         try {
         // El switch decide qué lógica ejecutar basado en el modo
@@ -397,6 +437,10 @@ public class FormularioGestionar extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnAsociarActionPerformed
 
+    /**
+     * Carga la lista de {@link Escuderia} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoEsc'.
+     */
     private void cargarEscuderias() {
         try {
             comboCampoEsc.removeAllItems();
@@ -419,6 +463,10 @@ public class FormularioGestionar extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Carga la lista de {@link Piloto} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoPiloto'.
+     */
     private void cargarPilotos() {
     comboCampoPiloto.removeAllItems();
     ArrayList<Piloto> lista = gestion.getListaPilotos();
@@ -427,6 +475,10 @@ public class FormularioGestionar extends javax.swing.JFrame {
     }
 }
     
+    /**
+     * Carga la lista de {@link Auto} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoAuto'.
+     */
     private void cargarAutos() {
     comboCampoAuto.removeAllItems();
     ArrayList<Auto> lista = gestion.getListaAutos();
@@ -435,6 +487,10 @@ public class FormularioGestionar extends javax.swing.JFrame {
     }
     }
     
+    /**
+     * Carga la lista de {@link Mecanico} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoMecanico'.
+     */
     private void cargarMecanicos() {
     comboCampoMecanico.removeAllItems();
     ArrayList<Mecanico> lista = gestion.getListaMecanicos();

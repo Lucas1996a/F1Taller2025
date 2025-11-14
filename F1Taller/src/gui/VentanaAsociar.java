@@ -4,23 +4,31 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import logica.*;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-
 /**
+ * Representa la ventana (JFrame) dedicada a crear la asociación N-a-N
+ * entre un {@link Piloto} y un {@link Auto} (la entidad {@link AutoPiloto}).
  *
- * @author Admin
+ * Esta pantalla valida reglas de negocio críticas antes de asociar, tales como:
+ * 1. Que el piloto no esté ya asociado a OTRO auto (Regla 1-a-1).
+ * 2. Que el piloto tenga un contrato vigente con la escudería a la que
+ * pertenece el auto.
+ * 3. Que el formato de fecha (YYYYMMDD) sea válido.
+ *
+ * @author Admin 
  */
 public class VentanaAsociar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaAsociar.class.getName());
+    /** Referencia al controlador principal de la lógica de negocio. */
     private final Gestion gestion;
+    /** Referencia a la pantalla principal ({@link Pantalla}) que invocó este formulario. */
     private final Pantalla pantallaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo formulario VentanaAsociar.
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion}).
+     * @param pantallaAnterior La pantalla principal ({@link Pantalla}) a la que se debe volver.
      */
     public VentanaAsociar(Gestion gestion, Pantalla pantallaAnterior) {
         initComponents();
@@ -140,6 +148,21 @@ public class VentanaAsociar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del evento del botón 'ASOCIAR'.
+     * Desencadena una serie de validaciones antes de guardar:
+     * 1. Valida que los campos no estén vacíos.
+     * 2. Valida el formato de fecha (YYYYMMDD) y rangos lógicos (mes/día).
+     * 3. Valida la lógica de negocio (1-a-1): que el piloto no esté ya
+     * asociado a *otro* auto.
+     * 4. Valida la lógica de equipo: que el piloto tenga un contrato
+     * (PilotoEscuderia) con la escudería propietaria del auto.
+     *
+     * Si todas las validaciones pasan, llama a 'gestion.gestionarPilotoAuto()'
+     * y muestra un mensaje de éxito.
+     *
+     * @param evt El evento de acción.
+     */
     private void btnAsociarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAsociarActionPerformed
             try {
             // --- 1. LECTURA DE DATOS ---
@@ -148,12 +171,11 @@ public class VentanaAsociar extends javax.swing.JFrame {
             String fecAs = txtFecha.getText().trim(); // Usamos .trim()
 
             // --- 2. VALIDACIÓN DE CAMPOS VACÍOS ---
-            // (Esto ya lo tenías, un poco modificado el mensaje)
             if (pil == null || auto == null || fecAs.isEmpty()) {
                 throw new Exception("Debe seleccionar un Piloto, un Auto y completar la Fecha.");
             }
 
-            // --- 3. ¡NUEVA VALIDACIÓN DE FECHA! (Formato YYYYMMDD y Lógica) ---
+            // --- 3. VALIDACIÓN DE FECHA (Formato YYYYMMDD y Lógica) ---
             if (!fecAs.matches("\\d{8}")) {
                 throw new Exception("La 'Fecha' debe tener 8 números en formato YYYYMMDD (ej: 20251026).");
             }
@@ -173,8 +195,7 @@ public class VentanaAsociar extends javax.swing.JFrame {
             // --- (Fin de validación de fecha) ---
 
 
-            // --- 4. ¡NUEVA VALIDACIÓN LÓGICA (PILOTO YA ASOCIADO)! ---
-            // "Un piloto no puede estar asociado a un auto distinto del que ya existe"
+            // --- 4. VALIDACIÓN LÓGICA  ---
             Auto autoYaAsociado = null;
             // Recorremos la lista de todas las asociaciones existentes
             for (AutoPiloto ap : gestion.getListaAutoPilotos()) {
@@ -194,22 +215,22 @@ public class VentanaAsociar extends javax.swing.JFrame {
             // --- (Fin de validación de piloto duplicado) ---
 
 
-            // --- 5. VALIDACIÓN DE EQUIPO (Este bloque ya lo tenías, pero MEJORADO) ---
+            // --- 5. VALIDACIÓN DE EQUIPO ---
             Escuderia escuderiaDelAuto = auto.getEscuderia();
-            Escuderia escuderiaDelPiloto = null; // Empezamos asumiendo que no tiene contrato
+            Escuderia escuderiaDelPiloto = null; 
 
             if (pil.getPilotoEscuderias() != null && !pil.getPilotoEscuderias().isEmpty()) {
 
                 // Buscamos si el piloto tiene contrato con la escudería del auto
                 for (PilotoEscuderia pe : pil.getPilotoEscuderias()) {
                     if (pe.getEscuderia().equals(escuderiaDelAuto)) {
-                        escuderiaDelPiloto = pe.getEscuderia(); // ¡Coincidencia! Encontramos el contrato.
+                        escuderiaDelPiloto = pe.getEscuderia(); // Encontramos el contrato
                         break;
                     }
                 }
             }
 
-            // Si, después de buscar, no encontramos contrato (sigue siendo null)...
+            // Si después de buscar, no encontramos contrato (sigue siendo null)...
             if (escuderiaDelPiloto == null) {
                 String msg = String.format("Error de Validación:\nEl Piloto (%s) no tiene contrato vigente con la escudería del Auto (%s).",
                                             pil.getNombre(),
@@ -223,8 +244,7 @@ public class VentanaAsociar extends javax.swing.JFrame {
             // Si llegamos aquí, todas las validaciones pasaron
             gestion.gestionarPilotoAuto(pil, auto, fecAs);
             JOptionPane.showMessageDialog(this, "El auto " + auto.getModelo() + " ha sido correctamente asociado al piloto: " + pil.getNombre());
-
-            // Opcional: Limpiar campos después de guardar
+            
             txtFecha.setText("");
             if (comboCampoAuto.getItemCount() > 0) comboCampoAuto.setSelectedIndex(0);
             if (comboCampoPiloto.getItemCount() > 0) comboCampoPiloto.setSelectedIndex(0);
@@ -236,17 +256,27 @@ public class VentanaAsociar extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAsociarActionPerformed
     
 
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra este formulario (dispose) y vuelve a hacer visible la pantalla
+     * principal ({@link Pantalla}).
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.pantallaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    
     private void txtFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaActionPerformed
 
     
-    
+    /**
+     * Carga la lista de {@link Piloto} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoPiloto'.
+     */
     private void cargarPilotos() {
     comboCampoPiloto.removeAllItems();
     ArrayList<Piloto> lista = gestion.getListaPilotos();
@@ -255,6 +285,10 @@ public class VentanaAsociar extends javax.swing.JFrame {
     }
 }
     
+    /**
+     * Carga la lista de {@link Auto} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoAuto'.
+     */
     private void cargarAutos() {
     comboCampoAuto.removeAllItems();
     ArrayList<Auto> lista = gestion.getListaAutos();

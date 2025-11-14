@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package gui;
 
 /**
@@ -11,12 +7,29 @@ package gui;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 
+
+/**
+ * Representa una ventana (JFrame) simple diseñada para mostrar la salida
+ * de un informe.
+ * * Consiste en un JTextArea no editable dentro de un JScrollPane para mostrar
+ * el texto del informe (recibido como un ArrayList de Strings) y un botón
+ * "VOLVER" para regresar a la ventana anterior que la invocó.
+ *
+ * @author Admin
+ */
 public class SalidaInforme extends javax.swing.JFrame {
+    /** Referencia a la ventana anterior (ej: FormularioInformes) para poder volver. */
     private JFrame ventanaAnterior;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SalidaInforme.class.getName());
 
     /**
-     * Creates new form SalidaInforme
+     * Crea un nuevo formulario SalidaInforme.
+     * Inicializa los componentes, guarda la referencia a la ventana anterior,
+     * y llama a {@link #mostrarInforme(ArrayList)} para poblar el área de texto.
+     *
+     * @param informe El ArrayList<String> que contiene las líneas del informe a mostrar.
+     * @param ventanaAnterior La ventana (JFrame) que invocó esta, para poder volver a ella.
      */
     public SalidaInforme(ArrayList<String> informe, JFrame ventanaAnterior) {
         initComponents();
@@ -79,11 +92,26 @@ public class SalidaInforme extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del evento del botón 'Volver'.
+     * Cierra (dispose) esta ventana de informe y vuelve a hacer visible
+     * la 'ventanaAnterior' (el formulario de configuración de informes).
+     *
+     * @param evt El evento de acción.
+     */
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
         this.ventanaAnterior.setVisible(true); // Muestra la ventana anterior (VentanaInformes)
         this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
     
+    /**
+     * Toma un ArrayList de Strings y lo formatea en el JTextArea 'txtSalida'.
+     * Cada elemento del ArrayList se trata como una nueva línea en el informe,
+     * añadiendo un salto de línea ("\n") después de cada uno.
+     * Finalmente, sitúa el cursor al inicio del texto.
+     *
+     * @param informe La lista de líneas de String que componen el informe.
+     */
     private void mostrarInforme(ArrayList<String> informe) {
         StringBuilder sb = new StringBuilder();
         for (String linea : informe) {

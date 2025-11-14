@@ -1,26 +1,29 @@
 package gui;
 
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import logica.*;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-
 /**
+ * Representa el sub-menú de "Gestión" de la aplicación.
+ * Esta ventana (JFrame) actúa como un navegador que redirige al usuario
+ * al formulario dinámico {@link FormularioGestionar}, pasándole
+ * un "modo" específico (ej: "PILOTO", "AUTO", "BORRAR_ESCUDERIA")
+ * según el botón presionado.
  *
  * @author Admin
  */
 public class VentanaGestionar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaGestionar.class.getName());
+    /** Referencia al controlador principal de la lógica de negocio ({@link Gestion}). */
     private final Gestion gestion;
+    /** Referencia a la pantalla principal ({@link Pantalla}) que la invocó, para poder volver. */
     private final Pantalla pantallaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo formulario VentanaGestionar (sub-menú de gestión).
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion}).
+     * @param pantallaAnterior La pantalla principal ({@link Pantalla}) a la que se debe volver.
      */
     public VentanaGestionar(Gestion gestion, Pantalla pantallaAnterior) {
         initComponents();
@@ -140,11 +143,23 @@ public class VentanaGestionar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra (dispose) esta ventana y vuelve a hacer visible la pantalla
+     * principal ({@link Pantalla}).
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.pantallaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    /**
+     * Manejador del botón 'Gestionar Autos'.
+     * Abre el {@link FormularioGestionar} en modo "AUTO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnAutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutosActionPerformed
         FormularioGestionar fGestion = new FormularioGestionar("AUTO", this.gestion, this);
         fGestion.setVisible(true);
@@ -152,6 +167,12 @@ public class VentanaGestionar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnAutosActionPerformed
 
+    /**
+     * Manejador del botón 'Borrar Escuderias'.
+     * Abre el {@link FormularioGestionar} en modo "BORRAR_ESCUDERIA".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnBorrarEscuderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarEscuderiaActionPerformed
         FormularioGestionar fGestion = new FormularioGestionar("BORRAR_ESCUDERIA", this.gestion, this);
         fGestion.setVisible(true);
@@ -159,6 +180,12 @@ public class VentanaGestionar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnBorrarEscuderiaActionPerformed
 
+    /**
+     * Manejador del botón 'Gestionar Pilotos'.
+     * Abre el {@link FormularioGestionar} en modo "PILOTO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnPilotosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilotosActionPerformed
         FormularioGestionar fGestion = new FormularioGestionar("PILOTO", this.gestion, this);
         fGestion.setVisible(true);
@@ -166,6 +193,12 @@ public class VentanaGestionar extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnPilotosActionPerformed
 
+    /**
+     * Manejador del botón 'Gestionar Mecánicos'.
+     * Abre el {@link FormularioGestionar} en modo "MECANICO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnMecanicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMecanicosActionPerformed
         FormularioGestionar fGestion = new FormularioGestionar("MECANICO", this.gestion, this);
         fGestion.setVisible(true);
