@@ -241,7 +241,8 @@ public class Gestion {
         nuevo.setNumeroVueltas(numeroVueltas);
         nuevo.setHoraRealizacion(hora);
         nuevo.setPais(pais);
-        listaCarreras.add(nuevo);    
+        listaCarreras.add(nuevo);   
+        gestorPersistencia.guardarCarrera(nuevo);
     }
     
     
