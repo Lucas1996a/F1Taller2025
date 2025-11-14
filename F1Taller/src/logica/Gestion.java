@@ -4,23 +4,27 @@
  */
 package logica;
 
+
 import java.util.ArrayList;
 import persistencia.GestorPersistencia;
 import java.util.Collections;
 import java.util.Comparator;
 
 /**
- * Controlador principal y clase "cerebro" de la aplicación.
- * Gestiona todas las listas de datos en memoria (pilotos, autos, carreras, etc.),
- * coordina la lógica de negocio (crear, asociar, borrar) y actúa como
- * el único punto de contacto entre la Interfaz de Usuario (GUI) y la
- * capa de Persistencia (GestorPersistencia).
+ * Clase central del sistema F1. Gestiona la carga, persistencia y lógica
+ * relacionada con pilotos, autos, escuderías, circuitos, carreras y resultados.
+ * 
+ * Se encarga de:
+ * - Cargar datos desde CSV mediante GestorPersistencia.
+ * - Crear entidades y asociaciones.
+ * - Registrar carreras y resultados.
+ * - Generar informes y rankings.
  *
- * @author Lucas (Preservado del original)
+ *
+ *
+ * @author Lucas
  */
 public class Gestion {
-
-    // --- LISTAS DE ENTIDADES PRINCIPALES ---
     private ArrayList<Auto> listaAutos;
     private ArrayList<Escuderia> listaEscuderias;
     private ArrayList<Circuito> listaCircuitos;
@@ -28,103 +32,101 @@ public class Gestion {
     private ArrayList<Mecanico> listaMecanicos;
     private ArrayList<Pais> listaPais;
     private ArrayList<Carrera> listaCarreras;
-    private ArrayList<ResultadoCarrera> listaResultados;
-    
-    // --- LISTAS DE ASOCIACIONES (Tablas de Unión) ---
     private ArrayList<PilotoEscuderia> listaPilotoEscuderias;
+    private ArrayList<ResultadoCarrera> listaResultados;
     private ArrayList<AutoPiloto> listaAutoPilotos;
     private ArrayList<MecanicoEscuderia> listaMecanicoEscuderias;
     
-    /** Instancia única del gestor de persistencia para leer/escribir en CSV. */
     GestorPersistencia gestorPersistencia = new GestorPersistencia();
     
+    
     /**
-     * Constructor de Gestion.
-     * ¡Este es el punto de carga de datos (deserialización) de la aplicación!
-     * Llama al GestorPersistencia para cargar todos los archivos CSV en memoria.
-     * El orden de carga es CRÍTICO para resolver las dependencias:
-     * 1. Entidades base (País).
-     * 2. Entidades dependientes (Piloto, Escuderia, Circuito - que necesitan País).
-     * 3. Entidades doble-dependientes (Auto - necesita Escudería).
-     * 4. Asociaciones (PilotoEscuderia, AutoPiloto - que necesitan Pilotos, Autos, etc.).
-     * 5. Resultados (que necesita AutoPiloto y Carrera).
-     *
-     * Finalmente, re-calcula las estadísticas de los pilotos (victorias, podios)
-     * basándose en los resultados cargados.
-     */
-    public Gestion() {
-        
-        // --- 1. CARGA DE ENTIDADES BASE (Sin dependencias) ---
-        this.listaPais = gestorPersistencia.cargarPaises();
-        if (this.listaPais == null) this.listaPais = new ArrayList<>();
+    * Constructor principal. Carga todas las listas necesarias desde los archivos CSV.
+    * Ensambla entidades dependientes, asociaciones entre clases y reconstruye
+    * estadísticas derivadas de resultados previos.
+    */
+    public Gestion(){
+    
+    
+    // CARGA DE ENTIDADES QUE VAMOS A USAR
+    this.listaPais = gestorPersistencia.cargarPaises();
+    if (this.listaPais == null) this.listaPais = new ArrayList<>();
+    
 
-        // --- 2. CARGA DE ENTIDADES (Dependen de País) ---
-        this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
-        if (this.listaPilotos == null) this.listaPilotos = new ArrayList<>();
-        
-        this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
-        if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
-        
-        this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
-        if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
-        
-        this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
-        if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
+    this.listaPilotos = gestorPersistencia.cargarPilotos(this.listaPais);
+    if (this.listaPilotos == null) this.listaPilotos = new ArrayList<>();
+    
 
-        // --- 3. CARGA DE ENTIDADES DEPENDIENTES ---
-        this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
-        if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
-        
-        this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
-        if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
+    this.listaEscuderias = gestorPersistencia.cargarEscuderias(this.listaPais);
+    if (this.listaEscuderias == null) this.listaEscuderias = new ArrayList<>();
+    
 
-        // --- 4. CARGA DE ASOCIACIONES (Vinculan todo) ---
-        this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
-                this.listaPilotos, this.listaEscuderias);
-        if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
-        
-        this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(
-                this.listaMecanicos, this.listaEscuderias);
-        if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
+    this.listaCircuitos = gestorPersistencia.cargarCircuitos(this.listaPais);
+    if (this.listaCircuitos == null) this.listaCircuitos = new ArrayList<>();
 
-        // LÍNEA CRÍTICA: Vincula Pilotos y Autos
-        this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(
-                this.listaPilotos, this.listaAutos);
-        if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
-        
-        // --- 5. CARGA DE RESULTADOS (Dependen de AutoPiloto y Carrera) ---
-        this.listaResultados = gestorPersistencia.cargarResultadosCarrera(
-                this.listaAutoPilotos, this.listaCarreras);
-        if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
-        
-        // --- 6. LOGICA POST-CARGA ---
-        // Actualiza las estadísticas en memoria de los pilotos (victorias, podios)
-        // basándose en los resultados cargados desde el CSV.
+    // CARGA DE ENTIDADES DEPENDIENTES 
+    
+    this.listaAutos = gestorPersistencia.cargarAutos(this.listaEscuderias);
+    if (this.listaAutos == null) this.listaAutos = new ArrayList<>();
+    
+    
+    this.listaCarreras = gestorPersistencia.cargarCarreras(this.listaCircuitos);
+    if (this.listaCarreras == null) this.listaCarreras = new ArrayList<>();
+    
+    this.listaMecanicos = gestorPersistencia.cargarMecanicos(this.listaPais);
+    if (this.listaMecanicos == null) this.listaMecanicos = new ArrayList<>();
+
+    // CARGA DE ASOCIACIONES 
+    
+    this.listaPilotoEscuderias = gestorPersistencia.cargarPilotosEscuderias(
+        this.listaPilotos, this.listaEscuderias);
+    if (this.listaPilotoEscuderias == null) this.listaPilotoEscuderias = new ArrayList<>();
+    
+    
+    this.listaMecanicoEscuderias = gestorPersistencia.cargarMecanicosEscuderias(
+        this.listaMecanicos, this.listaEscuderias);
+    if (this.listaMecanicoEscuderias == null) this.listaMecanicoEscuderias = new ArrayList<>();
+
+    // LÍNEA CRÍTICA
+    this.listaAutoPilotos = gestorPersistencia.cargarAutoPilotos(
+        this.listaPilotos, this.listaAutos);
+    if (this.listaAutoPilotos == null) this.listaAutoPilotos = new ArrayList<>();
+    
+    
+    // CARGA DE RESULTADOS 
+    this.listaResultados = gestorPersistencia.cargarResultadosCarrera(
+        this.listaAutoPilotos, this.listaCarreras);
+    if (this.listaResultados == null) this.listaResultados = new ArrayList<>();
+    
+    
+    // LOGICA POST CARGA
+    for (ResultadoCarrera res : this.listaResultados) {
+        resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
+    }
+}
+    
+    /**
+    * Recalcula las estadísticas de los pilotos basándose en los resultados ya cargados.
+    * Útil cuando se recarga la interfaz o se reescriben CSV.
+    */
+    public void recargarResultados(){
         for (ResultadoCarrera res : this.listaResultados) {
+            
             resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
         }
     }
     
-    /**
-     * Vuelve a calcular las estadísticas (victorias, podios, etc.) de todos
-     * los pilotos basándose en la lista 'listaResultados' cargada en memoria.
-     */
-    public void recargarResultados() {
-        // (Resetea stats si es necesario, aunque el método actual es acumulativo)
-        for (ResultadoCarrera res : this.listaResultados) {
-            resultadosCarreras(res.getAutoPiloto(), res.getPosicionFinal(), res.isVueltaRapida());
-        }
-    }
+    // METODOS PARA CREAR OBJETOS
     
-    // --- MÉTODOS PARA CREAR OBJETOS (Llamados desde la GUI) ---
     
     /**
-     * Crea un nuevo Auto, lo añade a la lista en memoria y lo persiste.
-     * @param modelo El nombre del modelo (ej: "W15").
-     * @param motor El fabricante del motor (ej: "Mercedes").
-     * @param escuderia El objeto {@link Escuderia} al que pertenece.
-     */
-    public void crearAutos(String modelo, String motor, Escuderia escuderia) {
+    * Crea un nuevo Auto, lo asocia a una Escudería y lo guarda en persistencia.
+    *
+    * @param modelo Modelo del auto.
+    * @param motor Tipo de motor.
+    * @param escuderia Escudería propietaria del auto.
+    */
+    public void crearAutos(String modelo, String motor, Escuderia escuderia){
         Auto nuevoAuto = new Auto();
         nuevoAuto.setModelo(modelo);
         nuevoAuto.setMotor(motor);
@@ -133,12 +135,14 @@ public class Gestion {
         gestorPersistencia.guardarAuto(nuevoAuto);
     }
     
+    
     /**
-     * Crea una nueva Escudería, la añade a la lista en memoria y la persiste.
-     * @param nombre El nombre de la escudería (ej: "Ferrari").
-     * @param pais El objeto {@link Pais} de su sede.
-     */
-    public void crearEscuderias(String nombre, Pais pais) {
+    * Crea una nueva Escudería y la guarda en persistencia.
+    *
+    * @param nombre Nombre de la escudería.
+    * @param pais País de origen.
+    */
+    public void crearEscuderias(String nombre, Pais pais){
         Escuderia nuevaEsc = new Escuderia();
         nuevaEsc.setNombre(nombre);
         nuevaEsc.setPais(pais);
@@ -148,40 +152,40 @@ public class Gestion {
     }
     
     /**
-     * Crea un nuevo Circuito, lo añade a la lista en memoria y lo persiste.
-     * @param nombre El nombre del circuito (ej: "Monza").
-     * @param longitud La longitud en metros.
-     * @param pais El objeto {@link Pais} donde se ubica.
-     */
-    public void crearCircuitos(String nombre, int longitud, Pais pais) {
+    * Crea un nuevo Circuito y lo guarda en persistencia.
+    *
+    * @param nombre Nombre del circuito.
+    * @param longitud Longitud total del circuito en metros.
+    * @param pais País donde se encuentra el circuito.
+    */
+    public void crearCircuitos(String nombre, int longitud, Pais pais){
         Circuito nuevo = new Circuito();
         nuevo.setNombre(nombre);
         nuevo.setLongitud(longitud);
         nuevo.setPais(pais);
         this.listaCircuitos.add(nuevo);
         gestorPersistencia.guardarCircuito(nuevo);
+      
     }
     
     /**
-     * Crea un nuevo Piloto, lo añade a la lista en memoria y lo persiste.
-     * Lanza una excepción si el DNI ya está registrado.
-     *
-     * @param dni DNI (único).
-     * @param nombre Nombre de pila.
-     * @param apellido Apellido.
-     * @param pais Objeto {@link Pais} de nacionalidad.
-     * @param numero Número de competencia.
-     * @param victorias Conteo inicial de victorias.
-     * @param pole Conteo inicial de poles.
-     * @param vueltasRapidas Conteo inicial de vueltas rápidas.
-     * @param podios Conteo inicial de podios.
-     * @throws Exception Si el DNI ya existe ({@link #buscarPilotoPorDNI}).
-     */
-    public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios) throws Exception {
+ * Crea un nuevo Piloto siempre que su DNI no exista previamente.
+ *
+ * @param dni DNI único del piloto.
+ * @param nombre Nombre del piloto.
+ * @param apellido Apellido del piloto.
+ * @param pais País de origen.
+ * @param numero Número de competencia.
+ * @param victorias Cantidad inicial de victorias.
+ * @param pole Poles acumuladas.
+ * @param vueltasRapidas Vueltas rápidas logradas.
+ * @param podios Podios acumulados.
+ * @throws Exception Si ya existe un piloto con el mismo DNI.
+ */
+    public void crearPilotos(String dni, String nombre, String apellido, Pais pais, int numero, int victorias, int pole, int vueltasRapidas, int podios) throws Exception{
         
-        // Validación de duplicados
         if (buscarPilotoPorDNI(dni) != null) {
-            throw new Exception("Error: Ya existe un piloto registrado con el DNI " + dni);
+            throw new Exception("Error: Ya existe un piloto registrado con  el DNI " + dni);
         }
         
         Piloto nuevo = new Piloto();
@@ -196,19 +200,21 @@ public class Gestion {
         nuevo.setPodios(podios);
         
         this.listaPilotos.add(nuevo);
+        
         gestorPersistencia.guardarPiloto(nuevo);
     }
     
     /**
-     * Crea un nuevo Mecánico, lo añade a la lista en memoria y lo persiste.
-     * @param dni DNI (único).
-     * @param nombre Nombre de pila.
-     * @param apellido Apellido.
-     * @param pais Objeto {@link Pais} de nacionalidad.
-     * @param especialidad El {@link Especialidad} (enum) del mecánico.
-     * @param experiencia Años de experiencia.
-     */
-    public void crearMecanicos(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia) {
+ * Crea un nuevo Mecánico, lo agrega al sistema y lo guarda en persistencia.
+ *
+ * @param dni DNI del mecánico.
+ * @param nombre Nombre del mecánico.
+ * @param apellido Apellido del mecánico.
+ * @param pais Nacionalidad.
+ * @param especialidad Especialidad técnica del mecánico.
+ * @param experiencia Años de experiencia.
+ */
+    public void crearMecanicos(String dni, String nombre, String apellido, Pais pais, Especialidad especialidad, int experiencia){
         Mecanico nuevo = new Mecanico();
         nuevo.setDni(dni);
         nuevo.setNombre(nombre);
@@ -222,160 +228,173 @@ public class Gestion {
     }
     
     /**
-     * (Método obsoleto/reemplazado) Crea una Carrera.
-     * Reemplazado por {@link #planificarCarrera(String, int, String, Circuito)}
-     * @param fecha Fecha de la carrera.
-     * @param numeroVueltas Total de vueltas.
-     * @param hora Hora de inicio.
-     * @param pais País anfitrión.
-     */
-    public void crearCarrera(String fecha, int numeroVueltas, String hora, Pais pais) {
+ * Crea una nueva Carrera y la agrega al sistema.
+ *
+ * @param fecha Fecha de realización.
+ * @param numeroVueltas Cantidad de vueltas programadas.
+ * @param hora Hora local.
+ * @param pais País anfitrión.
+ */
+    public void crearCarrera(String fecha, int numeroVueltas, String hora, Pais pais){
         Carrera nuevo = new Carrera();
         nuevo.setFechaRealizacion(fecha);
         nuevo.setNumeroVueltas(numeroVueltas);
         nuevo.setHoraRealizacion(hora);
         nuevo.setPais(pais);
-        listaCarreras.add(nuevo);
-        // (Falta persistencia aquí, pero parece ser un método antiguo)
+        listaCarreras.add(nuevo);    
     }
     
+    
     /**
-     * Crea un nuevo País, lo añade a la lista en memoria y lo persiste.
-     * @param id ID numérico único.
-     * @param descrip Nombre del país (ej: "Italia").
-     */
-    public void crearPais(int id, String descrip) {
+    * Crea un nuevo País y lo persiste.
+    *
+    * @param id Identificador único.
+    * @param descrip Descripción o nombre del país.
+    */
+    public void crearPais(int id, String descrip){
         Pais nuevo = new Pais();
         nuevo.setIdPais(id);
         nuevo.setDescripcion(descrip);
         this.listaPais.add(nuevo);
-        gestorPersistencia.guardarPais(nuevo);
+        gestorPersistencia.guardarPais(nuevo); 
     }
     
-    // --- GETTERS (Usados por la GUI para poblar JComboBoxes) ---
+  //  GETTERS
     
-    /** @return La lista completa de Países cargados. */
+    /**
+ * @return Lista completa de <Pais>.
+ */
     public ArrayList<Pais> getListaPais() {
         return this.listaPais;
     }
-    
-    /** @return La lista completa de Escuderías cargadas. */
+    /**
+ * @return Lista completa de <Escuderia>.
+ */
     public ArrayList<Escuderia> getListaEscuderias() {
         return this.listaEscuderias;
     }
-    
-    /** @return Un array con todos los valores del enum {@link Especialidad}. */
+    /**
+    * @return Lista completa de <Especialidad>.
+    */
     public Especialidad[] getListaEspecialidades() {
-        return Especialidad.values();
+        return Especialidad.values(); 
     }
-    
-    /** @return La lista completa de Circuitos cargados. */
+    /**
+ * @return Lista completa de <Circuito>.
+ */
     public ArrayList<Circuito> getListaCircuitos() {
-        return this.listaCircuitos;
-    }
-    
-    /** @return La lista completa de Pilotos cargados. */
+    return this.listaCircuitos;
+}
+    /**
+ * @return Lista completa de <Piloto>.
+ */
     public ArrayList<Piloto> getListaPilotos() {
         return this.listaPilotos;
     }
-    
-    /** @return La lista completa de Autos cargados. */
+    /**
+ * @return Lista completa de <Auto>.
+ */
     public ArrayList<Auto> getListaAutos() {
         return this.listaAutos;
     }
-    
-    /** @return La lista completa de Mecánicos cargados. */
+    /**
+ * @return Lista completa de <Mecanico>.
+ */
     public ArrayList<Mecanico> getListaMecanicos() {
         return this.listaMecanicos;
     }
-    
-    /** @return La lista completa de Carreras cargadas. */
-    public ArrayList<Carrera> getListaCarreras() {
+    /**
+ * @return Lista completa de <Carrera>.
+ */
+    public ArrayList<Carrera> getListaCarreras(){
         return this.listaCarreras;
     }
-    
-    /** @return La lista completa de asociaciones {@link AutoPiloto} cargadas. */
+    /**
+ * @return Lista completa de <AutoPiloto>.
+ */
     public ArrayList<AutoPiloto> getListaAutoPilotos() {
         return this.listaAutoPilotos;
     }
-    
-    /** @return La lista completa de {@link ResultadoCarrera} cargados. */
-    public ArrayList<ResultadoCarrera> getListaResultados() {
-        return this.listaResultados;
+    /**
+ * @return Lista completa de <ResultadoCarrera>.
+ */
+    public ArrayList<ResultadoCarrera> getListaResultados(){
+         return this.listaResultados;
     }
-    
-    /** @return La lista completa de asociaciones {@link PilotoEscuderia} cargadas. */
+    /**
+ * @return Lista completa de <PilotoEscuderia>.
+ */
     public ArrayList<PilotoEscuderia> getListaPilotoEscuderia() {
         return this.listaPilotoEscuderias;
     }
     
-    // --- LÓGICA DE GESTIÓN Y BORRADO ---
+    // BORRAR ESCUDERIAS
     
     /**
-     * Realiza un **BORRADO EN CASCADA** de una Escudería.
-     * Esto implica:
-     * 1. Borrar todos los {@link Auto} que le pertenecen.
-     * 2. Desvincular todos los contratos {@link PilotoEscuderia}.
-     * 3. Desvincular todos los contratos {@link MecanicoEscuderia}.
-     * 4. Borrar la {@link Escuderia} misma.
-     * 5. Reescribe todos los CSVs afectados (Autos, PilotoEscuderia,
-     * MecanicoEscuderia, Escuderias).
-     *
-     * @param escuderiaABorrar El objeto {@link Escuderia} a eliminar.
-     * @throws Exception Si la escudería es nula.
-     */
+ * Elimina una Escudería del sistema junto con:
+ * - Todos los autos asociados.
+ * - Todas las asociaciones Piloto–Escudería.
+ * - Todas las asociaciones Mecánico–Escudería.
+ * 
+ * No elimina pilotos ni mecánicos.
+ *
+ * @param escuderiaABorrar Escudería a eliminar.
+ * @throws Exception Si no se selecciona una escudería válida.
+ */
     public void borrarEscuderia(Escuderia escuderiaABorrar) throws Exception {
-        
+    
         if (escuderiaABorrar == null) {
             throw new Exception("No se seleccionó ninguna escudería para borrar.");
         }
-        
+
         String nombreEscuderia = escuderiaABorrar.getNombre();
-        
-        // --- 1. Borrar Autos (1-a-N) ---
+
         // Usamos removeIf para limpiar la lista principal de autos
         this.listaAutos.removeIf(auto -> auto.getEscuderia().equals(escuderiaABorrar));
+        // Reescribimos el CSV de Autos (ya sin los autos de esta escudería)
         gestorPersistencia.reescribirAutosCSV(this.listaAutos);
-        
-        // --- 2. Borrar Contratos de Pilotos (N-a-N) ---
+
         // NO borramos los pilotos, solo los contratos.
-        
-        // Limpiamos la lista principal de asociaciones
+
+        //  Limpiamos la lista principal de asociaciones
         this.listaPilotoEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
         // Limpiamos las referencias inversas en cada piloto (para consistencia en memoria)
         for (Piloto p : this.listaPilotos) {
             p.getPilotoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
         }
+        // Reescribimos el CSV de asociaciones
         gestorPersistencia.reescribirPilotoEscuderiaCSV(this.listaPilotoEscuderias);
-        
-        // --- 3. Borrar Contratos de Mecánicos (N-a-N) ---
+
+        // Borrar Asociaciones de Mecánicos (Enlaces) 
         // NO borramos los mecánicos, solo los enlaces.
-        
-        // Limpiamos la lista principal de asociaciones
+
+        //  Limpiamos la lista principal de asociaciones
         this.listaMecanicoEscuderias.removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
         // Limpiamos las referencias inversas en cada mecánico
         for (Mecanico m : this.listaMecanicos) {
             m.getMecanicoEscuderias().removeIf(asoc -> asoc.getEscuderia().equals(escuderiaABorrar));
         }
+        //  Re-escribimos el CSV de asociaciones
         gestorPersistencia.reescribirMecanicoEscuderiaCSV(this.listaMecanicoEscuderias);
-        
-        // --- 4. Borrar la Escudería (El último paso) ---
+
+        // Borrar la Escudería (El último paso) 
+        // Borramos la escudería de la lista principal
         this.listaEscuderias.remove(escuderiaABorrar);
+        // Reescribimos el CSV de Escuderías
         gestorPersistencia.reescribirEscuderiasCSV(this.listaEscuderias);
     }
+  
     
-    // --- GESTIÓN DE ASOCIACIONES (PILOTO-ESCUDERIA) ---
+    // ASOCIAR PILOTOS Y ELIMINAR ASOCIACION  
     
     /**
-     * Crea una nueva asociación N-a-N (contrato) entre un Piloto y una Escuderia.
-     * Realiza la "doble vinculación" (añade el contrato a la lista del piloto
-     * y a la lista de la escudería) y persiste la nueva asociación.
-     *
-     * @param piloto El {@link Piloto} a asociar.
-     * @param escuderia La {@link Escuderia} a asociar.
-     * @param fechaInicio La fecha de inicio del contrato (YYYYMMDD).
-     * @param fechaFin La fecha de fin del contrato (YYYYMMDD).
-     */
+ * Crea un contrato entre un Piloto y una Escudería con fechas de vigencia.
+ *
+ * @param piloto Piloto involucrado.
+ * @param escuderia Escudería contratante.
+ * @param fechaInicio Fecha de inicio del contrato.
+ * @param fechaFin Fecha de finalización del contrato.
+ */
     public void gestionarPilotoEscuderia(Piloto piloto, Escuderia escuderia, String fechaInicio, String fechaFin) {
         PilotoEscuderia nuevoContrato = new PilotoEscuderia();
         nuevoContrato.setDesdeFecha(fechaInicio);
@@ -383,153 +402,144 @@ public class Gestion {
         nuevoContrato.setPiloto(piloto);
         nuevoContrato.setEscuderia(escuderia);
         
-        // Doble vinculación en memoria
         piloto.agregarPilotoEscuderia(nuevoContrato);
         escuderia.agregarPilotoEscuderia(nuevoContrato);
         this.listaPilotoEscuderias.add(nuevoContrato);
-        
-        // Persistencia
         gestorPersistencia.guardarPilotoEscuderia(nuevoContrato);
     }
     
+    
     /**
-     * Elimina una asociación N-a-N (contrato) existente entre un Piloto y una
-     * Escudería.
-     * Realiza la "doble desvinculación" (elimina de las listas de ambos
-     * objetos)
-     * y reescribe el CSV de asociaciones.
-     *
-     * @param piloto El {@link Piloto} de la asociación.
-     * @param escuderia La {@link Escuderia} de la asociación.
-     * @throws Exception Si no se encuentra un contrato que coincida.
-     */
+ * Elimina la asociación entre un Piloto y una Escudería.
+ *
+ * @param piloto Piloto vinculado.
+ * @param escuderia Escudería del contrato.
+ * @throws Exception Si la asociación no existe.
+ */
     public void darDeBajaPilotoEscuderia(Piloto piloto, Escuderia escuderia) throws Exception {
-        
+    
         // 1. Encontrar la asociación a borrar
         PilotoEscuderia asociacionABorrar = null;
         for (PilotoEscuderia pe : this.listaPilotoEscuderias) {
-            // Comparamos los objetos
+        // Comparamos los objetos
             if (pe.getPiloto().equals(piloto) && pe.getEscuderia().equals(escuderia)) {
                 asociacionABorrar = pe;
                 break;
             }
         }
-        
+    
         if (asociacionABorrar == null) {
             throw new Exception("No se encontró un contrato entre " + piloto.getNombre() + " y " + escuderia.getNombre());
         }
-        
-        // 2. Borrarla de las listas en memoria (doble desvinculación)
+    
+        // Borrarla de las listas en memoria (doble vinculación)
         this.listaPilotoEscuderias.remove(asociacionABorrar);
-        piloto.getPilotoEscuderias().remove(asociacionABorrar);
-        escuderia.getPilotoEscuderia().remove(asociacionABorrar);
-        
-        // 3. Reescribir el CSV
+        piloto.getPilotoEscuderias().remove(asociacionABorrar); 
+        escuderia.getPilotoEscuderia().remove(asociacionABorrar); 
+    
+        // Reescribir el CSV
         gestorPersistencia.reescribirPilotoEscuderiaCSV(this.listaPilotoEscuderias);
     }
     
-    // --- GESTIÓN DE ASOCIACIONES (AUTO-ESCUDERIA) ---
     
+    // ASOCIARLE UN AUTO A LA ESCUDERIA O BORRARLA    
     /**
-     * (Método no implementado) Stub para la lógica de reasignación de un
-     * Auto a una nueva Escudería.
-     * @param auto El auto a reasignar.
-     * @param escuderia La nueva escudería.
-     */
-    public void gestionarAutoEscuderia(Auto auto, Escuderia escuderia) {
+ * Asocia a una escudería un auto y actualiza persistencia.
+ *
+ * @param auto Auto a asociar.
+ * @param escuderia Escuderia a asociar.
+ */
+    public void gestionarAutoEscuderia (Auto auto, Escuderia escuderia){
         if (auto.getEscuderia() != escuderia) {
-            // Lógica para reasignar (actualizar el objeto Auto y reescribir CSV)
+            
         } else {
-            // Lógica si ya pertenece (lanzar error, etc.)
+            
         }
     }
     
+    
     /**
-     * (Método no utilizado) Elimina un Auto de su escudería y de la lista
-     * global.
-     * @param autoABorrar El auto a eliminar.
-     * @throws Exception Si el auto es nulo.
-     */
+ * Elimina un Auto de su escudería y del sistema, y actualiza persistencia.
+ *
+ * @param autoABorrar Auto a eliminar.
+ * @throws Exception Si no se seleccionó un auto válido.
+ */
     public void darDeBajaAutoEscuderia(Auto autoABorrar) throws Exception {
         if (autoABorrar == null) {
             throw new Exception("Debe seleccionar un auto.");
         }
-        
-        // Borrar de la lista en memoria de su escudería
+    
+        // Borrar de la lista en memoria de su escudería 
         if (autoABorrar.getEscuderia() != null) {
-            autoABorrar.getEscuderia().getAutos().remove(autoABorrar);
+            autoABorrar.getEscuderia().getAutos().remove(autoABorrar); 
         }
-        
+    
         // Borrar de la lista global de autos
         this.listaAutos.remove(autoABorrar);
-        
-        // Reescribir el CSV de Autos
+    
+        // Reescribir el CSV de Autos 
         gestorPersistencia.reescribirAutosCSV(this.listaAutos);
+        
     }
     
-    // --- GESTIÓN DE ASOCIACIONES (PILOTO-AUTO) ---
+    // ASOCIAR PILOTOS CON AUTO Y BORRAR LA ASOCIACION
     
     /**
-     * Crea una nueva asociación N-a-N entre un Piloto y un Auto.
-     * Realiza la "doble vinculación" (añade a listas de piloto y auto) y persiste.
-     * @param piloto El {@link Piloto} a asociar.
-     * @param auto El {@link Auto} a asociar.
-     * @param fechaAsignacion La fecha de la asignación (YYYYMMDD).
-     */
+ * Asocia un Piloto a un Auto en una fecha dada.
+ *
+ * @param piloto Piloto asignado.
+ * @param auto Auto a utilizar.
+ * @param fechaAsignacion Fecha de asignación.
+ */
     public void gestionarPilotoAuto(Piloto piloto, Auto auto, String fechaAsignacion) {
         AutoPiloto nuevaAsociacion = new AutoPiloto();
         nuevaAsociacion.setPiloto(piloto);
         nuevaAsociacion.setAuto(auto);
         nuevaAsociacion.setFechaAsignacion(fechaAsignacion);
         
-        // Doble vinculación en memoria
         piloto.agregarAutoPiloto(nuevaAsociacion);
         auto.agregarAutoPiloto(nuevaAsociacion);
         this.listaAutoPilotos.add(nuevaAsociacion);
-        
-        // Persistencia
         gestorPersistencia.guardarAutoPiloto(nuevaAsociacion);
+        
     }
     
-    // --- GESTIÓN DE ASOCIACIONES (MECANICO-ESCUDERIA) ---
+    
+    // ASOCIAR MECANICOS CON ESCUDERIA Y BORRAR LA ASOCIACION
     
     /**
-     * Crea una nueva asociación N-a-N (contrato) entre un Mecánico y una
-     * Escudería.
-     * Realiza la "doble vinculación" y persiste.
-     *
-     * @param mecanico El {@link Mecanico} a asociar.
-     * @param escuderia La {@link Escuderia} a asociar.
-     * @param fechaInicio La fecha de inicio del contrato (YYYYMMDD).
-     * @param fechaFin La fecha de fin del contrato (YYYYMMDD).
-     */
-    public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin) {
+ * Asigna un Mecánico a una Escudería en un período definido.
+ *
+ * @param mecanico Mecánico asignado.
+ * @param escuderia Escudería correspondiente.
+ * @param fechaInicio Fecha de inicio.
+ * @param fechaFin Fecha de fin.
+ */
+    public void gestionarMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia, String fechaInicio, String fechaFin){
         MecanicoEscuderia nuevoContrato = new MecanicoEscuderia();
         nuevoContrato.setDesdeFecha(fechaInicio);
         nuevoContrato.setHastaFecha(fechaFin);
         nuevoContrato.setMecanico(mecanico);
         nuevoContrato.setEscuderia(escuderia);
         
-        // Doble vinculación
         mecanico.agregarMecanicoEscuderia(nuevoContrato);
         escuderia.agregarMecanicoEscuderia(nuevoContrato);
+        
         this.listaMecanicoEscuderias.add(nuevoContrato);
         
-        // Persistencia
         gestorPersistencia.guardarMecanicoEscuderia(nuevoContrato);
-    }
-    
-    /**
-     * Elimina una asociación N-a-N (contrato) existente entre un Mecánico y
-     * una Escudería.
-     * Realiza la "doble desvinculación" y reescribe el CSV.
-     *
-     * @param mecanico El {@link Mecanico} de la asociación.
-     * @param escuderia La {@link Escuderia} de la asociación.
-     * @throws Exception Si no se encuentra una asociación que coincida.
-     */
-    public void darDeBajaMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia) throws Exception {
         
+    } 
+  
+    /**
+ * Elimina una asociación Mecánico–Escudería existente.
+ *
+ * @param mecanico Mecánico vinculado.
+ * @param escuderia Escudería correspondiente.
+ * @throws Exception Si la asociación no existe.
+ */
+    public void darDeBajaMecanicoEscuderia(Mecanico mecanico, Escuderia escuderia) throws Exception {
+    
         // 1. Encontrar la asociación a borrar
         MecanicoEscuderia asociacionABorrar = null;
         for (MecanicoEscuderia me : this.listaMecanicoEscuderias) {
@@ -538,71 +548,71 @@ public class Gestion {
                 break;
             }
         }
-        
+    
         if (asociacionABorrar == null) {
             throw new Exception("No se encontró asociación entre " + mecanico.getNombre() + " y " + escuderia.getNombre());
         }
-        
-        // 2. Borrarla de las listas en memoria
+    
+        // Borrarla de las listas en memoria 
         this.listaMecanicoEscuderias.remove(asociacionABorrar);
-        mecanico.getMecanicoEscuderias().remove(asociacionABorrar);
-        escuderia.getMecanicos().remove(asociacionABorrar);
-        
-        // 3. Reescribir el CSV
+        mecanico.getMecanicoEscuderias().remove(asociacionABorrar); 
+        escuderia.getMecanicos().remove(asociacionABorrar); 
+    
+        //  Reescribir el CSV
         gestorPersistencia.reescribirMecanicoEscuderiaCSV(this.listaMecanicoEscuderias);
     }
     
-    // --- MÉTODOS PARA CARRERA ---
     
-    /**
-     * Planifica (crea) una nueva Carrera, la añade a la lista y la persiste.
-     * Vincula automáticamente el País basándose en el Circuito seleccionado.
-     *
-     * @param fecha La fecha de la carrera (YYYYMMDD).
-     * @param numeroVueltas El total de vueltas.
-     * @param hora La hora de inicio (HHMM).
-     * @param circuito El objeto {@link Circuito} donde se correrá.
-     */
-    public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito) {
+    // MÉTODOS PARA CARRERA    
+     /**
+ * Registra una nueva carrera en un circuito, copiando el país del mismo.
+ *
+ * @param fecha Fecha del evento.
+ * @param numeroVueltas Cantidad de vueltas.
+ * @param hora Hora programada.
+ * @param circuito Circuito donde se realizará.
+ */
+    public void planificarCarrera(String fecha, int numeroVueltas, String hora, Circuito circuito){
         Carrera nueva = new Carrera();
-        
+    
         nueva.setFechaRealizacion(fecha);
         nueva.setNumeroVueltas(numeroVueltas);
         nueva.setHoraRealizacion(hora);
         nueva.setCircuito(circuito);
         if (circuito != null) {
-            nueva.setPais(circuito.getPais()); // Hereda el país del circuito
+        nueva.setPais(circuito.getPais()); 
         }
         listaCarreras.add(nueva);
         gestorPersistencia.guardarCarrera(nueva);
-        
+       
     }
+     
     
     /**
-     * (Método obsoleto/reemplazado) Registra una participación.
-     * Reemplazado por {@link #gestionarPilotoAuto(Piloto, Auto, String)}.
-     * @param piloto El piloto.
-     * @param auto El auto.
-     * @param carrera La carrera.
-     */
+ * Registra que un Piloto con un Auto participa en una Carrera.
+ *
+ * @param piloto Piloto participante.
+ * @param auto Auto utilizado.
+ * @param carrera Carrera a disputar.
+ */
     public void registrarParticipacionCarrera(Piloto piloto, Auto auto, Carrera carrera) {
-        
+      
         // Crear la nueva instancia de la asociación AutoPiloto
         AutoPiloto registroParticipacion = new AutoPiloto();
-        
-        // Vinculaciones
+    
+        //  vinculaciones
         registroParticipacion.setPiloto(piloto);
         registroParticipacion.setAuto(auto);
-        
-        // Vinculamos el registro a la Carrera.
+    
+        // Vinculamos el registro a la Carrera. 
         ArrayList<Carrera> listaCarrera = new ArrayList<>();
-        listaCarrera.add(carrera);
+        listaCarrera.add(carrera); 
         registroParticipacion.setCarrera(listaCarrera);
-        
-        // Reutilizamos la fecha de la carrera
+    
+        // Reutilizamos la fecha de la carrera 
         registroParticipacion.setFechaAsignacion(carrera.getFechaRealizacion());
-        
-        // Guardamos la asociación en las listas
+    
+        // Guardamos la asociación en las listas 
         piloto.agregarAutoPiloto(registroParticipacion);
         auto.agregarAutoPiloto(registroParticipacion);
         this.listaAutoPilotos.add(registroParticipacion);
@@ -610,38 +620,35 @@ public class Gestion {
     }
     
     /**
-     * Helper utility para calcular los puntos F1 estándar según la posición.
-     * @param posicion La posición final (1-20).
-     * @return Los puntos (25, 18, 15...) o 0 si está fuera del top 10.
-     */
+ * Devuelve los puntos oficiales según la posición final.
+ *
+ * @param posicion Posición final del piloto.
+ * @return Puntos otorgados.
+ */
     public int calcularPuntos(int posicion) {
-        return switch (posicion) {
-            case 1 -> 25;
-            case 2 -> 18;
-            case 3 -> 15;
-            case 4 -> 12;
-            case 5 -> 10;
-            case 6 -> 8;
-            case 7 -> 6;
-            case 8 -> 4;
-            case 9 -> 2;
-            case 10 -> 1;
-            default -> 0;
+     return switch(posicion){
+        case 1 -> 25;
+        case 2 -> 18;
+        case 3 -> 15;
+        case 4 -> 12;
+        case 5 -> 10;
+        case 6 -> 8;
+        case 7 -> 6;
+        case 8 -> 4;
+        case 9 -> 2;
+        case 10 -> 1;
+        default -> 0;
         };
     }
     
     /**
-     * Helper lógico que **actualiza las estadísticas en memoria** de un
-     * {@link Piloto} (victorias, podios, vueltas rápidas)
-     * basándose en un resultado de carrera.
-     * Este método es llamado tanto al cargar los datos como al registrar un
-     * nuevo resultado.
-     *
-     * @param autoPiloto La asociación {@link AutoPiloto} que contiene al piloto.
-     * @param posicionFinal La posición obtenida.
-     * @param vueltaRapida Si obtuvo (true) o no (false) la vuelta rápida.
-     */
-    public void resultadosCarreras(AutoPiloto autoPiloto, int posicionFinal, boolean vueltaRapida) {
+ * Actualiza estadísticas del piloto según el resultado obtenido.
+ *
+ * @param autoPiloto Asociación Auto–Piloto utilizada.
+ * @param posicionFinal Posición obtenida.
+ * @param vueltaRapida Indica si hizo vuelta rápida.
+ */
+    public void resultadosCarreras(AutoPiloto autoPiloto, int posicionFinal, boolean vueltaRapida){
         Piloto piloto = autoPiloto.getPiloto();
         if (posicionFinal == 1) {
             piloto.setVictorias(piloto.getVictorias() + 1);
@@ -654,66 +661,62 @@ public class Gestion {
         }
         
         int puntosObtenidos = calcularPuntos(posicionFinal);
-        // (Nota: los puntos no se almacenan en el Piloto, se calculan en
-        // informes)
-    }
+     }
     
-    /**
-     * Registra el resultado final de un participante en una carrera.
-     * 1. Crea el objeto {@link ResultadoCarrera}.
-     * 2. Llama a {@link #resultadosCarreras} para actualizar las estadísticas
-     * del piloto (victorias, podios, etc.) en memoria.
-     * 3. Persiste el nuevo {@link ResultadoCarrera} en el CSV.
-     *
-     * @param carrera La {@link Carrera} donde se obtuvo el resultado.
-     * @param piloto El participante ({@link AutoPiloto}) que obtuvo el resultado.
-     * @param posicionFinal La posición final (1-20).
-     * @param tiempoFinal El tiempo (formato HHMMSS).
-     * @param vueltaRapida Si (true) o no (false) obtuvo la vuelta rápida.
-     */
-    public void registrarResultadosCarrera(Carrera carrera, AutoPiloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida) {
+    
+      /**
+ * Crea y almacena un nuevo resultado de carrera.
+ *
+ * @param carrera Carrera disputada.
+ * @param piloto Asociación Auto–Piloto que compite.
+ * @param posicionFinal Posición obtenida.
+ * @param tiempoFinal Tiempo total registrado.
+ * @param vueltaRapida Si obtuvo vuelta rápida.
+ */
+    public void registrarResultadosCarrera(Carrera carrera, AutoPiloto piloto, int posicionFinal, String tiempoFinal, boolean vueltaRapida){
         ResultadoCarrera nuevoResultado = new ResultadoCarrera();
-        
+    
         nuevoResultado.setCarrera(carrera);
         nuevoResultado.setAutoPiloto(piloto);
         nuevoResultado.setPosicionFinal(posicionFinal);
         nuevoResultado.setTiempoFinal(tiempoFinal);
         nuevoResultado.setVueltaRapida(vueltaRapida);
-        
+
         boolean esPodio = (posicionFinal <= 3);
-        nuevoResultado.setPodio(esPodio);
-        
-        // Actualiza las estadísticas del objeto Piloto en memoria
+        nuevoResultado.setPodio(esPodio); 
+  
         resultadosCarreras(piloto, posicionFinal, vueltaRapida);
-        
-        // Guarda el resultado en la lista y en persistencia
+
         this.listaResultados.add(nuevoResultado);
         gestorPersistencia.guardarResultadoCarrera(nuevoResultado);
+        int puntosGanados = calcularPuntos(posicionFinal);
+        
+         Piloto pilotoreal = piloto.getPiloto();
     }
     
+    
     /**
-     * Calcula el puntaje total acumulado de un piloto específico.
-     * Itera sobre *todos* los resultados de carrera registrados, filtra por
-     * el piloto, y suma los puntos usando {@link #calcularPuntos(int)}.
-     *
-     * @param piloto El {@link Piloto} para el cual calcular los puntos.
-     * @return El total de puntos acumulados.
-     */
+ * Calcula el total de puntos acumulados por un piloto en todas las carreras.
+ *
+ * @param piloto Piloto a evaluar.
+ * @return Puntos totales del piloto.
+ */
     public int calcularPuntosTotalesPiloto(Piloto piloto) {
-        
+    
         int totalPuntos = 0;
-        
+    
         // 1. Recorre todos los resultados
         for (ResultadoCarrera resultado : this.listaResultados) {
-            
-            // Obtenemos la asociación
+    
+     
+        // Obtenemos la asociación
             AutoPiloto asociacion = resultado.getAutoPiloto();
-            
-            // Obtenemos el Piloto de esa asociación
+        
+        //  Obtenemos el Piloto de esa asociación
             Piloto pilotoDelResultado = asociacion.getPiloto();
-            
-            // Comparamos el piloto
-            if (pilotoDelResultado.equals(piloto)) {
+        
+        // Comparamos el piloto
+            if (pilotoDelResultado.equals(piloto)) {  
                 int posicion = resultado.getPosicionFinal();
                 int puntosGanados = calcularPuntos(posicion);
                 totalPuntos += puntosGanados;
@@ -722,17 +725,18 @@ public class Gestion {
         return totalPuntos;
     }
     
-    // --- GENERACIÓN DE INFORMES (Llamados desde la GUI) ---
+    
+    
+    // GENERAR INFORMES
     
     /**
-     * Genera un informe de resultados de carreras dentro de un rango de fechas.
-     * Filtra las carreras por fecha (YYYYMMDD), busca sus resultados,
-     * los ordena por posición y los formatea en un ArrayList de Strings.
-     *
-     * @param fechaInicio Fecha de inicio (YYYYMMDD).
-     * @param fechaFin Fecha de fin (YYYYMMDD).
-     * @return Un ArrayList<String> listo para mostrar en un JTextArea.
-     */
+ * Genera un informe de los resultados de todas las carreras disputadas dentro
+ * de un intervalo de fechas dado.
+ *
+ * @param fechaInicio Fecha mínima (incluida).
+ * @param fechaFin Fecha máxima (incluida).
+ * @return Lista de líneas de texto representando el informe.
+ */
     public ArrayList<String> generarInformeResultadosPorFecha(String fechaInicio, String fechaFin) {
         ArrayList<String> informe = new ArrayList<>();
 
@@ -746,15 +750,16 @@ public class Gestion {
 
         // Recorremos las carreras
         for (Carrera carrera : this.listaCarreras) {
+
             String fechaCarrera = carrera.getFechaRealizacion();
 
-            // Comparamos las fechas (String compareTo funciona para YYYYMMDD)
+            // Comparamos las fechas
             if (fechaCarrera.compareTo(fechaInicio) >= 0 && fechaCarrera.compareTo(fechaFin) <= 0) {
 
                 carrerasEncontradas++;
-                sb.append("\n--- CARRERA: " + carrera.toString() + " ---\n");
+                sb.append("\n--- CARRERA: " + carrera.toString() + " ---\n"); 
 
-                // Recolectamos todos los resultados de ESTA carrera
+                // Recolectamos todos los resultados de una carrera
                 ArrayList<ResultadoCarrera> resultadosDeEstaCarrera = new ArrayList<>();
                 for (ResultadoCarrera resultado : this.listaResultados) {
                     if (resultado.getCarrera().equals(carrera)) {
@@ -775,7 +780,7 @@ public class Gestion {
                         }
                     });
 
-                    // creamos el informe ordenado y con detalles
+                    //  creamos el informe ordenado y con detalles
                     for (ResultadoCarrera resultado : resultadosDeEstaCarrera) {
 
                         Piloto piloto = resultado.getAutoPiloto().getPiloto();
@@ -785,7 +790,7 @@ public class Gestion {
                         String prefijo = "  " + posicion + "°: ";
                         String sufijo = "";
 
-                        // Distinguir ganador y podio
+                        // podemos distinguir ganador y podio
                         if (posicion == 1) prefijo = "🥇 1°: ";
                         else if (posicion == 2) prefijo = "🥈 2°: ";
                         else if (posicion == 3) prefijo = "🥉 3°: ";
@@ -794,121 +799,105 @@ public class Gestion {
                         if (resultado.isVueltaRapida()) sufijo = " (🏁 Vuelta Rápida)";
 
                         String linea = String.format("%s%s (Tiempo: %s)%s",
-                                prefijo,
-                                nombrePiloto,
-                                resultado.getTiempoFinal(),
-                                sufijo
-                        );
+                                         prefijo,
+                                         nombrePiloto,
+                                         resultado.getTiempoFinal(),
+                                         sufijo
+                                     );
                         sb.append(linea).append("\n");
                     }
                 }
+               
             }
-        } // Fin del bucle de carreras
+        } 
 
-        // Verificación
+        // Verificación 
         if (carrerasEncontradas == 0) {
             informe.add("\nNo se encontraron carreras en el rango de fechas especificado.");
         } else {
             //se agregan los resultados
-            informe.add(sb.toString());
+            informe.add(sb.toString()); 
         }
 
         return informe;
     }
     
-    /**
-     * Clase interna privada (Helper) usada para generar el ranking.
-     * Almacena un piloto y su puntaje total calculado para poder ordenarlos.
-     */
+    
     private class PilotoPuntuacion {
         Piloto piloto;
         int puntosAcumulados;
 
         public PilotoPuntuacion(Piloto piloto, int puntosAcumulados) {
-            this.piloto = piloto;
-            this.puntosAcumulados = puntosAcumulados;
+        this.piloto = piloto;
+        this.puntosAcumulados = puntosAcumulados;
         }
-        
+    
         public Piloto getPiloto() { return piloto; }
         public int getPuntosAcumulados() { return puntosAcumulados; }
     }
     
-    /**
-     * Genera un informe de Ranking de Pilotos.
-     * 1. Itera todos los pilotos en 'listaPilotos'.
-     * 2. Calcula los puntos totales para cada uno llamando a
-     * {@link #calcularPuntosTotalesPiloto(Piloto)}.
-     * 3. Almacena los resultados en una lista temporal de
-     * {@link PilotoPuntuacion}.
-     * 4. Ordena la lista temporal de mayor a menor puntaje.
-     * 5. Formatea la lista ordenada como un ArrayList<String>.
-     *
-     * @return Un ArrayList<String> (el ranking) listo para mostrar en un
-     * JTextArea.
-     */
-    public ArrayList<String> generarRankingPilotos() {
+       /**
+ * Genera el ranking completo de pilotos ordenado por puntos acumulados.
+ *
+ * @return Texto formateado con posiciones y puntajes.
+ */
+   public ArrayList<String> generarRankingPilotos() {
         ArrayList<String> rankingInforme = new ArrayList<>();
         ArrayList<PilotoPuntuacion> rankingTemporal = new ArrayList<>();
 
-        // 1. Itera sobre CADA piloto
         for (Piloto piloto : this.listaPilotos) {
             int puntosAcumulados = 0;
-            
-            // 2. Itera sobre CADA resultado para calcular los puntos de ESE piloto
+        
             for (ResultadoCarrera resultado : this.listaResultados) {
                 AutoPiloto asociacion = resultado.getAutoPiloto();
                 Piloto pilotoDelResultado = asociacion.getPiloto();
                 
-                if (pilotoDelResultado.equals(piloto)) {
-                    int posicion = resultado.getPosicionFinal();
-                    int puntosGanados = calcularPuntos(posicion);
-                    puntosAcumulados += puntosGanados;
+                if (pilotoDelResultado.equals(piloto)) { 
+                int posicion = resultado.getPosicionFinal();
+                int puntosGanados = calcularPuntos(posicion); 
+                puntosAcumulados += puntosGanados;
                 }
             }
-            // 3. Añade al ranking temporal
-            rankingTemporal.add(new PilotoPuntuacion(piloto, puntosAcumulados));
+           rankingTemporal.add(new PilotoPuntuacion(piloto, puntosAcumulados));
         }
-        
-        // 4. Ordena la lista temporal
+    
         Collections.sort(rankingTemporal, new Comparator<PilotoPuntuacion>() {
-            @Override
-            public int compare(PilotoPuntuacion pp1, PilotoPuntuacion pp2) {
-                // Orden descendente (pp2 vs pp1)
-                return Integer.compare(pp2.getPuntosAcumulados(), pp1.getPuntosAcumulados());
-            }
+        @Override
+        public int compare(PilotoPuntuacion pp1, PilotoPuntuacion pp2) {
+            return Integer.compare(pp2.getPuntosAcumulados(), pp1.getPuntosAcumulados());
+        }
         });
 
-        // 5. Formatea la salida
         rankingInforme.add("====================");
         rankingInforme.add("RANKING DE PILOTOS F1 2025");
         rankingInforme.add("====================");
-        
+    
         if (rankingTemporal.isEmpty()) {
-            rankingInforme.add("No hay pilotos registrados o resultados de carreras para calcular el ranking.");
-            return rankingInforme;
+        rankingInforme.add("No hay pilotos registrados o resultados de carreras para calcular el ranking.");
+        return rankingInforme;
         }
 
         int posicion = 1;
-        for (PilotoPuntuacion pp : rankingTemporal) {
+        for (PilotoPuntuacion pp : rankingTemporal){
+        
             String linea = posicion + ". " + pp.getPiloto().getNombre() + " " + pp.getPiloto().getApellido() + " - Puntos: " + pp.getPuntosAcumulados();
+
             rankingInforme.add(linea);
             posicion++;
         }
         return rankingInforme;
     }
     
-    /**
-     * Genera un informe de estadísticas históricas para un único piloto,
-     * identificado por su DNI.
-     *
-     * @param dni El DNI del piloto a buscar.
-     * @return Un ArrayList<String> con las estadísticas (Victorias, Podios,
-     * Puntos) del piloto.
-     */
-    public ArrayList<String> generarHistoricoPilotoIndividual(String dni) {
+   /**
+ * Genera el informe estadístico completo para un piloto específico.
+ *
+ * @param dni DNI del piloto a consultar.
+ * @return Informe de estadísticas individuales.
+ */
+   public ArrayList<String> generarHistoricoPilotoIndividual(String dni){
         ArrayList<String> informe = new ArrayList<>();
         Piloto piloto = buscarPilotoPorDNI(dni);
-        
+    
         if (piloto == null) {
             informe.add("No se encontró ningún piloto con el DNI: " + dni);
             informe.add("=============");
@@ -918,45 +907,40 @@ public class Gestion {
         informe.add("====================================");
         informe.add("HISTORIAL DE ESTADÍSTICAS INDIVIDUAL");
         informe.add("====================================");
-        
-        // Obtiene las estadísticas almacenadas en el objeto Piloto
+   
         int victorias = piloto.getVictorias();
         int podios = piloto.getPodios();
         int pole = piloto.getPolePosition();
         int vueltasRapidas = piloto.getVueltasRapidas();
-        
-        // Calcula los puntos totales iterando los resultados
+  
         int puntosTotales = calcularPuntosTotalesPiloto(piloto);
-        
+    
         informe.add(String.format("Piloto: %s %s (#%d)",
                 piloto.getNombre(),
                 piloto.getApellido(),
                 piloto.getNumeroCompetencia()));
-        
+                              
         informe.add("====================================");
-        
+    
         informe.add(String.format(" Victorias: %d", victorias));
         informe.add(String.format(" Podios: %d", podios));
         informe.add(String.format(" Pole Positions: %d", pole));
         informe.add(String.format(" Vueltas Rápidas: %d", vueltasRapidas));
-        
+    
         informe.add("====================================");
         informe.add(String.format(" Puntos Totales Acumulados: %d", puntosTotales));
         informe.add("====================================");
         return informe;
     }
-    
-    /**
-     * Genera un informe de estadísticas históricas para **todos** los pilotos
-     * registrados.
-     * Itera la 'listaPilotos' y para cada uno, calcula sus puntos y formatea
-     * sus estadísticas.
-     *
-     * @return Un ArrayList<String> con el historial de todos los pilotos.
-     */
+   
+   /**
+ * Genera un informe detallado con estadísticas históricas de todos los pilotos.
+ *
+ * @return Lista de líneas de informe.
+ */
     public ArrayList<String> generarHistoricoTodosPilotos() {
         ArrayList<String> informe = new ArrayList<>();
-        
+    
         informe.add("===================");
         informe.add("HISTORIAL DE ESTADÍSTICAS - TODOS LOS PILOTOS");
         informe.add("===================");
@@ -968,62 +952,53 @@ public class Gestion {
 
         // Recorremos la lista completa de pilotos
         for (Piloto piloto : this.listaPilotos) {
-            
-            // Obtiene estadísticas del objeto
+        
+            //  estadísticas para cadad piloto
             int victorias = piloto.getVictorias();
             int podios = piloto.getPodios();
             int pole = piloto.getPolePosition();
             int vueltasRapidas = piloto.getVueltasRapidas();
-            
-            // Llama al método para calcular sus puntos
-            int puntosTotales = calcularPuntosTotalesPiloto(piloto);
-            
-            // Agregamos los datos al informe
-            informe.add(String.format("\n--- Piloto: %s %s (#%d) ---",
-                    piloto.getNombre(),
-                    piloto.getApellido(),
-                    piloto.getNumeroCompetencia()
-            ));
-            
-            informe.add(String.format("  Victorias: %d", victorias));
-            informe.add(String.format("  Podios: %d", podios));
-            informe.add(String.format("  Pole Positions: %d", pole));
-            informe.add(String.format("  Vueltas Rápidas: %d", vueltasRapidas));
-            informe.add(String.format("  Puntos Totales: %d", puntosTotales));
-        }
         
-        informe.add("\n=================");
-        return informe;
+            // Llamamos al método para calcular sus puntos
+            int puntosTotales = calcularPuntosTotalesPiloto(piloto);
+        
+            // Agregamos los datos al informe
+            informe.add(String.format("\n--- Piloto: %s %s (#%d) ---", 
+                piloto.getNombre(), 
+                piloto.getApellido(), 
+                piloto.getNumeroCompetencia()
+            ));
+        
+        informe.add(String.format("  Victorias: %d", victorias));
+        informe.add(String.format("  Podios: %d", podios));
+        informe.add(String.format("  Pole Positions: %d", pole));
+        informe.add(String.format("  Vueltas Rápidas: %d", vueltasRapidas));
+        informe.add(String.format("  Puntos Totales: %d", puntosTotales));
     }
     
-    /**
-     * Helper utility para buscar un {@link Piloto} en memoria por su DNI.
-     * @param dni El DNI a buscar.
-     * @return El objeto {@link Piloto} si se encuentra, o {@code null} si no.
-     */
-    public Piloto buscarPilotoPorDNI(String dni) {
+    informe.add("\n=================");
+    return informe;
+}
+  
+   
+   public Piloto buscarPilotoPorDNI(String dni) {
         if (dni == null || dni.isEmpty()) {
-            return null;
+        return null;
         }
-        
+    
         for (Piloto piloto : this.listaPilotos) {
-            if (piloto.getDni().equals(dni)) {
-                return piloto;
+         if (piloto.getDni().equals(dni)) {
+            return piloto;
             }
         }
-        return null; // No se encontró
+     return null;
     }
+   
     
-    /**
-     * Genera un informe de los autos utilizados por una escudería específica
-     * en las carreras registradas.
-     *
-     * @param escuderia La {@link Escuderia} a consultar.
-     * @return Un ArrayList<String> detallando qué autos usó, quién los
-     * condujo y en qué carrera.
-     */
-    public ArrayList<String> generarInformeAutosEnCarreras(Escuderia escuderia) {
-        
+  
+   
+   public ArrayList<String> generarInformeAutosEnCarreras(Escuderia escuderia) {
+    
         ArrayList<String> informe = new ArrayList<>();
 
         // Encabezados del informe
@@ -1034,38 +1009,36 @@ public class Gestion {
 
         boolean tieneRegistros = false;
 
-        // Usamos una lista nueva para no repetir (evita duplicados si un
-        // piloto usó el mismo auto en la misma carrera múltiples veces)
+        // Usamos una lista nueva para no repetir las que tenemos
         ArrayList<String> registrosUnicos = new ArrayList<>();
 
         // Iteramos sobre la lista de Resultados
         for (ResultadoCarrera resultado : this.listaResultados) {
 
-            // Obtenemos los objetos relacionados
+            // Obtenemos resultado
             AutoPiloto autoPiloto = resultado.getAutoPiloto();
             Carrera carrera = resultado.getCarrera();
 
-            // Validamos que los datos existan
+            // Validamos exista
             if (autoPiloto == null || autoPiloto.getAuto() == null || carrera == null || carrera.getCircuito() == null) {
                 continue;
             }
 
             Auto autoUsado = autoPiloto.getAuto();
 
-            // FILTRO: ¿El auto usado pertenece a la escudería que buscamos?
+            // filtro para saber si el auto esta en al escuderia
             if (autoUsado.getEscuderia().equals(escuderia)) {
-                
+
                 tieneRegistros = true;
                 Piloto piloto = autoPiloto.getPiloto();
 
-                // Creamos una clave única (Modelo|Fecha|DNI) para evitar
-                // duplicados
+                // Creamos una clave para evitar duplicados
                 String clave = autoUsado.getModelo() + "|" + carrera.getFechaRealizacion() + "|" + piloto.getDni();
 
                 if (!registrosUnicos.contains(clave)) {
                     registrosUnicos.add(clave);
 
-                    // Formateamos la línea del informe
+                    // formetemos la línea del informe
                     String linea = String.format("- Auto: %s (Motor: %s)", autoUsado.getModelo(), autoUsado.getMotor());
                     informe.add(linea);
                     informe.add(String.format("  Usado por: %s %s", piloto.getNombre(), piloto.getApellido()));
@@ -1079,21 +1052,16 @@ public class Gestion {
             informe.add("No hay registros de autos de esta escudería");
             informe.add("utilizados en carreras.");
         }
-        
+    
         return informe;
     }
+   
+   
+   
+   public ArrayList<String> generarInformeMecanicos(Escuderia escuderia) {
     
-    /**
-     * Genera un informe de todos los mecánicos actualmente asociados a una
-     * escudería.
-     *
-     * @param escuderia La {@link Escuderia} a consultar.
-     * @return Un ArrayList<String> con los detalles de los mecánicos.
-     */
-    public ArrayList<String> generarInformeMecanicos(Escuderia escuderia) {
-        
-        ArrayList<String> informe = new ArrayList<>();
-        
+     ArrayList<String> informe = new ArrayList<>();
+    
         // Encabezados del informe
         informe.add("====================");
         informe.add("INFORME DE MECÁNICOS");
@@ -1101,18 +1069,18 @@ public class Gestion {
         informe.add("====================");
 
         boolean tieneMecanicos = false;
-        
-        // Iteramos sobre las asociaciones Mecanico-Escuderia
+    
+        // Iteramos sobre las listas
         for (MecanicoEscuderia asociacion : this.listaMecanicoEscuderias) {
-            
+        
             // Verificamos si la asociación pertenece a la escudería que buscamos
             if (asociacion.getEscuderia().equals(escuderia)) {
-                
+            
                 tieneMecanicos = true;
-                
-                // Si coincide, obtenemos el mecánico de la asociación
+            
+                //  en caso que coincida obtenemos el mecánico de la asociasion
                 Mecanico mecanico = asociacion.getMecanico();
-                
+            
                 // Formateamos los datos del mecánico para el informe
                 informe.add(String.format("- Mecánico: %s %s", mecanico.getNombre(), mecanico.getApellido()));
                 informe.add(String.format("  Especialidad: %s", mecanico.getEspecialidad()));
@@ -1124,40 +1092,30 @@ public class Gestion {
         if (!tieneMecanicos) {
             informe.add("No hay mecánicos asignados a esta escudería.");
         }
-        
+    
         return informe;
     }
-    
-    /**
-     * Helper utility para buscar un {@link Circuito} en memoria por su
-     * nombre (ignorando mayúsculas/minúsculas).
-     * @param nombre El nombre a buscar.
-     * @return El objeto {@link Circuito} si se encuentra, o {@code null} si no.
-     */
-    public Circuito buscarCircuitoPorNombre(String nombre) {
+   
+   
+   
+   
+   public Circuito buscarCircuitoPorNombre(String nombre) {
         if (nombre == null || nombre.isEmpty()) {
-            return null;
+         return null;
         }
-        
+    
         for (Circuito circuito : this.listaCircuitos) {
             
             if (circuito.getNombre().equalsIgnoreCase(nombre)) {
                 return circuito;
             }
         }
-        return null; // No se encontró
+        return null;
     }
+   
+   
+   public ArrayList<String> generarInformePilotoEnCircuito(String dniPiloto, String nombreCircuito) {
     
-    /**
-     * Genera un informe que cuenta cuántas veces un piloto específico ha
-     * corrido en un circuito específico.
-     *
-     * @param dniPiloto El DNI del piloto a buscar.
-     * @param nombreCircuito El nombre del circuito a buscar.
-     * @return Un ArrayList<String> con el resultado del conteo.
-     */
-    public ArrayList<String> generarInformePilotoEnCircuito(String dniPiloto, String nombreCircuito) {
-        
         ArrayList<String> informe = new ArrayList<>();
         informe.add("====================");
         informe.add("PARTICIPACIONES DE PILOTO EN CIRCUITO");
@@ -1179,13 +1137,13 @@ public class Gestion {
             return informe;
         }
 
-        // Itera sobre los resultados para contar
+
         for (ResultadoCarrera resultado : this.listaResultados) {
             Carrera carrera = resultado.getCarrera();
 
-            // Validación de seguridad
+
             if (carrera == null || carrera.getCircuito() == null || resultado.getAutoPiloto() == null) {
-                continue;
+                continue; 
             }
 
             Piloto pilotoDelResultado = resultado.getAutoPiloto().getPiloto();
@@ -1207,14 +1165,9 @@ public class Gestion {
 
         return informe;
     }
-    
-    /**
-     * Genera un informe que cuenta cuántas carreras se han planificado en un
-     * circuito específico.
-     *
-     * @param nombreCircuito El nombre del circuito a buscar.
-     * @return Un ArrayList<String> con los detalles del circuito y el conteo.
-     */
+
+   
+   
     public ArrayList<String> generarInformeCarrerasEnCircuito(String nombreCircuito) {
 
         ArrayList<String> informe = new ArrayList<>();
@@ -1230,8 +1183,9 @@ public class Gestion {
             return informe;
         }
 
-        // Contamos las carreras planificadas
+        // Contamos las carreras
         for (Carrera carrera : this.listaCarreras) {
+
             if (carrera.getCircuito() != null && carrera.getCircuito().equals(circuito)) {
                 contador++;
             }
@@ -1240,10 +1194,10 @@ public class Gestion {
         // Agregamos los resultados al informe
         informe.add("Circuito: " + circuito.getNombre());
         informe.add("País: " + circuito.getPais().getDescripcion());
-        informe.add("Longitud: " + circuito.getLongitud() + "km"); // (Nota: el guardado dice 'm', el informe 'km')
+        informe.add("Longitud: " + circuito.getLongitud() + "km");
         informe.add("--------------------");
         informe.add("Total de carreras planificadas: " + contador);
 
         return informe;
-    }
-}
+    }  
+ }
