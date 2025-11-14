@@ -9,16 +9,28 @@ import javax.swing.JOptionPane;
 import logica.Gestion;
 
 /**
+ * Representa el sub-menú principal para la sección de "Generar Informes".
+ * Esta ventana (JFrame) actúa como un navegador, abriendo el formulario de
+ * configuración {@link FormularioInformes} en diferentes modos
+ * (ej: "RESULTADOS", "HISTORICO") según el botón presionado.
  *
- * @author Admin
+ * Excepción: El botón "Ranking de pilotos" genera el informe directamente
+ * y salta a la ventana {@link SalidaInforme}.
+ *
+ * @author Admin (Preservado del original)
  */
 public class VentanaInformes extends javax.swing.JFrame {
+    /** Referencia al controlador principal de la lógica de negocio ({@link Gestion}). */
     private Gestion gestion;
+    /** Referencia a la pantalla principal ({@link Pantalla}) que la invocó, para poder volver. */
     private Pantalla pantallaAnterior;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaInformes.class.getName());
 
     /**
-     * Creates new form VentanaRegistrar
+     * Crea un nuevo formulario VentanaInformes (sub-menú de informes).
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion}).
+     * @param pantallaAnterior La pantalla principal ({@link Pantalla}) a la que se debe volver.
      */
     public VentanaInformes(Gestion gestion, Pantalla pantallaAnterior) {
         initComponents();
@@ -214,11 +226,23 @@ public class VentanaInformes extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra (dispose) esta ventana y vuelve a hacer visible la pantalla
+     * principal ({@link Pantalla}).
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.pantallaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    /**
+     * Manejador del botón 'Resultados de carreras...'.
+     * Abre el {@link FormularioInformes} en modo "RESULTADOS".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnResultadosCarrerasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResultadosCarrerasActionPerformed
         FormularioInformes form = new FormularioInformes("RESULTADOS", this.gestion, this);
         form.setVisible(true);
@@ -226,19 +250,20 @@ public class VentanaInformes extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnResultadosCarrerasActionPerformed
 
+    /**
+     * Manejador del botón 'Ranking de pilotos'.
+     * Este botón genera el informe **directamente**, sin pasar por un
+     * formulario de configuración.
+     * Llama a la lógica de gestión y abre {@link SalidaInforme} con los resultados.
+     * @param evt El evento de acción.
+     */
     private void btnRankingPilotosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRankingPilotosActionPerformed
-//        FormularioInformes form = new FormularioInformes("RANKING", this.gestion, this);
-//        form.setVisible(true);
-//        form.setLocationRelativeTo(null);
-//        this.dispose();
-
-try {
+                try {
                     ArrayList<String> informe = this.gestion.generarRankingPilotos();
-                    SalidaInforme vSalida = new SalidaInforme(informe, this); // Importante: pasamos ventanaAnterior
+                    SalidaInforme vSalida = new SalidaInforme(informe, this); // pasamos ventanaAnterior
                     vSalida.setVisible(true);
                     vSalida.setLocationRelativeTo(null);
-                    this.dispose(); // Cierra esta ventana FormularioInformes
-                    
+                    this.dispose(); // Cierra esta ventana FormularioInformes   
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Error al generar el ranking: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     this.setVisible(true); // Vuelve a la ventana anterior
@@ -246,6 +271,12 @@ try {
                 }
     }//GEN-LAST:event_btnRankingPilotosActionPerformed
 
+    /**
+     * Manejador del botón 'Histórico...'.
+     * Abre el {@link FormularioInformes} en modo "HISTORICO".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnHistoricoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistoricoActionPerformed
         FormularioInformes form = new FormularioInformes("HISTORICO", this.gestion, this);
         form.setVisible(true);
@@ -253,6 +284,12 @@ try {
         this.dispose();
     }//GEN-LAST:event_btnHistoricoActionPerformed
 
+    /**
+     * Manejador del botón 'Autos utilizados...'.
+     * Abre el {@link FormularioInformes} en modo "AUTOS_ESCUDERIA".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnAutosEscuderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutosEscuderiaActionPerformed
         FormularioInformes form = new FormularioInformes("AUTOS_ESCUDERIA", this.gestion, this);
         form.setVisible(true);
@@ -260,6 +297,12 @@ try {
         this.dispose();
     }//GEN-LAST:event_btnAutosEscuderiaActionPerformed
 
+    /**
+     * Manejador del botón 'Información de mecánicos...'.
+     * Abre el {@link FormularioInformes} en modo "INFO_MECANICOS".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnInfoMecanicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInfoMecanicosActionPerformed
         FormularioInformes form = new FormularioInformes("INFO_MECANICOS", this.gestion, this);
         form.setVisible(true);
@@ -267,6 +310,12 @@ try {
         this.dispose();
     }//GEN-LAST:event_btnInfoMecanicosActionPerformed
 
+    /**
+     * Manejador del botón 'Cantidad de veces (piloto en circuito)...'.
+     * Abre el {@link FormularioInformes} en modo "CANTIDAD_VECES".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnCantidadVecesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCantidadVecesActionPerformed
         FormularioInformes form = new FormularioInformes("CANTIDAD_VECES", this.gestion, this);
         form.setVisible(true);
@@ -274,6 +323,12 @@ try {
         this.dispose();
     }//GEN-LAST:event_btnCantidadVecesActionPerformed
 
+    /**
+     * Manejador del botón 'Cantidad de carreras (en circuito)...'.
+     * Abre el {@link FormularioInformes} en modo "CANTIDAD_CARRERAS".
+     * Cierra esta ventana.
+     * @param evt El evento de acción.
+     */
     private void btnCantidadCarrerasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCantidadCarrerasActionPerformed
         FormularioInformes form = new FormularioInformes("CANTIDAD_CARRERAS", this.gestion, this);
         form.setVisible(true);
@@ -281,6 +336,7 @@ try {
         this.dispose();
     }//GEN-LAST:event_btnCantidadCarrerasActionPerformed
 
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bg;
     private javax.swing.JButton bntVolver;

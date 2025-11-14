@@ -4,24 +4,40 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import logica.*;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-
 /**
+ * Representa un formulario (ventana JFrame) multipropósito para configurar y
+ * generar diversos informes.
+ *
+ * Esta ventana, al igual que {@link FormularioGestionar}, cambia dinámicamente su
+ * diseño y funcionalidad basándose en un parámetro 'modo' (ej: "RESULTADOS",
+ * "RANKING", "HISTORICO") que recibe en su constructor. Actúa como un
+ * "configurador" para la generación de informes, que luego se delegan a la
+ * ventana {@link SalidaInforme}.
  *
  * @author Admin
  */
 public class FormularioInformes extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioInformes.class.getName());
+    /**
+     * El modo de operación (ej: "RESULTADOS", "HISTORICO") que define el
+     * comportamiento de este formulario.
+     */
     private final String modo;
+    /** Referencia al controlador principal de la lógica de negocio. */
     private final Gestion gestion;
+    /** Referencia a la ventana 'Informes' que invocó este formulario, para poder volver. */
     private final VentanaInformes ventanaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo formulario de informes.
+     * Su comportamiento y diseño visual se adaptan según el 'modo' proporcionado.
+     * Configura la visibilidad de los componentes de la GUI (labels, combos,
+     * botones) según la tarea de informe seleccionada.
+     *
+     * @param modo El modo de operación (ej: "RESULTADOS").
+     * @param gestion La instancia del controlador de lógica.
+     * @param ventanaAnterior La ventana padre a la que se debe volver.
      */
     public FormularioInformes(String modo, Gestion gestion, VentanaInformes ventanaAnterior) {
         initComponents();
@@ -89,7 +105,7 @@ public class FormularioInformes extends javax.swing.JFrame {
             
             try {
                     ArrayList<String> informe = this.gestion.generarRankingPilotos();
-                    SalidaInforme vSalida = new SalidaInforme(informe, this.ventanaAnterior); // Importante: pasamos ventanaAnterior
+                    SalidaInforme vSalida = new SalidaInforme(informe, this.ventanaAnterior); 
                     vSalida.setVisible(true);
                     vSalida.setLocationRelativeTo(null);
                     this.dispose(); // Cierra esta ventana FormularioInformes
@@ -382,21 +398,27 @@ public class FormularioInformes extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    /**
+     * Manejador del botón 'Generar Resultados' (modo "RESULTADOS").
+     * Valida las fechas de inicio y fin, llama a la lógica de gestión para
+     * obtener el informe y luego muestra la ventana {@link SalidaInforme}.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarResultadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarResultadoActionPerformed
         try {
-           // 1. ¡NUEVA VALIDACIÓN!
            // Llama al método que acabamos de crear.
-           // Si algo está mal, saltará directamente al 'catch'.
+           // Si algo está mal, salta directamente al catch.
            validarFormularioResultados();
 
-           // 2. Leemos las fechas (ahora sabemos que son válidas)
+           // 2. Leemos las fechas
            String fechaInicio = txtCampodF.getText().trim();
            String fechaFin = txtCampohF.getText().trim();
 
-           // 3. Llamamos al método de la lógica (esto ya estaba bien)
+           // 3. Llama al método de la lógica
            ArrayList<String> informe = this.gestion.generarInformeResultadosPorFecha(fechaInicio, fechaFin);
 
-           // 4. Creamos y mostramos la nueva ventana de resultados
+           // 4. Crea y muestra la nueva ventana de resultados
            SalidaInforme vSalida = new SalidaInforme(informe, this); // Le pasamos el informe y esta ventana
            vSalida.setVisible(true);
            vSalida.setLocationRelativeTo(null);
@@ -413,12 +435,23 @@ public class FormularioInformes extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnGenerarResultadoActionPerformed
     
-    
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra este formulario (dispose) y vuelve a hacer visible la ventana anterior.
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.ventanaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Realizar Determinado' (modo "HISTORICO").
+     * Obtiene el piloto seleccionado del JComboBox y llama a la lógica de gestión
+     * para generar el informe histórico de ese piloto.
+     * @param evt El evento de acción.
+     */
     private void btnPilotoDeterminadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilotoDeterminadoActionPerformed
         try {
         // 1. Obtiene el piloto seleccionado
@@ -428,7 +461,7 @@ public class FormularioInformes extends javax.swing.JFrame {
             throw new Exception("Debe seleccionar un piloto de la lista.");
         }
 
-        // 2. Llama al método de Gestion (¡este ya lo tenés!)
+        // 2. Llama al método de Gestion
         ArrayList<String> informe = this.gestion.generarHistoricoPilotoIndividual(piloto.getDni());
         
         // 3. Abre la ventana de salida
@@ -442,9 +475,15 @@ public class FormularioInformes extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnPilotoDeterminadoActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Todos los Pilotos' (modo "HISTORICO").
+     * Llama a la lógica de gestión para generar el informe histórico de *todos* los pilotos.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarTodosPilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarTodosPilActionPerformed
         try {
-        // 1. Llama al NUEVO método de Gestion (el que acabamos de crear)
+        // 1. Llama al NUEVO método de Gestion
         ArrayList<String> informe = this.gestion.generarHistoricoTodosPilotos();
         
         // 2. Crea la ventana de salida
@@ -463,6 +502,13 @@ public class FormularioInformes extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnGenerarTodosPilActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Generar Ranking' (modo "RANKING").
+     * Llama a la lógica de gestión para generar el ranking de pilotos y lo muestra.
+     * (Nota: este botón puede ser redundante si el constructor ya lo hace).
+     * @param evt El evento de acción.
+     */
     private void btnGenerarRankingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarRankingActionPerformed
         try {
         // 1. Llama al método de Gestion que genera el informe
@@ -482,9 +528,14 @@ public class FormularioInformes extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnGenerarRankingActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Generar Informe' (modo "AUTOS_ESCUDERIA").
+     * Obtiene la escudería seleccionada y genera el informe de autos.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarAutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAutosActionPerformed
         // 1. Obtener el OBJETO seleccionado del combo
-    // (Revisá que 'jComboEscuderia' sea el nombre de tu variable)
     Object itemEscuderia = comboCampoEsc.getSelectedItem();
 
     // 2. Validar que se haya seleccionado algo
@@ -496,7 +547,7 @@ public class FormularioInformes extends javax.swing.JFrame {
     // 3. Convertir el 'Object' a 'Escuderia'
     Escuderia escuderiaSeleccionada = (Escuderia) itemEscuderia;
 
-    // 4. Llamar al NUEVO método de Gestion (el que creamos en el Paso 1)
+    // 4. Llamar al método de Gestion
     ArrayList<String> informe = this.gestion.generarInformeAutosEnCarreras(escuderiaSeleccionada);
 
     // 5. Crear y mostrar la ventana de salida
@@ -505,9 +556,14 @@ public class FormularioInformes extends javax.swing.JFrame {
     vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarAutosActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Generar Informe' (modo "CANTIDAD_VECES").
+     * Obtiene el piloto y el circuito seleccionados y genera el informe.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarPilotoCircActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPilotoCircActionPerformed
         // 1. Obtener los OBJETOS seleccionados de los combos
-        // (Asegúrate de que los nombres de variables jComboPiloto y jComboCircuito sean correctos)
         Object itemPiloto = comboCampoPiloto.getSelectedItem();
         Object itemCircuito = comboCampoCircuito.getSelectedItem();
 
@@ -525,7 +581,7 @@ public class FormularioInformes extends javax.swing.JFrame {
         String dniPiloto = pilotoSeleccionado.getDni();
         String nombreCircuito = circuitoSeleccionado.getNombre();
 
-        // 5. Llamar al método de Gestion que modificamos en el Paso 1
+        // 5. Llamar al método de Gestion
         ArrayList<String> informe = this.gestion.generarInformePilotoEnCircuito(dniPiloto, nombreCircuito);
 
         // 6. Crear y mostrar la ventana de salida
@@ -534,10 +590,15 @@ public class FormularioInformes extends javax.swing.JFrame {
         vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarPilotoCircActionPerformed
 
+    
+    /**
+     * Manejador del botón 'Generar Informe' (modo "CANTIDAD_CARRERAS").
+     * Obtiene el circuito seleccionado y genera el informe.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarCarreraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarCarreraActionPerformed
         // 1. Obtener el *objeto* seleccionado del ComboBox
-        // El JComboBox devuelve un 'Object', que en tu caso es un 'Circuito'
-        Object itemSeleccionado = comboCampoCircuito.getSelectedItem(); // REEMPLAZÁ 'jComboCircuito' si se llama distinto
+        Object itemSeleccionado = comboCampoCircuito.getSelectedItem(); 
 
         // 2. Validar que se haya seleccionado algo
         if (itemSeleccionado == null) {
@@ -551,7 +612,7 @@ public class FormularioInformes extends javax.swing.JFrame {
         // 4. Ahora que tenemos el objeto, obtenemos el String (el nombre)
         String nombreCircuito = circuitoSeleccionado.getNombre();
 
-        // 5. Llamar al método de Gestion (esta parte ya estaba bien)
+        // 5. Llamar al método de Gestion
         ArrayList<String> informe = this.gestion.generarInformeCarrerasEnCircuito(nombreCircuito);
     
         // 6. Crear la ventana de salida
@@ -562,10 +623,13 @@ public class FormularioInformes extends javax.swing.JFrame {
         vSalida.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnGenerarCarreraActionPerformed
 
-
+/**
+     * Manejador del botón 'Generar Informe' (modo "INFO_MECANICOS").
+     * Obtiene la escudería seleccionada y genera el informe de mecánicos.
+     * @param evt El evento de acción.
+     */
     private void btnGenerarMecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarMecActionPerformed
         // 1. Obtener el OBJETO seleccionado del combo
-        // (Revisá que 'jComboEscuderia' sea el nombre de tu variable)
         Object itemEscuderia = comboCampoEsc.getSelectedItem();
 
         // 2. Validar que se haya seleccionado algo
@@ -574,10 +638,10 @@ public class FormularioInformes extends javax.swing.JFrame {
             return;
         }
 
-        // 3. Convertir el 'Object' a 'Escuderia' (como aprendimos en el error anterior)
+        // 3. Convertir el 'Object' a 'Escuderia'
         Escuderia escuderiaSeleccionada = (Escuderia) itemEscuderia;
 
-        // 4. Llamar al NUEVO método de Gestion (el que creamos en el Paso 1)
+        // 4. Llamar al NUEVO método de Gestion
         ArrayList<String> informe = this.gestion.generarInformeMecanicos(escuderiaSeleccionada);
 
         // 5. Crear y mostrar la ventana de salida
@@ -598,6 +662,11 @@ public class FormularioInformes extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboCampoDeterminadoActionPerformed
 
+    
+    /**
+     * Carga la lista de {@link Escuderia} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoEsc'.
+     */
     private void cargarEscuderias() {
         try {
             comboCampoEsc.removeAllItems();
@@ -620,6 +689,11 @@ public class FormularioInformes extends javax.swing.JFrame {
         }
     }
     
+    
+    /**
+     * Carga la lista de {@link Piloto} desde la capa de gestión
+     * y las añade a *ambos* JComboBox 'comboCampoPiloto' y 'comboCampoDeterminado'.
+     */
     private void cargarPilotos() {
     comboCampoDeterminado.removeAllItems();
     comboCampoPiloto.removeAllItems();
@@ -632,6 +706,11 @@ public class FormularioInformes extends javax.swing.JFrame {
     }
 }
     
+    
+    /**
+     * Carga la lista de {@link Auto} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoAuto'.
+     */
     private void cargarAutos() {
     comboCampoAuto.removeAllItems();
     ArrayList<Auto> lista = gestion.getListaAutos();
@@ -640,6 +719,11 @@ public class FormularioInformes extends javax.swing.JFrame {
     }
     }
     
+    
+    /**
+     * Carga la lista de {@link Mecanico} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoMecanico'.
+     */
     private void cargarMecanicos() {
     comboCampoMecanico.removeAllItems();
     ArrayList<Mecanico> lista = gestion.getListaMecanicos();
@@ -648,6 +732,11 @@ public class FormularioInformes extends javax.swing.JFrame {
         }
     }
     
+    
+    /**
+     * Carga la lista de {@link Circuito} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoCircuito'.
+     */
     private void cargarCircuitos() {
     comboCampoCircuito.removeAllItems();
     ArrayList<Circuito> lista = gestion.getListaCircuitos();
@@ -659,6 +748,19 @@ public class FormularioInformes extends javax.swing.JFrame {
     
     //VALIDACIONES
             
+    
+    /**
+     * Ejecuta un conjunto de reglas de validación para el formulario de
+     * 'Resultados por Fecha'.
+     * Comprueba:
+     * 1. Que los campos no estén vacíos.
+     * 2. Que las fechas cumplan el formato numérico YYYYMMDD de 8 dígitos.
+     * 3. Que la fecha 'Desde' no sea posterior a la 'Hasta'.
+     * 4. Que los valores de mes (01-12) y día (01-31) sean lógicos (validación simple).
+     *
+     * @throws Exception Si alguna regla de validación no se cumple. El mensaje
+     * de la excepción está listo para mostrarse al usuario.
+     */
     private void validarFormularioResultados() throws Exception {
     
         // --- 1. LECTURA DE DATOS ---
@@ -680,8 +782,6 @@ public class FormularioInformes extends javax.swing.JFrame {
         }
 
         // --- 4. VALIDACIÓN DE RANGO (Que 'Desde' no sea mayor que 'Hasta') ---
-        // (Tu regla de que 20250204 no puede ser mayor que 20250115)
-        // String.compareTo() funciona perfecto para formato YYYYMMDD
         if (fechaInicio.compareTo(fechaFin) > 0) {
             throw new Exception("Error de Rango: La 'Fecha Desde' (" + fechaInicio + 
                               ") no puede ser posterior a la 'Fecha Hasta' (" + fechaFin + ").");

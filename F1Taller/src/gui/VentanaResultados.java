@@ -5,17 +5,33 @@ import javax.swing.JOptionPane;
 import logica.*;
 
 /**
+ * Representa la ventana (JFrame) dedicada a registrar el resultado
+ * ({@link logica.ResultadoCarrera}) de un participante en una carrera.
  *
- * @author Admin
+ * Esta interfaz recopila el participante (un {@link logica.AutoPiloto}),
+ * la {@link logica.Carrera}, la posición final, el tiempo y si obtuvo
+ * la vuelta rápida.
+ *
+ * Incluye validaciones robustas para prevenir la duplicación de datos, como:
+ * - Que un piloto no esté registrado dos veces en la misma carrera.
+ * - Que una posición no esté ocupada dos veces en la misma carrera.
+ * - Que la vuelta rápida no se asigne a más de un piloto por carrera.
+ *
+ * @author Admin 
  */
 public class VentanaResultados extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaResultados.class.getName());
+    /** Referencia al controlador principal de la lógica de negocio ({@link Gestion}). */
     private final Gestion gestion;
+    /** Referencia a la pantalla principal ({@link Pantalla}) que la invocó, para poder volver. */
     private final Pantalla pantallaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo formulario VentanaResultados.
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion}).
+     * @param pantallaAnterior La pantalla principal ({@link Pantalla}) a la que se debe volver.
      */
     public VentanaResultados(Gestion gestion, Pantalla pantallaAnterior) {
         initComponents();
@@ -161,6 +177,17 @@ public class VentanaResultados extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del evento del botón 'GUARDAR'.
+     * Es el controlador principal de esta ventana.
+     * 1. Llama a {@link #validarFormularioResultados()} para revisar los datos.
+     * 2. Si la validación falla, captura la Excepción y muestra el error.
+     * 3. Si la validación tiene éxito, llama a {@link #guardarResultado()} para
+     * crear el resultado y persistirlo.
+     * 4. Muestra un mensaje de éxito.
+     *
+     * @param evt El evento de acción.
+     */
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
             try {
             // 1. Llama a todas las validaciones
@@ -182,30 +209,42 @@ public class VentanaResultados extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
     
-
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra (dispose) esta ventana y vuelve a hacer visible la pantalla
+     * principal ({@link Pantalla}).
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.pantallaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
 
+    
     private void txtTiempoFinalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTiempoFinalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTiempoFinalActionPerformed
 
+    
     private void checkVueltaRapidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkVueltaRapidaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_checkVueltaRapidaActionPerformed
 
+    
     private void txtPosicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPosicionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPosicionActionPerformed
 
+    
     private void comboCampoPilotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoPilotoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboCampoPilotoActionPerformed
 
     
-    
+    /**
+     * Carga la lista de {@link AutoPiloto} (participantes) desde la capa
+     * de gestión y las añade al JComboBox 'comboCampoPiloto'.
+     */
     private void cargarAutoPilotos() {
         comboCampoPiloto.removeAllItems();
         ArrayList<AutoPiloto> lista = this.gestion.getListaAutoPilotos();
@@ -214,6 +253,10 @@ public class VentanaResultados extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Carga la lista de {@link Carrera} (eventos) desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoCarrera'.
+     */
     private void cargarCarreras() {
         comboCampoCarrera.removeAllItems();
         ArrayList<Carrera> lista = this.gestion.getListaCarreras();
@@ -225,6 +268,23 @@ public class VentanaResultados extends javax.swing.JFrame {
     
     //VALIDACIONES
     
+    /**
+     * Ejecuta un conjunto de reglas de validación para el formulario de
+     * registro de resultados.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Posición: Numérica y en el rango [1, 20].
+     * 3. Tiempo: Formato HHMMSS (6 dígitos), rango [01:00:00 - 02:59:59].
+     * 4. Duplicado de Piloto: Que el piloto no tenga ya un resultado en esa
+     * carrera.
+     * 5. Duplicado de Posición: Que la posición no esté ya ocupada en esa
+     * carrera.
+     * 6. Duplicado de Vuelta Rápida: Que la vuelta rápida no esté ya asignada
+     * en esa carrera.
+     *
+     * @throws Exception Si alguna regla de validación no se cumple. El mensaje
+     * de la excepción está listo para mostrarse al usuario.
+     */
     private void validarFormularioResultados() throws Exception {
     
         // --- 1. LECTURA DE DATOS ---
@@ -254,7 +314,6 @@ public class VentanaResultados extends javax.swing.JFrame {
         }
 
         // --- 4. VALIDACIÓN DE TIEMPO (Reglas: >1h, <3h, formato HHMMSS) ---
-        // (Asumo el formato HHMMSS, ej: 012545 para 1h 25m 45s)
         if (!tiempoStr.matches("\\d{6}")) {
             throw new Exception("El 'Tiempo Final' debe tener 6 números en formato HHMMSS (ej: 012545).");
         }
@@ -263,8 +322,6 @@ public class VentanaResultados extends javax.swing.JFrame {
             int h = Integer.parseInt(tiempoStr.substring(0, 2)); // HH
             int m = Integer.parseInt(tiempoStr.substring(2, 4)); // MM
             int s = Integer.parseInt(tiempoStr.substring(4, 6)); // SS
-
-            // ¡Tu validación de >1h y <3h!
             if (h < 1) { // 00:59:59 no es válido
                 throw new Exception("El tiempo debe ser mayor a 1 hora (HH debe ser 01 o 02).");
             }
@@ -282,8 +339,7 @@ public class VentanaResultados extends javax.swing.JFrame {
             throw new Exception("El formato del Tiempo (HHMMSS) es inválido.");
         }
 
-        // --- 5. VALIDACIÓN DE DUPLICADOS (Tu regla principal) ---
-        // "que no se pueda registrar si el mismo participante corrio la carrera dos veces"
+        // --- 5. VALIDACIÓN DE DUPLICADOS ---
 
         AutoPiloto autoPiloto = (AutoPiloto) partObj;
         Carrera carrera = (Carrera) carrObj;
@@ -314,10 +370,9 @@ public class VentanaResultados extends javax.swing.JFrame {
                                         " en esta carrera.");
                 }
                 
-                // Usamos el método que confirmaste: isVueltaRapida()
                 boolean otroYaLaTiene = res.isVueltaRapida(); 
                 
-                // Si [queremos marcar la vuelta rápida] Y [es la misma carrera] Y [otro ya la tiene]...
+                // Si queremos marcar la vuelta rápida Y es la misma carrera Y otro ya la tiene...
                 if (quiereMarcarVueltaRapida && mismaCarrera && otroYaLaTiene) {
                     throw new Exception("Error de Lógica: La vuelta rápida para esta carrera" +
                                         " ya fue registrada por el piloto " + res.getAutoPiloto().getPiloto().getApellido() + ".");
@@ -327,7 +382,11 @@ public class VentanaResultados extends javax.swing.JFrame {
         }
     }
     
-    
+    /**
+     * Lee los datos (ya validados) del formulario y llama a la capa de
+     * 'gestion' para crear y persistir el nuevo resultado de carrera.
+     * Finalmente, limpia los campos del formulario para un nuevo ingreso.
+     */
     private void guardarResultado() {
         // 1. Leemos los datos (ya sabemos que son válidos)
         AutoPiloto participante = (AutoPiloto) comboCampoPiloto.getSelectedItem();
@@ -336,7 +395,7 @@ public class VentanaResultados extends javax.swing.JFrame {
         String tiempo = txtTiempoFinal.getText();
         boolean vueltaRapida = checkVueltaRapida.isSelected(); 
 
-        // 2. Llamamos a la lógica de negocio
+        // 2. Llamamos a la lógica
         this.gestion.registrarResultadosCarrera(carrera, participante, posicion, tiempo, vueltaRapida);
 
         // 3. Limpiamos los campos para el próximo registro

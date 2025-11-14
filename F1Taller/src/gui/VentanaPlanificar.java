@@ -10,17 +10,32 @@ import logica.*;
  */
 
 /**
+ * Representa la ventana (JFrame) dedicada a la planificación (creación) de
+ * nuevas {@link logica.Carrera}.
  *
- * @author Admin
+ * Esta interfaz de usuario recopila la fecha, hora, número de vueltas y el
+ * circuito
+ * para una nueva carrera. Incluye validaciones robustas para asegurar que los
+ * datos
+ * sean correctos (formatos, rangos lógicos) y que se cumplan las reglas de
+ * negocio
+ * (ej. no duplicar un circuito en el mismo año).
+ *
+ * @author Admin 
  */
 public class VentanaPlanificar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPlanificar.class.getName());
+    /** Referencia al controlador principal de la lógica de negocio ({@link Gestion}). */
     private final Gestion gestion;
+    /** Referencia a la pantalla principal ({@link Pantalla}) que la invocó, para poder volver. */
     private final Pantalla pantallaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo formulario VentanaPlanificar.
+     *
+     * @param gestion La instancia del controlador de lógica principal ({@link Gestion}).
+     * @param pantallaAnterior La pantalla principal ({@link Pantalla}) a la que se debe volver.
      */
     public VentanaPlanificar(Gestion gestion, Pantalla pantallaAnterior) {
         initComponents();
@@ -155,6 +170,12 @@ public class VentanaPlanificar extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra (dispose) esta ventana y vuelve a hacer visible la pantalla
+     * principal ({@link Pantalla}).
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.pantallaAnterior.setVisible(true);
         this.dispose();
@@ -163,7 +184,18 @@ public class VentanaPlanificar extends javax.swing.JFrame {
     private void txtCampo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCampo1ActionPerformed
         
     }//GEN-LAST:event_txtCampo1ActionPerformed
-
+    
+    /**
+     * Manejador del evento del botón 'GUARDAR'.
+     * Es el controlador principal de esta ventana.
+     * 1. Llama a {@link #validarFormularioPlanificar()} para revisar los datos.
+     * 2. Si la validación falla, captura la Excepción y muestra el error.
+     * 3. Si la validación tiene éxito, llama a {@link #guardarPlanificar()} para
+     * crear la carrera y persistirla.
+     * 4. Muestra un mensaje de éxito.
+     *
+     * @param evt El evento de acción.
+     */
     private void bntGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntGuardarActionPerformed
         try {
          // 1. Llama a todas las validaciones
@@ -185,10 +217,15 @@ public class VentanaPlanificar extends javax.swing.JFrame {
          }
     }//GEN-LAST:event_bntGuardarActionPerformed
 
+    
     private void comboCampoCircuitosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCampoCircuitosActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comboCampoCircuitosActionPerformed
 
+    /**
+     * Carga la lista de {@link Circuito} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampoCircuitos'.
+     */
     private void cargarCircuitos() {
         try {
             comboCampoCircuitos.removeAllItems();
@@ -214,10 +251,23 @@ public class VentanaPlanificar extends javax.swing.JFrame {
     
     
     
-    //validaciones
+    // Validaciones
     
-    
-   private void validarFormularioPlanificar() throws Exception {
+    /**
+     * Ejecuta un conjunto de reglas de validación para el formulario de
+     * planificación de carrera.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato de Fecha (YYYYMMDD) y Hora (HHMM).
+     * 3. Rangos lógicos (Mes 01-12, Día 01-31, Hora 00-23, Min 00-59).
+     * 4. Formato de Vueltas (numérico) y Rango (20-80).
+     * 5. Regla de Negocio: Que el circuito no esté ya planificado para ese
+     * mismo año.
+     *
+     * @throws Exception Si alguna regla de validación no se cumple. El mensaje
+     * de la excepción está listo para mostrarse al usuario.
+     */
+    private void validarFormularioPlanificar() throws Exception {
     
         // --- 1. LECTURA DE DATOS ---
         String fechaStr = txtCampo1.getText().trim();
@@ -262,12 +312,12 @@ public class VentanaPlanificar extends javax.swing.JFrame {
             int hora = Integer.parseInt(horaStr.substring(0, 2)); // (HH)
             int min = Integer.parseInt(horaStr.substring(2, 4)); // (MM)
 
-            // ¡Validación de Hora (00-23)!
+            // ¡Validación de Hora (00-23)
             if (hora < 0 || hora > 23) {
                 throw new Exception("La Hora (HH) debe estar entre 00 y 23.");
             }
 
-            // ¡Validación de Minutos (00-59)!
+            // ¡Validación de Minutos (00-59)
             if (min < 0 || min > 59) {
                 throw new Exception("Los Minutos (MM) deben estar entre 00 y 59.");
             }
@@ -286,7 +336,7 @@ public class VentanaPlanificar extends javax.swing.JFrame {
             throw new Exception("El 'Número de vueltas' debe ser un número (no se permiten letras).");
         }
 
-        // ¡Validación de rango 20-80! (Esto ya cubre los negativos)
+        // ¡Validación de rango 20-80!
         if (vueltas < 20 || vueltas > 80) {
             throw new Exception("El 'Número de vueltas' debe estar entre 20 y 80.");
         }
@@ -315,9 +365,13 @@ public class VentanaPlanificar extends javax.swing.JFrame {
         }
     }
     
-    
-   private void guardarPlanificar() {
-        // Leemos los datos (ya sabemos que son válidos y tienen el formato correcto)
+    /**
+     * Lee los datos (ya validados) del formulario y llama a la capa de
+     * 'gestion' para crear y persistir la nueva carrera.
+     * Finalmente, limpia los campos de texto del formulario.
+     */
+    private void guardarPlanificar() {
+        // Leemos los datos
         String fecha = txtCampo1.getText().trim();
         String hora = txtCampo2.getText().trim();
         int vueltas = Integer.parseInt(txtCampo3.getText().trim()); // Es seguro parsear
@@ -326,7 +380,7 @@ public class VentanaPlanificar extends javax.swing.JFrame {
         // Llamamos a la lógica de negocio
         this.gestion.planificarCarrera(fecha, vueltas, hora, circuito);
 
-        // Opcional: limpiar campos después de guardar
+        // Limpiar campos después de guardar
         txtCampo1.setText("");
         txtCampo2.setText("");
         txtCampo3.setText("");

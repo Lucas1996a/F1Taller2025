@@ -4,24 +4,40 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import logica.*;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-
 /**
+ * Representa un formulario (ventana JFrame) dinámico para el **registro**
+ * de nuevas entidades en el sistema.
+ *
+ * El contenido y la funcionalidad de esta ventana (qué etiquetas y campos de
+ * texto se muestran) cambian drásticamente según el `tipoRegistro`
+ * (ej: "PILOTO", "MECANICO", "AUTO", "PAIS") que se recibe en el constructor.
+ * Se encarga de recolectar datos, validarlos y pasarlos a la capa de
+ * {@link Gestion} para su creación y persistencia.
  *
  * @author Admin
  */
 public class FormularioRegistro extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormularioRegistro.class.getName());
+    /**
+     * El modo de operación (ej: "PILOTO", "MECANICO") que define
+     * qué tipo de entidad está registrando este formulario.
+     */
     private final String tipoRegistro;
+    /** Referencia al controlador principal de la lógica */
     private final Gestion gestion;
+    /** Referencia a la ventana 'Registrar' que invocó este formulario, para poder volver. */
     private final VentanaRegistrar ventanaAnterior;
 
     /**
-     * Creates new form FormularioRegistro
+     * Crea un nuevo FormularioRegistro.
+     * El constructor configura dinámicamente la visibilidad y las etiquetas
+     * de los componentes de la GUI (un "pool" de JLabels, JTextFields y
+     * JComboBoxes) basándose en el parámetro 'tipo'.
+     *
+     * @param tipo El tipo de entidad a registrar (ej: "PILOTO", "ESCUDERIA").
+     * @param gestion La instancia del controlador de lógica principal.
+     * @param ventanaAnterior La ventana padre ({@link VentanaRegistrar}) a la que se debe volver.
      */
     public FormularioRegistro(String tipo, Gestion gestion, VentanaRegistrar ventanaAnterior) {
         initComponents();
@@ -117,7 +133,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             tituloRegistro.setText(tipo);
             
-            // "Prendemos" y configuramos los campos para Piloto
+            // "Prendemos" y configuramos los campos para Mecanico
             lblCampo1.setText("DNI:");
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
@@ -150,7 +166,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             tituloRegistro.setText(tipo);
             
-            // "Prendemos" y configuramos los campos para Piloto
+            // "Prendemos" y configuramos los campos para Auto
             lblCampo1.setText("Modelo:");
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
@@ -170,7 +186,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             tituloRegistro.setText(tipo);
             
-            // "Prendemos" y configuramos los campos para Piloto
+            // "Prendemos" y configuramos los campos para Escuderia
             lblCampo1.setText("Nombre:");
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
@@ -185,7 +201,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             tituloRegistro.setText(tipo);
             
-            // "Prendemos" y configuramos los campos para Piloto
+            // "Prendemos" y configuramos los campos para Circuito
             lblCampo1.setText("Nombre:");
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
@@ -204,7 +220,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             tituloRegistro.setText(tipo);
             
-            // "Prendemos" y configuramos los campos para Piloto
+            // "Prendemos" y configuramos los campos para Pais
             lblCampo1.setText("idPais:");
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
@@ -219,7 +235,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
             
             tituloRegistro.setText(tipo);
             
-            // "Prendemos" y configuramos los campos para Piloto
+            // "Prendemos" y configuramos los campos para Carrera
             lblCampo1.setText("Fecha de realización:");
             lblCampo1.setVisible(true); 
             txtCampo1.setVisible(true); 
@@ -421,6 +437,18 @@ public class FormularioRegistro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    /**
+     * Manejador del evento del botón 'Guardar'.
+     * Utiliza un switch en 'tipoRegistro' para determinar qué entidad
+     * se está intentando crear.
+     * Llama primero al método de validación correspondiente (ej: `validarFormularioPiloto()`).
+     * Si la validación tiene éxito, llama al método de guardado (ej: `guardarPiloto()`).
+     * Captura y muestra cualquier 'Exception' de validación (ej: "DNI duplicado")
+     * o 'NumberFormatException' (ej: "victorias" no es un número) en un JOptionPane.
+     *
+     * @param evt El evento de acción.
+     */
     private void bntGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntGuardarActionPerformed
     try {
         switch (this.tipoRegistro) {
@@ -471,18 +499,24 @@ public class FormularioRegistro extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(
             this, // La ventana actual
             "Error al guardar: " + e.getMessage(), // Muestra el mensaje que lanzamos
-            "Error de Validación", // Título de la ventana
-            JOptionPane.ERROR_MESSAGE // Ícono de error
+            "Error de Validación", 
+            JOptionPane.ERROR_MESSAGE 
         );
         }
          
     }//GEN-LAST:event_bntGuardarActionPerformed
 
+    /**
+     * Manejador del botón 'Volver'.
+     * Cierra este formulario (dispose) y vuelve a hacer visible la ventana anterior.
+     * @param evt El evento de acción.
+     */
     private void bntVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntVolverActionPerformed
         this.ventanaAnterior.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_bntVolverActionPerformed
-
+    
+        
     private void txtCampo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCampo1ActionPerformed
         
     }//GEN-LAST:event_txtCampo1ActionPerformed
@@ -495,6 +529,11 @@ public class FormularioRegistro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboCampoEspActionPerformed
 
+    /**
+     * Carga la lista de {@link Pais} desde la capa de gestión
+     * y las añade a los JComboBox 'comboCampo2' y 'comboCampo4'.
+     * Estos combos se usan para "País de Escudería" y "País de Piloto/Mecánico".
+     */
     private void cargarPaises() {
         try {
             // 1. Limpia el combo (borra "Item 1", "Item 2", etc.)
@@ -502,7 +541,6 @@ public class FormularioRegistro extends javax.swing.JFrame {
             comboCampo4.removeAllItems(); 
             
             // 2. Le pide la lista de países a tu objeto 'miGestion'
-            //    (Esto usa el método que creamos en Gestion.java)
             ArrayList<Pais> listaDePaises = this.gestion.getListaPais();
 
             // 3. Recorre la lista y añade cada OBJETO 'Pais' al combo
@@ -513,7 +551,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
                 }
             }
             
-            // 4. (Opcional) Pone el primero como seleccionado
+            // 4. Pone el primero como seleccionado
             if (comboCampo2.getItemCount() > 0) {
                 comboCampo2.setSelectedIndex(0);
             }
@@ -527,12 +565,13 @@ public class FormularioRegistro extends javax.swing.JFrame {
                 "Error fatal: No se pudo cargar la lista de países.", 
                 "Error de Carga", 
                 JOptionPane.ERROR_MESSAGE);
-            
-            // También usamos el 'logger' que ya tienes en tu clase
-            logger.severe("Error al cargar países: " + e.getMessage());
         }
     }
     
+    /**
+     * Carga la lista de {@link Escuderia} desde la capa de gestión
+     * y las añade al JComboBox 'comboCampo3' (usado en el registro de Autos).
+     */
     private void cargarEscuderias() {
         try {
             comboCampo3.removeAllItems();
@@ -555,6 +594,10 @@ public class FormularioRegistro extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Carga todos los valores del enum {@link Especialidad}
+     * y los añade al JComboBox 'comboCampoEsp' (usado en el registro de Mecánicos).
+     */
     private void cargarEspecialidades() {
     try {
         comboCampoEsp.removeAllItems(); // Limpia el combo
@@ -582,9 +625,16 @@ public class FormularioRegistro extends javax.swing.JFrame {
     
     
     /**
-    * Valida todos los campos del formulario de Piloto.
-    * Si algo está mal, Lanza una Excepción (throws Exception).
-    */
+     * Valida todos los campos del formulario de Piloto.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato DNI (8 dígitos exactos).
+     * 3. Formato Nombre/Apellido (inicio mayúscula, solo letras/espacios).
+     * 4. Formato Estadísticas (solo números >= 0).
+     * 5. Lógica de Negocio (Victorias no puede ser mayor que Podios).
+     *
+     * @throws Exception Si alguna regla de validación no se cumple.
+     */
     private void validarFormularioPiloto() throws Exception {
     
     // --- 1. LECTURA DE DATOS ---
@@ -655,9 +705,16 @@ public class FormularioRegistro extends javax.swing.JFrame {
     
     }
     
+    /**
+     * Lee los datos de la GUI, los convierte y llama a 'gestion.crearPilotos()'.
+     * Se asume que 'validarFormularioPiloto' ya se ejecutó con éxito.
+     *
+     * @throws Exception Si 'gestion.crearPilotos' lanza una excepción (ej: DNI duplicado)
+     * o si 'parseInt' falla (aunque no debería si la validación pasó).
+     */
     private void guardarPiloto() throws Exception {
     
-    // 1. Leemos los datos de nuevo (no hay problema en leerlos 2 veces)
+    // 1. Leemos los datos de nuevo
     String dni = txtCampo1.getText();
     String nombrePiloto = txtCampo2.getText();
     String apellido = txtCampo3.getText();
@@ -676,9 +733,15 @@ public class FormularioRegistro extends javax.swing.JFrame {
 }
     
     /**
-    * Valida todos los campos del formulario de Mecánico.
-    * Si algo está mal, Lanza una Excepción (throws Exception).
-    */
+     * Valida todos los campos del formulario de Mecánico.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato DNI (8 dígitos).
+     * 3. Formato Nombre/Apellido (capitalizado, solo letras/espacios).
+     * 4. Formato Años de Experiencia (solo números >= 0).
+     *
+     * @throws Exception Si alguna regla de validación no se cumple.
+     */
     private void validarFormularioMecanico() throws Exception {
     
     // --- 1. LECTURA DE DATOS ---
@@ -720,6 +783,14 @@ public class FormularioRegistro extends javax.swing.JFrame {
     }
     }
     
+    
+    /**
+     * Lee los datos de la GUI, los convierte y llama a 'gestion.crearMecanicos()'.
+     * Se asume que 'validarFormularioMecanico' ya se ejecutó con éxito.
+     *
+     * @throws Exception Si 'gestion.crearMecanicos' lanza una excepción
+     * (ej: DNI duplicado) o si 'parseInt' falla.
+     */
     private void guardarMecanico() throws Exception {
     
     // 1. Leemos los datos de nuevo
@@ -738,9 +809,15 @@ public class FormularioRegistro extends javax.swing.JFrame {
 }
     
     /**
-    * Valida todos los campos del formulario de País.
-    * Si algo está mal, Lanza una Excepción (throws Exception).
-    */
+     * Valida los campos del formulario de País.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato ID (solo números).
+     * 3. Formato Nombre (capitalizado, solo letras/espacios).
+     * 4. Duplicados de ID y Nombre (consultando a la capa de 'gestion').
+     *
+     * @throws Exception Si alguna regla de validación no se cumple.
+     */
     private void validarFormularioPais() throws Exception {
         // --- 1. LECTURA DE DATOS ---
         String idStr = txtCampo1.getText().trim();
@@ -759,7 +836,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
 
         // --- 4. VALIDACIÓN DE FORMATO (Nombre/Descripción) ---
         // Debe empezar con mayúscula y solo tener letras y espacios.
-        // Usamos la misma regex que en Piloto: ^ indica inicio, \p{Lu} mayúscula, [\p{L} ]* resto letras/espacios.
+        // Usa la misma regex que en Piloto: ^ indica inicio, \p{Lu} mayúscula, [\p{L} ]* resto letras/espacios.
         String regexMayusculaYLetras = "^\\p{Lu}[\\p{L} ]*$";
         
         if (!nombrePais.matches(regexMayusculaYLetras)) {
@@ -781,7 +858,6 @@ public class FormularioRegistro extends javax.swing.JFrame {
                 }
                 
                 // B. Validar que el Nombre no exista (ignorando mayúsculas/minúsculas)
-                // NOTA: Si tu getter se llama 'getDescripcion()', cámbialo aquí.
                 if (p.getDescripcion().equalsIgnoreCase(nombrePais)) { 
                     throw new Exception("El país '" + nombrePais + "' ya está registrado.");
                 }
@@ -789,6 +865,13 @@ public class FormularioRegistro extends javax.swing.JFrame {
         }
     }
 
+    
+    /**
+     * Lee los datos de la GUI y llama a 'gestion.crearPais()'.
+     * Se asume que 'validarFormularioPais' ya se ejecutó con éxito.
+     *
+     * @throws Exception Si 'gestion.crearPais' lanza una excepción o si 'parseInt' falla.
+     */
     private void guardarPais() throws Exception {
         // 1. Leemos y limpiamos los datos
         String idStr = txtCampo1.getText().trim();
@@ -801,7 +884,16 @@ public class FormularioRegistro extends javax.swing.JFrame {
         this.gestion.crearPais(id, nombrePais);
     }
     
-   
+   /**
+     * Valida los campos del formulario de Circuito.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato Longitud (número entero > 0).
+     * 3. Formato Nombre (capitalizado, solo letras/espacios).
+     * 4. Duplicados (Nombre).
+     *
+     * @throws Exception Si alguna regla de validación no se cumple.
+     */
     private void validarFormularioCircuito() throws Exception {
     
         // --- 1. LECTURA DE DATOS ---
@@ -816,7 +908,7 @@ public class FormularioRegistro extends javax.swing.JFrame {
         }
 
         // --- 3. VALIDACIÓN DE FORMATO (Longitud) ---
-        // (Revisamos que sea un número y que CUMPLA TUS REGLAS)
+        // (Revisamos que sea un número)
         int longitud;
         try {
             longitud = Integer.parseInt(longitudStr);
@@ -825,21 +917,18 @@ public class FormularioRegistro extends javax.swing.JFrame {
         throw new Exception("La 'Longitud' debe ser un número entero (ej: 5).");
         }
     
-        // *** ¡AQUÍ TU VALIDACIÓN DE LONGITUD NEGATIVA! ***
-        // (Incluyo también el 0, ya que un circuito no puede tener 0km)
+        // (Incluye también numeros menores a 1, ya que un circuito no puede tener 0km o ser negativo)
         if (longitud <= 0) {
             throw new Exception("La 'Longitud' debe ser un número positivo (mayor a 0).");
         }
 
         // --- 4. VALIDACIÓN DE FORMATO (Nombre) ---
-        // (Reutilizamos la misma lógica de País y Piloto)
         String regexMayusculaYLetras = "^\\p{Lu}[\\p{L} ]*$";
         if (!nombreCircuito.matches(regexMayusculaYLetras)) {
             throw new Exception("El 'Nombre' del circuito debe iniciar con mayúscula y solo contener letras y espacios (Ej: 'Monza').");
         }
     
         // --- 5. VALIDACIÓN DE DUPLICADOS (Lógica de Negocio) ---
-        // *** ¡AQUÍ TU VALIDACIÓN DE NOMBRE EXISTENTE! ***
     
         // Obtenemos la lista actual desde tu gestión
         ArrayList<Circuito> listaCircuitos = this.gestion.getListaCircuitos();
@@ -854,7 +943,12 @@ public class FormularioRegistro extends javax.swing.JFrame {
         }
     }
     
-    
+    /**
+     * Lee los datos de la GUI y llama a 'gestion.crearCircuitos()'.
+     * Se asume que 'validarFormularioCircuito' ya se ejecutó con éxito.
+     *
+     * @throws Exception Si 'gestion.crearCircuitos' lanza una excepción o si 'parseInt' falla.
+     */
     private void guardarCircuito() throws Exception {
         // 1. Leemos los datos (ya sabemos que son válidos)
         String nombreCircuito = txtCampo1.getText().trim();
@@ -865,7 +959,17 @@ public class FormularioRegistro extends javax.swing.JFrame {
         this.gestion.crearCircuitos(nombreCircuito, longitud, paisCircuito);
     }
     
-    
+    /**
+     * Valida los campos del formulario de Auto.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato de Modelo y Motor (capitalizado, alfanumérico con guiones/espacios).
+     * 3. Regla de Negocio: Una escudería solo puede tener UN auto (1 a 1).
+     * 4. Regla de Negocio: El Modelo debe ser único en todo el sistema.
+     * 5. Regla de Negocio: El Motor debe ser único en todo el sistema.
+     *
+     * @throws Exception Si alguna regla de validación no se cumple.
+     */
     private void validarFormularioAuto() throws Exception {
     
         // --- 1. LECTURA DE DATOS ---
@@ -878,14 +982,14 @@ public class FormularioRegistro extends javax.swing.JFrame {
             throw new Exception("Debe completar todos los campos (Modelo, Motor y Escudería).");
         }
     
-        // Convertimos la escudería ELEGIDA (la del combo) para usarla en la validación
+        // Convertimos la escudería ELEGIDA para usarla en la validación
         Escuderia escuderiaSeleccionada = (Escuderia) escuderiaObj;
 
-        // --- 3. VALIDACIÓN DE FORMATO (Tu nueva regla) ---
+        // --- 3. VALIDACIÓN DE FORMATO) ---
         // Esta expresión regular:
         // ^\p{Lu}         -> Empezar con Mayúscula
         // [\p{L}\p{N} \-]* -> Seguido de letras, NÚMEROS, espacios y guiones.
-        // ¡Esto NO permite comas (,) ni puntos (.)!
+        // Esto NO permite comas ni puntos
         String regexModeloMotor = "^\\p{Lu}[\\p{L}\\p{N} \\-]*$";
     
         if (!modelo.matches(regexModeloMotor)) {
@@ -905,7 +1009,6 @@ public class FormularioRegistro extends javax.swing.JFrame {
             // Recorremos la lista de autos existentes para validar
             for (Auto autoExistente : listaAutos) {
             
-                // REGLA 1 (Tu nueva regla): "que no tenga distintos modelos una misma escuderia"
                 // Verificamos si la escudería que ELEGIMOS ya tiene un auto registrado.
                 if (autoExistente.getEscuderia().equals(escuderiaSeleccionada)) {
                     throw new Exception("La escudería '" + escuderiaSeleccionada.getNombre() + 
@@ -913,14 +1016,12 @@ public class FormularioRegistro extends javax.swing.JFrame {
                                   "No se puede registrar un segundo modelo.");
                 }
             
-                // REGLA 2: "validar que [modelo] ya exista y si existe que tire error"
-                // (Verifica que el nombre del modelo no lo tenga OTRA escudería)
+                // Verifica que el nombre del modelo no lo tenga OTRA escudería
                 if (autoExistente.getModelo().equalsIgnoreCase(modelo)) {
                     throw new Exception("El modelo '" + modelo + "' ya está registrado (pertenece a " + 
                                   autoExistente.getEscuderia().getNombre() + ").");
                 }
             
-                // REGLA 3: "motor tambien validar que ya no exista"
                 if (autoExistente.getMotor().equalsIgnoreCase(motor)) {
                     throw new Exception("El motor '" + motor + "' ya está registrado (pertenece al modelo " + 
                                   autoExistente.getModelo() + ").");
@@ -929,8 +1030,12 @@ public class FormularioRegistro extends javax.swing.JFrame {
          }
     }
     
-    
-    
+    /**
+     * Lee los datos de la GUI y llama a 'gestion.crearAutos()'.
+     * Se asume que 'validarFormularioAuto' ya se ejecutó con éxito.
+     *
+     * @throws Exception Si 'gestion.crearAutos' lanza una excepción.
+     */
     private void guardarAuto() throws Exception {
         // 1. Leemos los datos (ya validados)
         String modelo = txtCampo1.getText().trim();
@@ -941,11 +1046,14 @@ public class FormularioRegistro extends javax.swing.JFrame {
         this.gestion.crearAutos(modelo, motor, escuderia);
     }
   
-  /**
-     * Valida datos de Escudería:
-     * - Campos no vacíos.
-     * - Nombre con formato Capitalizado (Mayúscula inicial, solo letras y espacios).
-     * - Que no exista otra escudería con el mismo nombre.
+    /**
+     * Valida los campos del formulario de Escudería.
+     * Comprueba:
+     * 1. Campos vacíos.
+     * 2. Formato Nombre (capitalizado, solo letras/espacios).
+     * 3. Duplicados (Nombre).
+     *
+     * @throws Exception Si alguna regla de validación no se cumple.
      */
     private void validarFormularioEscuderia() throws Exception {
         // --- 1. LECTURA ---
@@ -980,6 +1088,11 @@ public class FormularioRegistro extends javax.swing.JFrame {
         }
     }
 
+    
+    /**
+     * Lee los datos de la GUI y llama a 'gestion.crearEscuderias()'.
+     * Se asume que 'validarFormularioEscuderia' ya se ejecutó con éxito.
+     */
     private void guardarEscuderia() {
         // 1. Recuperar datos limpios
         String nombreEsc = txtCampo1.getText().trim();
